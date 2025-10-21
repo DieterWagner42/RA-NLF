@@ -1,0 +1,293 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="d6" for="edge" attr.name="step" attr.type="string" />
+  <key id="d5" for="edge" attr.name="uc" attr.type="string" />
+  <key id="d4" for="edge" attr.name="type" attr.type="string" />
+  <key id="d3" for="node" attr.name="shape" attr.type="string" />
+  <key id="d2" for="node" attr.name="color" attr.type="string" />
+  <key id="d1" for="node" attr.name="shared" attr.type="boolean" />
+  <key id="d0" for="node" attr.name="type" attr.type="string" />
+  <graph edgedefault="directed">
+    <node id="System Interface">
+      <data key="d0">boundary</data>
+      <data key="d1">False</data>
+      <data key="d2">#9b59b6</data>
+      <data key="d3">circle</data>
+    </node>
+    <node id="Notification Interface">
+      <data key="d0">boundary</data>
+      <data key="d1">False</data>
+      <data key="d2">#9b59b6</data>
+      <data key="d3">circle</data>
+    </node>
+    <node id="Configuration Interface">
+      <data key="d0">boundary</data>
+      <data key="d1">False</data>
+      <data key="d2">#9b59b6</data>
+      <data key="d3">circle</data>
+    </node>
+    <node id="Espressos">
+      <data key="d0">entity</data>
+      <data key="d1">False</data>
+      <data key="d2">#27ae60</data>
+      <data key="d3">square</data>
+    </node>
+    <node id="Pressure">
+      <data key="d0">entity</data>
+      <data key="d1">False</data>
+      <data key="d2">#27ae60</data>
+      <data key="d3">square</data>
+    </node>
+    <node id="beans">
+      <data key="d0">entity</data>
+      <data key="d1">False</data>
+      <data key="d2">#27ae60</data>
+      <data key="d3">square</data>
+    </node>
+    <node id="Milk">
+      <data key="d0">entity</data>
+      <data key="d1">False</data>
+      <data key="d2">#27ae60</data>
+      <data key="d3">square</data>
+    </node>
+    <node id="Container">
+      <data key="d0">entity</data>
+      <data key="d1">False</data>
+      <data key="d2">#27ae60</data>
+      <data key="d3">square</data>
+    </node>
+    <node id="Level">
+      <data key="d0">entity</data>
+      <data key="d1">False</data>
+      <data key="d2">#27ae60</data>
+      <data key="d3">square</data>
+    </node>
+    <node id="Temperature">
+      <data key="d0">entity</data>
+      <data key="d1">False</data>
+      <data key="d2">#27ae60</data>
+      <data key="d3">square</data>
+    </node>
+    <node id="Heater">
+      <data key="d0">entity</data>
+      <data key="d1">False</data>
+      <data key="d2">#27ae60</data>
+      <data key="d3">square</data>
+    </node>
+    <node id="Time">
+      <data key="d0">entity</data>
+      <data key="d1">False</data>
+      <data key="d2">#27ae60</data>
+      <data key="d3">square</data>
+    </node>
+    <node id="Grounds">
+      <data key="d0">entity</data>
+      <data key="d1">False</data>
+      <data key="d2">#27ae60</data>
+      <data key="d3">square</data>
+    </node>
+    <node id="Notification">
+      <data key="d0">entity</data>
+      <data key="d1">False</data>
+      <data key="d2">#27ae60</data>
+      <data key="d3">square</data>
+    </node>
+    <node id="Coffee">
+      <data key="d0">entity</data>
+      <data key="d1">False</data>
+      <data key="d2">#27ae60</data>
+      <data key="d3">square</data>
+    </node>
+    <node id="Amount">
+      <data key="d0">entity</data>
+      <data key="d1">False</data>
+      <data key="d2">#27ae60</data>
+      <data key="d3">square</data>
+    </node>
+    <node id="Sugar">
+      <data key="d0">entity</data>
+      <data key="d1">False</data>
+      <data key="d2">#27ae60</data>
+      <data key="d3">square</data>
+    </node>
+    <node id="Compressor">
+      <data key="d0">entity</data>
+      <data key="d1">False</data>
+      <data key="d2">#27ae60</data>
+      <data key="d3">square</data>
+    </node>
+    <node id="Water">
+      <data key="d0">entity</data>
+      <data key="d1">False</data>
+      <data key="d2">#27ae60</data>
+      <data key="d3">square</data>
+    </node>
+    <node id="User">
+      <data key="d0">entity</data>
+      <data key="d1">False</data>
+      <data key="d2">#27ae60</data>
+      <data key="d3">square</data>
+    </node>
+    <node id="Filter">
+      <data key="d0">entity</data>
+      <data key="d1">False</data>
+      <data key="d2">#27ae60</data>
+      <data key="d3">square</data>
+    </node>
+    <node id="Cup">
+      <data key="d0">entity</data>
+      <data key="d1">False</data>
+      <data key="d2">#27ae60</data>
+      <data key="d3">square</data>
+    </node>
+    <node id="Amount Controller">
+      <data key="d0">control</data>
+      <data key="d1">False</data>
+      <data key="d2">#3498db</data>
+      <data key="d3">triangle</data>
+    </node>
+    <node id="Coffee Controller">
+      <data key="d0">control</data>
+      <data key="d1">False</data>
+      <data key="d2">#3498db</data>
+      <data key="d3">triangle</data>
+    </node>
+    <node id="Error Handler A2">
+      <data key="d0">control</data>
+      <data key="d1">False</data>
+      <data key="d2">#3498db</data>
+      <data key="d3">triangle</data>
+    </node>
+    <node id="System Orchestrator">
+      <data key="d0">control</data>
+      <data key="d1">False</data>
+      <data key="d2">#3498db</data>
+      <data key="d3">triangle</data>
+    </node>
+    <node id="Milk Controller">
+      <data key="d0">control</data>
+      <data key="d1">False</data>
+      <data key="d2">#3498db</data>
+      <data key="d3">triangle</data>
+    </node>
+    <node id="Filter Controller">
+      <data key="d0">control</data>
+      <data key="d1">False</data>
+      <data key="d2">#3498db</data>
+      <data key="d3">triangle</data>
+    </node>
+    <node id="Error Handler A1">
+      <data key="d0">control</data>
+      <data key="d1">False</data>
+      <data key="d2">#3498db</data>
+      <data key="d3">triangle</data>
+    </node>
+    <node id="Heater Controller">
+      <data key="d0">control</data>
+      <data key="d1">False</data>
+      <data key="d2">#3498db</data>
+      <data key="d3">triangle</data>
+    </node>
+    <node id="Cup Controller">
+      <data key="d0">control</data>
+      <data key="d1">False</data>
+      <data key="d2">#3498db</data>
+      <data key="d3">triangle</data>
+    </node>
+    <node id="Notification Controller">
+      <data key="d0">control</data>
+      <data key="d1">False</data>
+      <data key="d2">#3498db</data>
+      <data key="d3">triangle</data>
+    </node>
+    <node id="Compressor Controller">
+      <data key="d0">control</data>
+      <data key="d1">False</data>
+      <data key="d2">#3498db</data>
+      <data key="d3">triangle</data>
+    </node>
+    <node id="Begin Controller">
+      <data key="d0">control</data>
+      <data key="d1">False</data>
+      <data key="d2">#3498db</data>
+      <data key="d3">triangle</data>
+    </node>
+    <node id="Time Controller">
+      <data key="d0">control</data>
+      <data key="d1">False</data>
+      <data key="d2">#3498db</data>
+      <data key="d3">triangle</data>
+    </node>
+    <node id="Water Controller">
+      <data key="d0">control</data>
+      <data key="d1">False</data>
+      <data key="d2">#3498db</data>
+      <data key="d3">triangle</data>
+    </node>
+    <edge source="User" target="System Interface">
+      <data key="d4">interacts</data>
+      <data key="d5">UC2: Prepare Espresso</data>
+      <data key="d6">B8</data>
+    </edge>
+    <edge source="User" target="Notification Interface">
+      <data key="d4">interacts</data>
+      <data key="d5">UC2: Prepare Espresso</data>
+      <data key="d6">B8</data>
+    </edge>
+    <edge source="System Orchestrator" target="Time Controller">
+      <data key="d4">coordinates</data>
+      <data key="d5">UC2: Prepare Espresso</data>
+      <data key="d6">B1</data>
+    </edge>
+    <edge source="System Orchestrator" target="Heater Controller">
+      <data key="d4">coordinates</data>
+      <data key="d5">UC2: Prepare Espresso</data>
+      <data key="d6">B2</data>
+    </edge>
+    <edge source="System Orchestrator" target="Filter Controller">
+      <data key="d4">coordinates</data>
+      <data key="d5">UC2: Prepare Espresso</data>
+      <data key="d6">B5</data>
+    </edge>
+    <edge source="System Orchestrator" target="Amount Controller">
+      <data key="d4">coordinates</data>
+      <data key="d5">UC2: Prepare Espresso</data>
+      <data key="d6">B4</data>
+    </edge>
+    <edge source="System Orchestrator" target="Cup Controller">
+      <data key="d4">coordinates</data>
+      <data key="d5">UC2: Prepare Espresso</data>
+      <data key="d6">B5</data>
+    </edge>
+    <edge source="System Orchestrator" target="Water Controller">
+      <data key="d4">coordinates</data>
+      <data key="d5">UC1: Prepare Latte</data>
+      <data key="d6">B7</data>
+    </edge>
+    <edge source="System Orchestrator" target="Begin Controller">
+      <data key="d4">coordinates</data>
+      <data key="d5">UC2: Prepare Espresso</data>
+      <data key="d6">B7</data>
+    </edge>
+    <edge source="System Orchestrator" target="Milk Controller">
+      <data key="d4">coordinates</data>
+      <data key="d5">UC1: Prepare Latte</data>
+      <data key="d6">B8</data>
+    </edge>
+    <edge source="System Orchestrator" target="Coffee Controller">
+      <data key="d4">coordinates</data>
+      <data key="d5">UC1: Prepare Latte</data>
+      <data key="d6">B9</data>
+    </edge>
+    <edge source="System Orchestrator" target="Notification Controller">
+      <data key="d4">coordinates</data>
+      <data key="d5">UC2: Prepare Espresso</data>
+      <data key="d6">B8</data>
+    </edge>
+    <edge source="System Orchestrator" target="Compressor Controller">
+      <data key="d4">coordinates</data>
+      <data key="d5">UC2: Prepare Espresso</data>
+      <data key="d6">B6</data>
+    </edge>
+  </graph>
+</graphml>

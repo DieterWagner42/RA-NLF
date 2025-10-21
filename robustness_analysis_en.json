@@ -1,0 +1,155 @@
+{
+  "objects": {
+    "boundary": [
+      "User Notification",
+      "Settings Interface",
+      "Timer/Clock"
+    ],
+    "entity": [
+      "Beans",
+      "Filter",
+      "Water",
+      "Sugar",
+      "Storage",
+      "Cup",
+      "Container",
+      "Coffee",
+      "Milk"
+    ],
+    "control": [
+      "Fehlerbehandlung-A1",
+      "Sugar Controller",
+      "Cup Handler",
+      "Water Heater Controller",
+      "Brew Controller",
+      "Filter Controller",
+      "Fehlerbehandlung-A2"
+    ]
+  },
+  "relationships": [
+    {
+      "from": "Timer/Clock",
+      "to": "Orchestrator",
+      "type": "triggers",
+      "step": "B1",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "Settings Interface",
+      "to": "Orchestrator",
+      "type": "configures",
+      "step": "B1",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "Orchestrator",
+      "to": "Water Heater Controller",
+      "type": "controls",
+      "step": "B2",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "Orchestrator",
+      "to": "Water Heater Controller",
+      "type": "controls",
+      "step": "B2",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "Water Heater Controller",
+      "to": "Water",
+      "type": "heats",
+      "step": "B2",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "Settings Interface",
+      "to": "Orchestrator",
+      "type": "configures",
+      "step": "B4",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "Orchestrator",
+      "to": "Brew Controller",
+      "type": "controls",
+      "step": "B6",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "Brew Controller",
+      "to": "Coffee",
+      "type": "brews",
+      "step": "B6",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "Settings Interface",
+      "to": "Orchestrator",
+      "type": "configures",
+      "step": "B6",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "Orchestrator",
+      "to": "Milk Controller",
+      "type": "controls",
+      "step": "B7",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "Milk Controller",
+      "to": "Milk",
+      "type": "uses",
+      "step": "B7",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "Milk Controller",
+      "to": "Cup",
+      "type": "fills",
+      "step": "B7",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "Orchestrator",
+      "to": "Brew Controller",
+      "type": "controls",
+      "step": "B8",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "Coffee Controller",
+      "to": "Coffee",
+      "type": "uses",
+      "step": "B8",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "Coffee Controller",
+      "to": "Cup",
+      "type": "fills",
+      "step": "B8",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "Orchestrator",
+      "to": "User Notification",
+      "type": "sends",
+      "step": "B9",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "User Notification",
+      "to": "User",
+      "type": "notifies",
+      "step": "B9",
+      "uc": "UC1: Prepare Latte"
+    }
+  ],
+  "features": {
+    "Coffee Preparation": {
+      "Latte-Feature": "UC1: Prepare Latte"
+    }
+  }
+}

@@ -1,0 +1,13 @@
+User System Interface {'type': 'interacts', 'uc': 'UC2: Prepare Espresso', 'step': 'B8'}
+User Notification Interface {'type': 'interacts', 'uc': 'UC2: Prepare Espresso', 'step': 'B8'}
+System Orchestrator Time Controller {'type': 'coordinates', 'uc': 'UC2: Prepare Espresso', 'step': 'B1'}
+System Orchestrator Heater Controller {'type': 'coordinates', 'uc': 'UC2: Prepare Espresso', 'step': 'B2'}
+System Orchestrator Filter Controller {'type': 'coordinates', 'uc': 'UC2: Prepare Espresso', 'step': 'B5'}
+System Orchestrator Amount Controller {'type': 'coordinates', 'uc': 'UC2: Prepare Espresso', 'step': 'B4'}
+System Orchestrator Cup Controller {'type': 'coordinates', 'uc': 'UC2: Prepare Espresso', 'step': 'B5'}
+System Orchestrator Water Controller {'type': 'coordinates', 'uc': 'UC1: Prepare Latte', 'step': 'B7'}
+System Orchestrator Begin Controller {'type': 'coordinates', 'uc': 'UC2: Prepare Espresso', 'step': 'B7'}
+System Orchestrator Milk Controller {'type': 'coordinates', 'uc': 'UC1: Prepare Latte', 'step': 'B8'}
+System Orchestrator Coffee Controller {'type': 'coordinates', 'uc': 'UC1: Prepare Latte', 'step': 'B9'}
+System Orchestrator Notification Controller {'type': 'coordinates', 'uc': 'UC2: Prepare Espresso', 'step': 'B8'}
+System Orchestrator Compressor Controller {'type': 'coordinates', 'uc': 'UC2: Prepare Espresso', 'step': 'B6'}

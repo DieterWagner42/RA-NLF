@@ -1,0 +1,147 @@
+{
+  "objects": {
+    "boundary": [
+      "Confirmation Interface",
+      "Products Input Interface"
+    ],
+    "entity": [
+      "Price",
+      "Customer",
+      "Catalog",
+      "Record",
+      "Confirmation",
+      "method",
+      "Payment",
+      "Availability",
+      "Products",
+      "Information",
+      "inventory",
+      "account"
+    ],
+    "control": [
+      "Error Handler A1",
+      "Price Controller",
+      "Availability Controller",
+      "Record Controller",
+      "Error Handler A2",
+      "System Orchestrator",
+      "Payment Controller",
+      "Confirmation Controller"
+    ],
+    "actor": [
+      "Customer"
+    ]
+  },
+  "relationships": [
+    {
+      "from": "Customer",
+      "to": "Products Input Interface",
+      "type": "select",
+      "step": "B1",
+      "uc": "UC1: Process Order"
+    },
+    {
+      "from": "Customer",
+      "to": "Products Input Interface",
+      "type": "interacts",
+      "step": "B1",
+      "uc": "UC1: Process Order"
+    },
+    {
+      "from": "System",
+      "to": "Availability",
+      "type": "validate",
+      "step": "B2",
+      "uc": "UC1: Process Order"
+    },
+    {
+      "from": "System Orchestrator",
+      "to": "Availability Controller",
+      "type": "coordinates",
+      "step": "B2",
+      "uc": "UC1: Process Order"
+    },
+    {
+      "from": "System",
+      "to": "Price",
+      "type": "calculate",
+      "step": "B3",
+      "uc": "UC1: Process Order"
+    },
+    {
+      "from": "System Orchestrator",
+      "to": "Price Controller",
+      "type": "coordinates",
+      "step": "B3",
+      "uc": "UC1: Process Order"
+    },
+    {
+      "from": "Customer",
+      "to": "Information",
+      "type": "provide",
+      "step": "B4",
+      "uc": "UC1: Process Order"
+    },
+    {
+      "from": "System",
+      "to": "Payment",
+      "type": "process",
+      "step": "B5",
+      "uc": "UC1: Process Order"
+    },
+    {
+      "from": "System Orchestrator",
+      "to": "Payment Controller",
+      "type": "coordinates",
+      "step": "B5",
+      "uc": "UC1: Process Order"
+    },
+    {
+      "from": "System",
+      "to": "Record",
+      "type": "create",
+      "step": "B6",
+      "uc": "UC1: Process Order"
+    },
+    {
+      "from": "System Orchestrator",
+      "to": "Record Controller",
+      "type": "coordinates",
+      "step": "B6",
+      "uc": "UC1: Process Order"
+    },
+    {
+      "from": "System",
+      "to": "Confirmation Interface",
+      "type": "send",
+      "step": "B7",
+      "uc": "UC1: Process Order"
+    },
+    {
+      "from": "Customer",
+      "to": "Confirmation Interface",
+      "type": "interacts",
+      "step": "B7",
+      "uc": "UC1: Process Order"
+    },
+    {
+      "from": "System",
+      "to": "Confirmation Interface",
+      "type": "interacts",
+      "step": "B7",
+      "uc": "UC1: Process Order"
+    },
+    {
+      "from": "System Orchestrator",
+      "to": "Confirmation Controller",
+      "type": "coordinates",
+      "step": "B7",
+      "uc": "UC1: Process Order"
+    }
+  ],
+  "features": {
+    "Order Management": {
+      "Standard Order Processing": "UC1: Process Order"
+    }
+  }
+}

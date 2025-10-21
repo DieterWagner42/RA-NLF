@@ -1,0 +1,1915 @@
+# Deine Robustheitsanalyse-Methodik
+
+## Überblick
+
+Eine **systematische, kontextbasierte Methode** zur Durchführung der Robustheitsanalyse nach RUP, die Use Cases in Boundary-, Entity- und Control-Objekte überführt.
+
+---
+
+## Phase 1: Kontext aufbauen und verstehen
+
+### Schritt 1.1: Fähigkeit analysieren
+
+**Input:** Fähigkeitsname (z.B. "Kaffeezubereitung")
+
+**Vorgehensweise:**
+1. **Identifiziere die Domäne**
+   - Beispiel: "Kaffeezubereitung" → Domäne ist "Getränkezubereitung"
+   
+2. **Recherchiere bei Wissenslücken**
+   - Wenn du nicht genug über die Domäne weißt → recherchiere
+   - Baue Kontextwissen auf
+   
+3. **Schließe Unpassendes aus**
+   - Beispiel: Bei "Kaffeezubereitung" kann manuelle Zubereitung ausgeschlossen werden
+   
+4. **Merke dir den Kontext** für alle weiteren Schritte
+
+**Output:** Domänenwissen für die Analyse
+
+---
+
+### Schritt 1.2: Use Case Titel analysieren
+
+**Input:** UC-Titel (z.B. "Milchkaffee zubereiten")
+
+**Vorgehensweise:**
+1. **Erkenne Beschränkungen des Lösungsraums**
+   - "Milchkaffee" ist eine spezifische Variante
+   
+2. **Identifiziere mögliche andere UCs**
+   - Gibt es "Espresso zubereiten"?
+   - Müssen beim Kunden nachgefragt werden?
+
+**Output:** Verfeinertes Kontextwissen
+
+---
+
+### Schritt 1.3: Ziel analysieren
+
+**Input:** Ziel-Beschreibung (z.B. "Benutzer kann Milchkaffee um 7h trinken")
+
+**Vorgehensweise:**
+1. **Extrahiere zeitliche Anforderungen**
+   - "um 7h" → Controller "ZeitManager"
+   
+2. **Extrahiere Input-Anforderungen**
+   - Zeitsteuerung → Boundary "Eingabe einer Uhrzeit" (wenn manuell) oder "Zeit" (wenn automatisch)
+
+**Output:** 
+- Erste Controller identifiziert
+- Erste Boundaries identifiziert
+
+---
+
+### Schritt 1.4: Actors merken
+
+**Input:** Liste der Actors
+
+**Vorgehensweise:**
+1. **Speichere alle Actors**
+2. **Unterscheide Typen:**
+   - **Menschlich** (z.B. "Benutzer") → kommunizieren über **HMI**
+   - **Nicht-menschlich** (z.B. "Zeitsender") → eigener Controller
+
+3. **Merke für später:** Am Ende prüfen, ob jeder Actor in mindestens einem Szenario vorkommt
+
+**Output:** Actor-Liste mit Typ-Klassifikation
+
+---
+
+## Phase 2: Betriebsmittel-Analyse (aus Vorbedingungen)
+
+### Das 3-Schritte-Schema
+
+Für **jedes** Betriebsmittel aus den Vorbedingungen:
+
+#### Pattern erkennen
+```
+"[Objekt] ist/sind im System vorhanden"
+```
+
+---
+
+### Schritt 2.1: Input bestimmen
+
+**Frage:** Wie kommt das Betriebsmittel ins System?
+
+**Regel:**
+- **Wenn manuell befüllt** → Boundary "[Objekt] Input"
+- **Wenn menschlich befüllt** → über **HMI**
+
+**Beispiel:**
+- Kaffeebohnen → "Kaffee Input" Boundary
+- Wasser → "Wasser Input" Boundary
+- Milch → "Milch Input" Boundary
+
+---
+
+### Schritt 2.2: Lagerung und Verarbeitung
+
+**Erstelle Manager-Controller:**
+```
+[Objekt]Manager
+```
+
+**Aus Kontext ableiten:** Was muss mit dem Betriebsmittel geschehen?
+
+**Beispiel Kaffeebohnen:**
+- Aus Kontext: Kaffee wird gemahlen
+- → KaffeeManager
+- → Funktion: "Kaffeebohnen lagern"
+- → Funktion: "Kaffee mahlen" (aus Kontext!)
+
+**Beispiel Milch:**
+- Aus Kontext: Milch ist verderblich
+- → MilchManager
+- → Funktion: "Milch lagern"
+- → Funktion: "Milch kühlen" (aus Kontext: verderblich!)
+
+**Beispiel Wasser:**
+- Aus Kontext: Kaffee braucht heißes Wasser
+- → WasserManager
+- → Funktion: "Wasser lagern"
+- → Funktion: "Wasser erhitzen" (aus Kontext!)
+
+---
+
+### Schritt 2.3: Output bestimmen
+
+**Frage:** Wie verlässt das Betriebsmittel (oder sein Produkt) das System?
+
+**Unterscheide:**
+
+**A) Abfallprodukt:**
+- Beispiel: Kaffeesatz (entsteht aus Kaffeemehl nach Brühen)
+- → **Eigene Output-Boundary** "Kaffeesatz Output"
+
+**B) Teil des Endprodukts:**
+- Beispiel: Milch (geht in die Tasse, wird Teil des Getränks)
+- → **Keine** eigene Output-Boundary
+
+---
+
+## Phase 3: Basisablauf Schritt-für-Schritt analysieren
+
+### Schritt 3.1: Trigger-Schritt (B1)
+
+**Regel:** Trigger muss von **Actor** ODER **Zeit/Datum** kommen
+
+**Beispiel B1:** "Uhr des Systems erreicht eingestellte Uhrzeit von 7:00h (Funkuhr)"
+
+**Deine Analyse:**
+
+1. **Zeit-Spezialfall erkennen:**
+   - Zeit ist nicht-menschlicher Actor
+   - Boundary: "Zeit" oder "RF Zeitinformation" (Funkuhr)
+   - Controller: ZeitManager (NICHT über HMI!)
+
+2. **Entity identifizieren:**
+   - "eingestellte Uhrzeit" → Entity (Konfiguration)
+   - Datenfluss: Eingestellte Uhrzeit → (USE) → ZeitManager
+
+3. **UC-Fehler erkennen:**
+   - Entity "eingestellte Uhrzeit" wird genutzt
+   - ABER: Keine Vorbedingung beschreibt, wie sie gesetzt wurde!
+   - → **Fehlerbehebung:** 
+     - Neue Vorbedingung: "Uhrzeit für automatische Zubereitung ist eingestellt"
+     - Neuer UC: "Automatische Kaffeezubereitung einstellen" (mit Kundenmehrwert!)
+
+---
+
+### Schritt 3.2: Normaler Schritt analysieren
+
+**Beispiel B2:** "Das System aktiviert den Wasserkocher"
+
+**Deine Analyse:**
+
+1. **Verb identifizieren:** "aktiviert"
+
+2. **Objekt identifizieren:** "Wasserkocher"
+
+3. **Unterscheidung treffen:**
+   - "Wasserkocher" ist **physikalische Realisierung** → NICHT relevant für RA
+   - Relevant ist die **Funktion:** "Wasser erhitzen"
+
+4. **Controller zuordnen:**
+   - Aus Vorbedingung bereits bekannt: WasserManager
+   - Funktion: "Wasser erhitzen" (schon identifiziert)
+   - Neue Funktion: "Wasserkocher aktivieren" → Nein! (zu technisch)
+   - Später aus Fehlerfall: "Wasserkocher ausschalten"
+
+5. **Entities identifizieren:**
+   - Kaltes Wasser → (USE) → WasserManager
+   - WasserManager → (PROVIDE) → Heißes Wasser
+   - **Wichtig:** Zwei separate Entities! (Zustandstransformation)
+
+6. **Orchestrierung erkennen:**
+   - B2 ist einer von mehreren parallelen Schritten (B2a-d)
+   - Alle brauchen übergeordneten "GetränkeOrchestrator"
+   - Kontrollfluss: GetränkeOrchestrator → WasserManager
+
+---
+
+### Schritt 3.3: Parallele Schritte erkennen
+
+**Beispiel B2, B3, B4, B5 (ursprünglich):**
+
+**Deine Erkenntnis:**
+- B2: Wasserkocher aktivieren
+- B3: Filter vorbereiten
+- B4: Kaffee mahlen
+- B5: Tasse holen
+
+**Alle sind unabhängig!** → Können parallel laufen
+
+**UC-Verbesserung:** Nummerierung ändern:
+- B2a: Wasserkocher aktivieren
+- B2b: Filter vorbereiten
+- B2c: Kaffee mahlen
+- B2d: Tasse holen
+- → B3: (nächster sequenzieller Schritt)
+
+**Kontrollfluss:**
+```
+GetränkeOrchestrator → WasserManager (B2a)
+                     → FilterManager (B2b)
+                     → KaffeeManager (B2c)
+                     → TassenManager (B2d)
+                     
+Alle → GetränkeManager (nächster Schritt)
+```
+
+---
+
+### Schritt 3.4: Objekte aus Schritten extrahieren
+
+**Beispiel B3 (jetzt B2c):** "Das System mahlt die eingestellte Menge in dem eingestellten Mahlgrad direkt in den Filter"
+
+**Deine Analyse:**
+
+1. **Verb:** "mahlt" → Funktion "Kaffee mahlen"
+
+2. **Objekte mit Adjektiven:**
+   - "eingestellte Menge" → Entity "KaffeemehlMenge" (Stellgröße)
+   - "eingestellten Mahlgrad" → Entity "KaffeemehlMahlgrad" (Stellgröße)
+   
+3. **UC-Fehler erkennen:**
+   - Beide Entities werden genutzt
+   - ABER: Nicht in Vorbedingungen!
+   - → Fehlende Vorbedingungen:
+     - "Kaffeestärke ist eingestellt"
+     - "Kaffee-Aroma ist eingestellt"
+
+4. **Controller zuordnen:**
+   - KaffeeManager (aus Vorbedingung bekannt)
+
+5. **Entities für Zustandstransformation:**
+   - Input: Kaffeebohnen
+   - Output: **Kaffeemehl** (neue Entity!)
+   - Beide sind **separate Entities**
+
+6. **Datenflüsse:**
+   - Kaffeebohnen → (USE) → KaffeeManager
+   - KaffeemehlMenge → (USE) → KaffeeManager
+   - KaffeemehlMahlgrad → (USE) → KaffeeManager
+   - KaffeeManager → (PROVIDE) → Kaffeemehl
+
+7. **Wichtige Regel:**
+   - "Filter" erscheint im Text
+   - ABER: Filter wird nur von FilterManager genutzt
+   - → Filter ist **KEINE Entity** (internes Detail des FilterManager)
+
+8. **Funktion zuordnen:**
+   - Kaffeemehl geht zum FilterManager
+   - Die Funktion "Kaffeemehl in Filter leiten" gehört zum **Erzeuger** (KaffeeManager)
+   - NICHT zum Empfänger (FilterManager)!
+
+---
+
+### Schritt 3.5: Controller-Zuordnung entscheiden
+
+**Beispiel B4 (Milch zugeben):** "Das System gibt Milch in die Tasse"
+
+**Deine Überlegung:**
+
+**Option 1:** MilchManager gibt Milch zu
+- MilchManager ist zuständig für Milch-Lagerhaltung
+
+**Option 2:** GetränkeManager gibt Milch zu  
+- GetränkeManager ist zuständig für Getränkezubereitung
+
+**Deine Entscheidung:** GetränkeManager!
+
+**Begründung:**
+- MilchManager: Zuständig für "Milch kühlen", "Milch lagern", "Milch bereitstellen"
+- GetränkeManager: Zuständig für "Kaffee brühen", "Milch zugeben", "Getränk mischen"
+- **Logik:** Getränkezubereitung ist Aufgabe von GetränkeManager
+
+**Datenfluss:**
+- Milch (Entity) → (USE) → GetränkeManager
+- Tasse mit Getränk → (USE) → GetränkeManager
+- GetränkeManager → (PROVIDE) → Tasse mit Getränk und Zusatz
+
+---
+
+### Schritt 3.6: Interne vs. Externe Objekte
+
+**Deine Regel:**
+
+**Entity NUR wenn von mehreren Controllern genutzt:**
+
+**Beispiele:**
+
+✅ **Kaffeemehl ist Entity:**
+- KaffeeManager erstellt es (PROVIDE)
+- FilterManager nutzt es (USE)
+- → Von **2 Controllern** genutzt → **Entity**
+
+❌ **Filter ist KEINE Entity:**
+- Nur FilterManager nutzt es
+- → Nur **1 Controller** → **Internes Detail**
+
+❌ **Lagerbehälter ist KEINE Entity:**
+- Nur TassenManager nutzt ihn
+- → Nur **1 Controller** → **Internes Detail**
+
+---
+
+## Phase 4: Kontrollfluss-Regeln
+
+### Deine präzise Regel:
+
+**Jeder Controller hat:**
+- **Genau 1 Eingang** (von vorherigem UC-Schritt-Controller)
+- **Genau 1 Ausgang** (zu nächstem UC-Schritt-Controller)
+
+### Wichtige Zählregeln:
+
+#### 1. Parallele Ausgänge = 1 Ausgang
+Wenn ein Controller mehrere parallele Controller startet:
+```
+Orchestrator → WasserManager
+             → FilterManager
+             → KaffeeManager
+             → TassenManager
+```
+→ Das sind **4 parallele Ausgänge**, zählen aber als **1 Ausgang**
+
+#### 2. Parallele Eingänge = 1 Eingang
+Wenn mehrere parallele Controller zu einem Controller gehen:
+```
+WasserManager   →
+FilterManager   → GetränkeManager
+KaffeeManager   →
+TassenManager   →
+```
+→ Das sind **4 parallele Eingänge**, zählen aber als **1 Eingang**
+
+#### 3. Boundaries zählen NICHT
+Verbindungen zu Boundaries werden NICHT mitgezählt:
+```
+Actor ↔ Boundary ↔ HMI
+```
+→ Die Verbindung `Boundary ↔ HMI` zählt **NICHT** als Eingang des HMI
+
+```
+HMI ↔ Boundary ↔ Actor
+```
+→ Die Verbindung `HMI ↔ Boundary` zählt **NICHT** als Ausgang des HMI
+
+---
+
+### Beispiele mit korrekter Zählung:
+
+#### Beispiel 1: GetränkeOrchestrator
+
+**Eingänge:**
+- ZeitManager → GetränkeOrchestrator
+- → **1 Eingang** ✓
+
+**Ausgänge:**
+- GetränkeOrchestrator → WasserManager (parallel)
+- GetränkeOrchestrator → FilterManager (parallel)
+- GetränkeOrchestrator → KaffeeManager (parallel)
+- GetränkeOrchestrator → TassenManager (parallel)
+- → **4 parallele Ausgänge = 1 Ausgang** ✓
+
+---
+
+#### Beispiel 2: GetränkeManager
+
+**Eingänge:**
+- WasserManager → GetränkeManager (parallel)
+- FilterManager → GetränkeManager (parallel)
+- KaffeeManager → GetränkeManager (parallel)
+- TassenManager → GetränkeManager (parallel)
+- → **4 parallele Eingänge = 1 Eingang** ✓
+
+**Ausgänge:**
+- GetränkeManager → MilchManager (parallel)
+- GetränkeManager → ZuckerManager (parallel)
+- GetränkeManager → HMI (direkt, wenn keine Milch/Zucker)
+- → **3 parallele Ausgänge = 1 Ausgang** ✓
+
+---
+
+#### Beispiel 3: HMI
+
+**Eingänge (Kontrollfluss von Controllern):**
+- GetränkeManager → HMI
+- MilchManager → HMI
+- ZuckerManager → HMI
+- → **3 parallele Eingänge = 1 Eingang** ✓
+
+**Ausgänge (Kontrollfluss zu Controllern):**
+- HMI → TassenManager
+- → **1 Ausgang** ✓
+
+**Boundaries (zählen NICHT):**
+- Actor ↔ "Zuckerzugabe" ↔ HMI → zählt NICHT als Eingang
+- HMI ↔ "Getränk fertig" ↔ Actor → zählt NICHT als Ausgang
+- HMI ↔ "Tasse Ausgabe" ↔ Actor → zählt NICHT als Ausgang
+- HMI ↔ "Fehlermeldung" ↔ Actor → zählt NICHT als Ausgang
+
+---
+
+### Validierungs-Algorithmus (korrigiert)
+
+```python
+def validiere_controller_ein_ausgänge(controller, kontrollfluss):
+    """
+    Prüft ob Controller genau 1 Eingang und 1 Ausgang hat
+    
+    Zählregeln:
+    - Parallele Eingänge/Ausgänge = 1
+    - Boundaries zählen NICHT
+    """
+    
+    # 1. Finde alle Kontrollfluss-Eingänge (von anderen Controllern)
+    eingänge_von_controllern = []
+    for fluss in kontrollfluss:
+        if fluss.ziel == controller and isinstance(fluss.quelle, Controller):
+            eingänge_von_controllern.append(fluss)
+    
+    # 2. Gruppiere parallele Eingänge
+    eingangs_gruppen = gruppiere_parallele_flüsse(eingänge_von_controllern)
+    anzahl_eingänge = len(eingangs_gruppen)
+    
+    # 3. Finde alle Kontrollfluss-Ausgänge (zu anderen Controllern)
+    ausgänge_zu_controllern = []
+    for fluss in kontrollfluss:
+        if fluss.quelle == controller and isinstance(fluss.ziel, Controller):
+            ausgänge_zu_controllern.append(fluss)
+    
+    # 4. Gruppiere parallele Ausgänge
+    ausgangs_gruppen = gruppiere_parallele_flüsse(ausgänge_zu_controllern)
+    anzahl_ausgänge = len(ausgangs_gruppen)
+    
+    # 5. Validiere
+    fehler = []
+    
+    if anzahl_eingänge != 1:
+        fehler.append(f"{controller.name}: {anzahl_eingänge} Eingangs-Gruppen (erwartet: 1)")
+    
+    if anzahl_ausgänge != 1:
+        fehler.append(f"{controller.name}: {anzahl_ausgangs} Ausgangs-Gruppen (erwartet: 1)")
+    
+    return fehler
+
+
+def gruppiere_parallele_flüsse(flüsse):
+    """
+    Gruppiert Flüsse die zur gleichen Parallelitäts-Gruppe gehören
+    
+    Beispiel:
+    - B2a, B2b, B2c, B2d → 1 Gruppe
+    - B3, B4, E1 → 1 Gruppe
+    - B5 → 1 Gruppe
+    """
+    gruppen = []
+    verwendet = set()
+    
+    for fluss in flüsse:
+        if fluss in verwendet:
+            continue
+        
+        # Finde alle parallelen Flüsse zu diesem
+        parallel_gruppe = [fluss]
+        for anderer_fluss in flüsse:
+            if anderer_fluss in verwendet:
+                continue
+            if ist_parallel(fluss, anderer_fluss):
+                parallel_gruppe.append(anderer_fluss)
+        
+        # Markiere als verwendet
+        for f in parallel_gruppe:
+            verwendet.add(f)
+        
+        gruppen.append(parallel_gruppe)
+    
+    return gruppen
+
+
+def ist_parallel(fluss_a, fluss_b):
+    """
+    Prüft ob zwei Flüsse parallel sind
+    
+    Kriterien:
+    - Gleicher Quell-Controller
+    - Gleicher Ziel-Controller (nach der parallelen Gruppe)
+    - Teil der gleichen UC-Schritt-Gruppe (z.B. B2a-d)
+    """
+    if fluss_a.quelle != fluss_b.quelle:
+        return False
+    
+    # Prüfe ob gleiche UC-Schritt-Gruppe
+    schritt_a = fluss_a.label  # z.B. "B2a"
+    schritt_b = fluss_b.label  # z.B. "B2b"
+    
+    if schritt_a and schritt_b:
+        # Extrahiere Nummer (z.B. "2" aus "B2a")
+        import re
+        match_a = re.match(r"B(\d+)", schritt_a)
+        match_b = re.match(r"B(\d+)", schritt_b)
+        
+        if match_a and match_b:
+            return match_a.group(1) == match_b.group(1)
+    
+    return False
+```
+
+---
+
+### Spezialfälle:
+
+#### Orchestrator
+- **Eingang:** 1 (von vorherigem Controller)
+- **Ausgang:** Mehrere parallele = zählt als 1 ✓
+
+#### Manager in paralleler Gruppe
+- **Eingang:** Orchestrator = 1 ✓
+- **Ausgang:** Nächster gemeinsamer Controller = 1 ✓
+
+#### HMI
+- **Eingänge:** Mehrere parallel (GetränkeManager, MilchManager, ZuckerManager) = 1 ✓
+- **Ausgänge:** 1 (TassenManager) ✓
+- **Boundaries:** Zählen NICHT! ✓
+
+---
+
+### Zusammenfassung der Zählregel:
+
+```
+Kontrollfluss-Regel für jeden Controller:
+├─ Eingänge (von Controllern): 
+│  └─ Parallel gruppiert = 1 Eingang
+│
+├─ Ausgänge (zu Controllern):
+│  └─ Parallel gruppiert = 1 Ausgang
+│
+└─ Boundaries (zu/von Actors):
+   └─ Zählen NICHT mit
+```
+
+**Valide Controller:**
+- 1 Eingangs-Gruppe + 1 Ausgangs-Gruppe = ✓
+- Beliebig viele Boundary-Verbindungen = egal
+
+**Invalide Controller:**
+- 0 oder 2+ Eingangs-Gruppen = ✗
+- 0 oder 2+ Ausgangs-Gruppen = ✗
+
+---
+
+## Phase 5: Datenfluss-Regeln (RUP)
+
+### Deine strenge RUP-Regeln:
+
+**ERLAUBT:**
+- ✅ Entity → (USE) → Controller
+- ✅ Controller → (PROVIDE) → Entity
+
+**VERBOTEN:**
+- ❌ Actor → Datenfluss (Actors haben KEINE Datenflüsse!)
+- ❌ Controller → Controller Datenfluss (nur Kontrollfluss!)
+- ❌ Entity → Entity Datenfluss (nur über Controller!)
+- ❌ Boundary im Datenfluss (gehören zum Kontrollfluss!)
+
+### Beispiele aus deiner Analyse:
+
+✅ **Korrekt:**
+```
+Kaffeebohnen (Entity) → (USE) → KaffeeManager
+KaffeeManager → (PROVIDE) → Kaffeemehl (Entity)
+Kaffeemehl → (USE) → FilterManager
+```
+
+❌ **Falsch (hätte ich fast gemacht):**
+```
+Benutzer (Actor) → HMI  // Actors haben keine Datenflüsse!
+HMI → ZuckerManager     // Controller→Controller verboten!
+```
+
+---
+
+## Phase 6: Boundary-Regeln (RUP)
+
+### Deine strikte Regel:
+
+**Boundaries existieren NUR zwischen Actor und Controller**
+
+**Struktur:**
+```
+Actor ↔ Boundary ↔ Controller
+```
+
+**NIEMALS:**
+- ❌ Actor ↔ Boundary ↔ Boundary ↔ Controller
+- ❌ Boundary ↔ Entity
+- ❌ Controller ↔ Boundary ↔ Controller
+
+---
+
+### HMI-Regel (für menschliche Actors)
+
+**Deine Regel:** Alle menschlichen Actor-Interaktionen gehen über **HMI**
+
+**Input Boundaries:**
+```
+Benutzer ↔ "Zuckerzugabe" ↔ HMI
+```
+
+**Output Boundaries:**
+```
+HMI ↔ "Getränk fertig" ↔ Benutzer
+HMI ↔ "Tasse Ausgabe" ↔ Benutzer
+HMI ↔ "Fehlermeldung" ↔ Benutzer
+```
+
+**Ausnahme (nicht-menschliche Actors):**
+```
+Zeitsender ↔ "Zeit" ↔ ZeitManager  // NICHT über HMI!
+```
+
+---
+
+## Phase 7: Alternative Abläufe (Fehlerbehandlung)
+
+### Fehlertypen unterscheiden
+
+**Deine Klassifikation:**
+
+#### Fatal Error:
+- **Kriterium:** System kann beschädigt werden
+- **Beispiel:** "Wasserkocher hat zu wenig Wasser" → Überhitzung möglich
+- **Reaktion:** 
+  - Sofortiger Abbruch **aller** Prozesse
+  - Alle Controller brauchen Funktion "Abbrechen" `[implizit]`
+
+#### Non-Fatal Error:
+- **Kriterium:** Kein Systemschaden
+- **Beispiel:** "Zu wenig Milch" → Kein Schaden, nur Funktionseinschränkung
+- **Reaktion:**
+  - Graceful Degradation (Teilleistung)
+  - Keine Abbruch-Funktion nötig
+
+---
+
+### Implizite Funktionen aus Fehlerfall
+
+**Deine Regel:**
+
+**Pattern:** "zu wenig/viel [Objekt]"
+→ Controller braucht: "Füllstand überwachen" `[implizit]`
+
+**Beispiel A1:** "Wasserkocher hat zu wenig Wasser"
+- WasserManager: "Füllstand überwachen" `[implizit]`
+- WasserManager: "Wasserkocher ausschalten"
+- WasserManager: "Abbrechen" `[implizit]` (weil fatal)
+
+**Beispiel A2:** "Zu wenig Milch"
+- MilchManager: "Füllstand überwachen" `[implizit]`
+- MilchManager: "Milchzugabe beenden"
+- **Keine** Abbrechen-Funktion (non-fatal)
+
+---
+
+### Fehlerbehandlungs-Kontrollfluss
+
+**Deine Architektur-Entscheidung:**
+
+**Standard (zentralisiert):**
+```
+FehlerhafterManager → GetränkeOrchestrator → HMI → Fehlermeldung → Actor
+```
+
+**Alternative (dezentral):**
+```
+FehlerhafterManager → HMI → Fehlermeldung → Actor
+```
+
+**NLP soll:** Beide vorschlagen, Default = zentralisiert
+
+---
+
+### Systemzustands-Nachbedingungen
+
+**Deine wichtige Erkenntnis bei A2:**
+
+**Falsche Nachbedingung:**
+❌ "Benutzer hat keinen Kaffee bekommen"
+
+**Korrekte Nachbedingung:**
+✅ "Keine Getränke die Milch beinhalten werden mehr dem Benutzer angeboten"
+
+**Impliziert:**
+- HMI: "Milchbasierte Getränke deaktivieren" `[implizit]`
+
+---
+
+## Phase 8: Erweiterungsszenarien (Optionale Features)
+
+### Erkennung
+
+**Deine Pattern-Erkennung:**
+
+```
+E1 bei B5-B8 (trigger) Benutzer will Zucker in Kaffee
+```
+
+**Bedeutet:**
+- **Trigger:** Actor "Benutzer" ist beteiligt → menschlich
+- **Zeitpunkt:** Zwischen B5 und B8 (flexibel)
+- **Optional:** Nur wenn Benutzer will
+- **Feature:** "Zucker-Feature"
+
+---
+
+### Als Betriebsmittel behandeln
+
+**Deine Vorgehensweise:**
+
+**Schritt 1: Input**
+- Boundary: "Zuckerzugabe" (wenig/mittel/viel)
+- Actor "Benutzer" → Boundary → HMI
+
+**Schritt 2: Lagerung**
+- Controller: ZuckerManager
+- Funktionen: "Zucker lagern", "Zucker zugeben"
+- Markierung: `[optional]`
+
+**Schritt 3: Verwendung**
+- Entity: "Zucker"
+- Entity: "ZuckerWunsch" (Eingabe vom Benutzer)
+- Zucker → (USE) → ZuckerManager
+- ZuckerWunsch → (USE) → ZuckerManager
+
+---
+
+### Parallelität bei Erweiterungen
+
+**Deine Erkenntnis aus Kontext:**
+
+**E1: Zucker zugeben** kann parallel zu **B4: Milch zugeben**
+
+**Begründung aus Kontext:**
+- Zucker kann vor, während oder nach Milch zugegeben werden
+- Keine physikalische Abhängigkeit
+- Reihenfolge egal
+
+**Kontrollfluss:**
+```
+GetränkeManager → MilchManager → HMI
+                → ZuckerManager → HMI (parallel)
+```
+
+---
+
+## Phase 9: UC-Validierung und Verbesserung
+
+### Fehlertypen die du erkennst:
+
+#### 1. Fehlende Vorbedingungen
+
+**Deine Methode:**
+- Entity erscheint im Basisablauf
+- Aber nicht in Vorbedingungen
+- → Fehler!
+
+**Beispiel:**
+- B1 nutzt "eingestellte Uhrzeit"
+- Keine Vorbedingung dazu
+- → Ergänze: "Uhrzeit für automatische Zubereitung ist eingestellt"
+
+---
+
+#### 2. Fehlende Use Cases
+
+**Deine Regel:**
+- Konfiguration-Entity wird benötigt
+- Aber kein UC zum Setzen vorhanden
+- → Neuer UC nötig
+
+**Wichtig:** UC-Titel muss **Kundenmehrwert** beschreiben!
+
+❌ Falsch: "Uhrzeit einstellen" (nur Funktion)
+✅ Richtig: "Automatische Kaffeezubereitung einstellen" (Mehrwert)
+
+---
+
+#### 3. Redundante Schritte
+
+**Beispiel:**
+- B4: "System brüht Kaffee in die Tasse"
+- B8: "System gibt gebrühten Kaffee in die Tasse"
+- → B8 ist redundant!
+
+---
+
+#### 4. Fehlende Schritte
+
+**Beispiel:**
+- UC endet mit "System gibt Meldung aus"
+- ABER: Wie erhält Benutzer die Tasse?
+- → Fehlender Schritt: "System stellt Tasse bereit"
+
+---
+
+#### 5. Falsches Ziel im UC
+
+**Deine Korrektur bei B4:**
+
+**Original:**
+"System beginnt Kaffee zu brühen"
+
+**Problem:** Wohin fließt der Kaffee?
+
+**Korrigiert:**
+"System brüht Kaffee mit der eingestellten Wassermenge in die Tasse"
+
+---
+
+## Phase 10: Implizite Funktionen aus Kontext
+
+### Deine Heuristiken:
+
+#### 1. Hygiene-Kontext
+
+**Wenn:** Objekt hat Lebensmittelkontakt
+**Dann:** 
+- Funktion: "reinigen" `[implizit]`
+- Funktion: "desinfizieren" `[implizit]`
+
+**Beispiel Filter:**
+- Hat Kaffee-Kontakt
+- FilterManager: "Filter reinigen" `[implizit]`
+- FilterManager: "Filter desinfizieren" `[implizit]`
+
+---
+
+#### 2. Wiederverwendbare Objekte
+
+**Wenn:** Objekt wird mehrfach genutzt
+**Dann:**
+- Funktion: "reinigen" `[implizit]`
+
+---
+
+#### 3. Verderbliche Objekte
+
+**Wenn:** Aus Kontext bekannt dass verderblich
+**Dann:**
+- Funktion: "kühlen" `[implizit]`
+
+**Beispiel Milch:**
+- Aus Kontext: Milch ist verderblich
+- MilchManager: "Milch kühlen" `[implizit]`
+
+---
+
+#### 4. Fehlerbehandlung
+
+**Immer bei Fatal Error:**
+- Alle Controller: "Abbrechen" `[implizit]`
+- Orchestrator: "Alle Prozesse abbrechen" `[implizit]`
+
+---
+
+## Phase 11: Generalisierung
+
+### Deine Strategie: Bleibe generisch
+
+**Beispiel GetränkeOrchestrator:**
+
+❌ Nicht: "KaffeeOrchestrator"
+✅ Sondern: "GetränkeOrchestrator"
+
+**Begründung:**
+- Zukunftssicher für UC "Tee zubereiten"
+- Wiederverwendbar über Capabilities hinweg
+- Reduziert Redundanz
+
+---
+
+## Zusammenfassung der Kern-Prinzipien
+
+### 1. Kontextbasiert arbeiten
+- Nutze Domänenwissen
+- Leite implizite Funktionen ab
+- Erkenne Zustandstransformationen
+
+### 2. Systematisch vorgehen
+- 3-Schritte-Schema für Betriebsmittel
+- Schritt-für-Schritt durch Basisablauf
+- Jeder Schritt wird vollständig analysiert
+
+### 3. UC validieren und verbessern
+- Fehlende Vorbedingungen finden
+- Redundanzen erkennen
+- Fehlende Schritte identifizieren
+
+### 4. RUP-Regeln strikt einhalten
+- Kontrollfluss: 1 Ein-/Ausgang pro Controller
+- Datenfluss: Nur Entity ↔ Controller
+- Boundaries: Nur Actor ↔ Controller
+- HMI: Für menschliche Actors
+
+### 5. Unterscheidungen treffen
+- Betriebsmittel vs. System-Elemente
+- Fatal vs. Non-Fatal Errors
+- Explizite vs. Implizite Funktionen
+- Menschliche vs. Nicht-menschliche Actors
+
+### 6. Generisch denken
+- Oberbegriffe statt Spezifika
+- Wiederverwendbarkeit
+- Feature-basierte Variabilität
+
+---
+
+## Das ist DEINE Methodik!
+
+Diese systematische, kontextbasierte Vorgehensweise ermöglicht:
+- ✅ Vollständige Robustheitsanalyse
+- ✅ UC-Qualitätsverbesserung
+- ✅ RUP-Konformität
+- ✅ Feature-Variabilität
+- ✅ Automatisierbarkeit durch NLP# Deine Robustheitsanalyse-Methodik
+
+## Überblick
+
+Eine **systematische, kontextbasierte Methode** zur Durchführung der Robustheitsanalyse nach RUP, die Use Cases in Boundary-, Entity- und Control-Objekte überführt.
+
+---
+
+## Phase 1: Kontext aufbauen und verstehen
+
+### Schritt 1.1: Fähigkeit analysieren
+
+**Input:** Fähigkeitsname (z.B. "Kaffeezubereitung")
+
+**Vorgehensweise:**
+1. **Identifiziere die Domäne**
+   - Beispiel: "Kaffeezubereitung" → Domäne ist "Getränkezubereitung"
+   
+2. **Recherchiere bei Wissenslücken**
+   - Wenn du nicht genug über die Domäne weißt → recherchiere
+   - Baue Kontextwissen auf
+   
+3. **Schließe Unpassendes aus**
+   - Beispiel: Bei "Kaffeezubereitung" kann manuelle Zubereitung ausgeschlossen werden
+   
+4. **Merke dir den Kontext** für alle weiteren Schritte
+
+**Output:** Domänenwissen für die Analyse
+
+---
+
+### Schritt 1.2: Use Case Titel analysieren
+
+**Input:** UC-Titel (z.B. "Milchkaffee zubereiten")
+
+**Vorgehensweise:**
+1. **Erkenne Beschränkungen des Lösungsraums**
+   - "Milchkaffee" ist eine spezifische Variante
+   
+2. **Identifiziere mögliche andere UCs**
+   - Gibt es "Espresso zubereiten"?
+   - Müssen beim Kunden nachgefragt werden?
+
+**Output:** Verfeinertes Kontextwissen
+
+---
+
+### Schritt 1.3: Ziel analysieren
+
+**Input:** Ziel-Beschreibung (z.B. "Benutzer kann Milchkaffee um 7h trinken")
+
+**Vorgehensweise:**
+1. **Extrahiere zeitliche Anforderungen**
+   - "um 7h" → Controller "ZeitManager"
+   
+2. **Extrahiere Input-Anforderungen**
+   - Zeitsteuerung → Boundary "Eingabe einer Uhrzeit" (wenn manuell) oder "Zeit" (wenn automatisch)
+
+**Output:** 
+- Erste Controller identifiziert
+- Erste Boundaries identifiziert
+
+---
+
+### Schritt 1.4: Actors merken
+
+**Input:** Liste der Actors
+
+**Vorgehensweise:**
+1. **Speichere alle Actors**
+2. **Unterscheide Typen:**
+   - **Menschlich** (z.B. "Benutzer") → kommunizieren über **HMI**
+   - **Nicht-menschlich** (z.B. "Zeitsender") → eigener Controller
+
+3. **Merke für später:** Am Ende prüfen, ob jeder Actor in mindestens einem Szenario vorkommt
+
+**Output:** Actor-Liste mit Typ-Klassifikation
+
+---
+
+## Phase 2: Betriebsmittel-Analyse (aus Vorbedingungen)
+
+### Das 3-Schritte-Schema
+
+Für **jedes** Betriebsmittel aus den Vorbedingungen:
+
+#### Pattern erkennen
+```
+"[Objekt] ist/sind im System vorhanden"
+```
+
+---
+
+### Schritt 2.1: Input bestimmen
+
+**Frage:** Wie kommt das Betriebsmittel ins System?
+
+**Regel:**
+- **Wenn manuell befüllt** → Boundary "[Objekt] Input"
+- **Wenn menschlich befüllt** → über **HMI**
+
+**Beispiel:**
+- Kaffeebohnen → "Kaffee Input" Boundary
+- Wasser → "Wasser Input" Boundary
+- Milch → "Milch Input" Boundary
+
+---
+
+### Schritt 2.2: Lagerung und Verarbeitung
+
+**Erstelle Manager-Controller:**
+```
+[Objekt]Manager
+```
+
+**Aus Kontext ableiten:** Was muss mit dem Betriebsmittel geschehen?
+
+**Beispiel Kaffeebohnen:**
+- Aus Kontext: Kaffee wird gemahlen
+- → KaffeeManager
+- → Funktion: "Kaffeebohnen lagern"
+- → Funktion: "Kaffee mahlen" (aus Kontext!)
+
+**Beispiel Milch:**
+- Aus Kontext: Milch ist verderblich
+- → MilchManager
+- → Funktion: "Milch lagern"
+- → Funktion: "Milch kühlen" (aus Kontext: verderblich!)
+
+**Beispiel Wasser:**
+- Aus Kontext: Kaffee braucht heißes Wasser
+- → WasserManager
+- → Funktion: "Wasser lagern"
+- → Funktion: "Wasser erhitzen" (aus Kontext!)
+
+---
+
+### Schritt 2.3: Output bestimmen
+
+**Frage:** Wie verlässt das Betriebsmittel (oder sein Produkt) das System?
+
+**Unterscheide:**
+
+**A) Abfallprodukt:**
+- Beispiel: Kaffeesatz (entsteht aus Kaffeemehl nach Brühen)
+- → **Eigene Output-Boundary** "Kaffeesatz Output"
+
+**B) Teil des Endprodukts:**
+- Beispiel: Milch (geht in die Tasse, wird Teil des Getränks)
+- → **Keine** eigene Output-Boundary
+
+---
+
+## Phase 3: Basisablauf Schritt-für-Schritt analysieren
+
+### Schritt 3.1: Trigger-Schritt (B1)
+
+**Regel:** Trigger muss von **Actor** ODER **Zeit/Datum** kommen
+
+**Beispiel B1:** "Uhr des Systems erreicht eingestellte Uhrzeit von 7:00h (Funkuhr)"
+
+**Deine Analyse:**
+
+1. **Zeit-Spezialfall erkennen:**
+   - Zeit ist nicht-menschlicher Actor
+   - Boundary: "Zeit" oder "RF Zeitinformation" (Funkuhr)
+   - Controller: ZeitManager (NICHT über HMI!)
+
+2. **Entity identifizieren:**
+   - "eingestellte Uhrzeit" → Entity (Konfiguration)
+   - Datenfluss: Eingestellte Uhrzeit → (USE) → ZeitManager
+
+3. **UC-Fehler erkennen:**
+   - Entity "eingestellte Uhrzeit" wird genutzt
+   - ABER: Keine Vorbedingung beschreibt, wie sie gesetzt wurde!
+   - → **Fehlerbehebung:** 
+     - Neue Vorbedingung: "Uhrzeit für automatische Zubereitung ist eingestellt"
+     - Neuer UC: "Automatische Kaffeezubereitung einstellen" (mit Kundenmehrwert!)
+
+---
+
+### Schritt 3.2: Normaler Schritt analysieren
+
+**Beispiel B2:** "Das System aktiviert den Wasserkocher"
+
+**Deine Analyse:**
+
+1. **Verb identifizieren:** "aktiviert"
+
+2. **Objekt identifizieren:** "Wasserkocher"
+
+3. **Unterscheidung treffen:**
+   - "Wasserkocher" ist **physikalische Realisierung** → NICHT relevant für RA
+   - Relevant ist die **Funktion:** "Wasser erhitzen"
+
+4. **Controller zuordnen:**
+   - Aus Vorbedingung bereits bekannt: WasserManager
+   - Funktion: "Wasser erhitzen" (schon identifiziert)
+   - Neue Funktion: "Wasserkocher aktivieren" → Nein! (zu technisch)
+   - Später aus Fehlerfall: "Wasserkocher ausschalten"
+
+5. **Entities identifizieren:**
+   - Kaltes Wasser → (USE) → WasserManager
+   - WasserManager → (PROVIDE) → Heißes Wasser
+   - **Wichtig:** Zwei separate Entities! (Zustandstransformation)
+
+6. **Orchestrierung erkennen:**
+   - B2 ist einer von mehreren parallelen Schritten (B2a-d)
+   - Alle brauchen übergeordneten "GetränkeOrchestrator"
+   - Kontrollfluss: GetränkeOrchestrator → WasserManager
+
+---
+
+### Schritt 3.3: Parallele Schritte erkennen
+
+**Beispiel B2, B3, B4, B5 (ursprünglich):**
+
+**Deine Erkenntnis:**
+- B2: Wasserkocher aktivieren
+- B3: Filter vorbereiten
+- B4: Kaffee mahlen
+- B5: Tasse holen
+
+**Alle sind unabhängig!** → Können parallel laufen
+
+**UC-Verbesserung:** Nummerierung ändern:
+- B2a: Wasserkocher aktivieren
+- B2b: Filter vorbereiten
+- B2c: Kaffee mahlen
+- B2d: Tasse holen
+- → B3: (nächster sequenzieller Schritt)
+
+**Kontrollfluss:**
+```
+GetränkeOrchestrator → WasserManager (B2a)
+                     → FilterManager (B2b)
+                     → KaffeeManager (B2c)
+                     → TassenManager (B2d)
+                     
+Alle → GetränkeManager (nächster Schritt)
+```
+
+---
+
+### Schritt 3.4: Objekte aus Schritten extrahieren
+
+**Beispiel B3 (jetzt B2c):** "Das System mahlt die eingestellte Menge in dem eingestellten Mahlgrad direkt in den Filter"
+
+**Deine Analyse:**
+
+1. **Verb:** "mahlt" → Funktion "Kaffee mahlen"
+
+2. **Objekte mit Adjektiven:**
+   - "eingestellte Menge" → Entity "KaffeemehlMenge" (Stellgröße)
+   - "eingestellten Mahlgrad" → Entity "KaffeemehlMahlgrad" (Stellgröße)
+   
+3. **UC-Fehler erkennen:**
+   - Beide Entities werden genutzt
+   - ABER: Nicht in Vorbedingungen!
+   - → Fehlende Vorbedingungen:
+     - "Kaffeestärke ist eingestellt"
+     - "Kaffee-Aroma ist eingestellt"
+
+4. **Controller zuordnen:**
+   - KaffeeManager (aus Vorbedingung bekannt)
+
+5. **Entities für Zustandstransformation:**
+   - Input: Kaffeebohnen
+   - Output: **Kaffeemehl** (neue Entity!)
+   - Beide sind **separate Entities**
+
+6. **Datenflüsse:**
+   - Kaffeebohnen → (USE) → KaffeeManager
+   - KaffeemehlMenge → (USE) → KaffeeManager
+   - KaffeemehlMahlgrad → (USE) → KaffeeManager
+   - KaffeeManager → (PROVIDE) → Kaffeemehl
+
+7. **Wichtige Regel:**
+   - "Filter" erscheint im Text
+   - ABER: Filter wird nur von FilterManager genutzt
+   - → Filter ist **KEINE Entity** (internes Detail des FilterManager)
+
+8. **Funktion zuordnen:**
+   - Kaffeemehl geht zum FilterManager
+   - Die Funktion "Kaffeemehl in Filter leiten" gehört zum **Erzeuger** (KaffeeManager)
+   - NICHT zum Empfänger (FilterManager)!
+
+---
+
+### Schritt 3.5: Controller-Zuordnung entscheiden
+
+**Beispiel B4 (Milch zugeben):** "Das System gibt Milch in die Tasse"
+
+**Deine Überlegung:**
+
+**Option 1:** MilchManager gibt Milch zu
+- MilchManager ist zuständig für Milch-Lagerhaltung
+
+**Option 2:** GetränkeManager gibt Milch zu  
+- GetränkeManager ist zuständig für Getränkezubereitung
+
+**Deine Entscheidung:** GetränkeManager!
+
+**Begründung:**
+- MilchManager: Zuständig für "Milch kühlen", "Milch lagern", "Milch bereitstellen"
+- GetränkeManager: Zuständig für "Kaffee brühen", "Milch zugeben", "Getränk mischen"
+- **Logik:** Getränkezubereitung ist Aufgabe von GetränkeManager
+
+**Datenfluss:**
+- Milch (Entity) → (USE) → GetränkeManager
+- Tasse mit Getränk → (USE) → GetränkeManager
+- GetränkeManager → (PROVIDE) → Tasse mit Getränk und Zusatz
+
+---
+
+### Schritt 3.6: Interne vs. Externe Objekte
+
+**Deine Regel:**
+
+**Entity NUR wenn von mehreren Controllern genutzt:**
+
+**Beispiele:**
+
+✅ **Kaffeemehl ist Entity:**
+- KaffeeManager erstellt es (PROVIDE)
+- FilterManager nutzt es (USE)
+- → Von **2 Controllern** genutzt → **Entity**
+
+❌ **Filter ist KEINE Entity:**
+- Nur FilterManager nutzt es
+- → Nur **1 Controller** → **Internes Detail**
+
+❌ **Lagerbehälter ist KEINE Entity:**
+- Nur TassenManager nutzt ihn
+- → Nur **1 Controller** → **Internes Detail**
+
+---
+
+## Phase 4: Kontrollfluss-Regeln
+
+### Deine präzise Regel:
+
+**Jeder Controller hat:**
+- **Genau 1 Eingang** (von vorherigem UC-Schritt-Controller)
+- **Genau 1 Ausgang** (zu nächstem UC-Schritt-Controller)
+
+### Wichtige Zählregeln:
+
+#### 1. Parallele Ausgänge = 1 Ausgang
+Wenn ein Controller mehrere parallele Controller startet:
+```
+Orchestrator → WasserManager
+             → FilterManager
+             → KaffeeManager
+             → TassenManager
+```
+→ Das sind **4 parallele Ausgänge**, zählen aber als **1 Ausgang**
+
+#### 2. Parallele Eingänge = 1 Eingang
+Wenn mehrere parallele Controller zu einem Controller gehen:
+```
+WasserManager   →
+FilterManager   → GetränkeManager
+KaffeeManager   →
+TassenManager   →
+```
+→ Das sind **4 parallele Eingänge**, zählen aber als **1 Eingang**
+
+#### 3. Boundaries zählen NICHT
+Verbindungen zu Boundaries werden NICHT mitgezählt:
+```
+Actor ↔ Boundary ↔ HMI
+```
+→ Die Verbindung `Boundary ↔ HMI` zählt **NICHT** als Eingang des HMI
+
+```
+HMI ↔ Boundary ↔ Actor
+```
+→ Die Verbindung `HMI ↔ Boundary` zählt **NICHT** als Ausgang des HMI
+
+---
+
+### Beispiele mit korrekter Zählung:
+
+#### Beispiel 1: GetränkeOrchestrator
+
+**Eingänge:**
+- ZeitManager → GetränkeOrchestrator
+- → **1 Eingang** ✓
+
+**Ausgänge:**
+- GetränkeOrchestrator → WasserManager (parallel)
+- GetränkeOrchestrator → FilterManager (parallel)
+- GetränkeOrchestrator → KaffeeManager (parallel)
+- GetränkeOrchestrator → TassenManager (parallel)
+- → **4 parallele Ausgänge = 1 Ausgang** ✓
+
+---
+
+#### Beispiel 2: GetränkeManager
+
+**Eingänge:**
+- WasserManager → GetränkeManager (parallel)
+- FilterManager → GetränkeManager (parallel)
+- KaffeeManager → GetränkeManager (parallel)
+- TassenManager → GetränkeManager (parallel)
+- → **4 parallele Eingänge = 1 Eingang** ✓
+
+**Ausgänge:**
+- GetränkeManager → MilchManager (parallel)
+- GetränkeManager → ZuckerManager (parallel)
+- GetränkeManager → HMI (direkt, wenn keine Milch/Zucker)
+- → **3 parallele Ausgänge = 1 Ausgang** ✓
+
+---
+
+#### Beispiel 3: HMI
+
+**Eingänge (Kontrollfluss von Controllern):**
+- GetränkeManager → HMI
+- MilchManager → HMI
+- ZuckerManager → HMI
+- → **3 parallele Eingänge = 1 Eingang** ✓
+
+**Ausgänge (Kontrollfluss zu Controllern):**
+- HMI → TassenManager
+- → **1 Ausgang** ✓
+
+**Boundaries (zählen NICHT):**
+- Actor ↔ "Zuckerzugabe" ↔ HMI → zählt NICHT als Eingang
+- HMI ↔ "Getränk fertig" ↔ Actor → zählt NICHT als Ausgang
+- HMI ↔ "Tasse Ausgabe" ↔ Actor → zählt NICHT als Ausgang
+- HMI ↔ "Fehlermeldung" ↔ Actor → zählt NICHT als Ausgang
+
+---
+
+### Validierungs-Algorithmus (korrigiert)
+
+```python
+def validiere_controller_ein_ausgänge(controller, kontrollfluss):
+    """
+    Prüft ob Controller genau 1 Eingang und 1 Ausgang hat
+    
+    Zählregeln:
+    - Parallele Eingänge/Ausgänge = 1
+    - Boundaries zählen NICHT
+    """
+    
+    # 1. Finde alle Kontrollfluss-Eingänge (von anderen Controllern)
+    eingänge_von_controllern = []
+    for fluss in kontrollfluss:
+        if fluss.ziel == controller and isinstance(fluss.quelle, Controller):
+            eingänge_von_controllern.append(fluss)
+    
+    # 2. Gruppiere parallele Eingänge
+    eingangs_gruppen = gruppiere_parallele_flüsse(eingänge_von_controllern)
+    anzahl_eingänge = len(eingangs_gruppen)
+    
+    # 3. Finde alle Kontrollfluss-Ausgänge (zu anderen Controllern)
+    ausgänge_zu_controllern = []
+    for fluss in kontrollfluss:
+        if fluss.quelle == controller and isinstance(fluss.ziel, Controller):
+            ausgänge_zu_controllern.append(fluss)
+    
+    # 4. Gruppiere parallele Ausgänge
+    ausgangs_gruppen = gruppiere_parallele_flüsse(ausgänge_zu_controllern)
+    anzahl_ausgänge = len(ausgangs_gruppen)
+    
+    # 5. Validiere
+    fehler = []
+    
+    if anzahl_eingänge != 1:
+        fehler.append(f"{controller.name}: {anzahl_eingänge} Eingangs-Gruppen (erwartet: 1)")
+    
+    if anzahl_ausgänge != 1:
+        fehler.append(f"{controller.name}: {anzahl_ausgangs} Ausgangs-Gruppen (erwartet: 1)")
+    
+    return fehler
+
+
+def gruppiere_parallele_flüsse(flüsse):
+    """
+    Gruppiert Flüsse die zur gleichen Parallelitäts-Gruppe gehören
+    
+    Beispiel:
+    - B2a, B2b, B2c, B2d → 1 Gruppe
+    - B3, B4, E1 → 1 Gruppe
+    - B5 → 1 Gruppe
+    """
+    gruppen = []
+    verwendet = set()
+    
+    for fluss in flüsse:
+        if fluss in verwendet:
+            continue
+        
+        # Finde alle parallelen Flüsse zu diesem
+        parallel_gruppe = [fluss]
+        for anderer_fluss in flüsse:
+            if anderer_fluss in verwendet:
+                continue
+            if ist_parallel(fluss, anderer_fluss):
+                parallel_gruppe.append(anderer_fluss)
+        
+        # Markiere als verwendet
+        for f in parallel_gruppe:
+            verwendet.add(f)
+        
+        gruppen.append(parallel_gruppe)
+    
+    return gruppen
+
+
+def ist_parallel(fluss_a, fluss_b):
+    """
+    Prüft ob zwei Flüsse parallel sind
+    
+    Kriterien:
+    - Gleicher Quell-Controller
+    - Gleicher Ziel-Controller (nach der parallelen Gruppe)
+    - Teil der gleichen UC-Schritt-Gruppe (z.B. B2a-d)
+    """
+    if fluss_a.quelle != fluss_b.quelle:
+        return False
+    
+    # Prüfe ob gleiche UC-Schritt-Gruppe
+    schritt_a = fluss_a.label  # z.B. "B2a"
+    schritt_b = fluss_b.label  # z.B. "B2b"
+    
+    if schritt_a and schritt_b:
+        # Extrahiere Nummer (z.B. "2" aus "B2a")
+        import re
+        match_a = re.match(r"B(\d+)", schritt_a)
+        match_b = re.match(r"B(\d+)", schritt_b)
+        
+        if match_a and match_b:
+            return match_a.group(1) == match_b.group(1)
+    
+    return False
+```
+
+---
+
+### Spezialfälle:
+
+#### Orchestrator
+- **Eingang:** 1 (von vorherigem Controller)
+- **Ausgang:** Mehrere parallele = zählt als 1 ✓
+
+#### Manager in paralleler Gruppe
+- **Eingang:** Orchestrator = 1 ✓
+- **Ausgang:** Nächster gemeinsamer Controller = 1 ✓
+
+#### HMI
+- **Eingänge:** Mehrere parallel (GetränkeManager, MilchManager, ZuckerManager) = 1 ✓
+- **Ausgänge:** 1 (TassenManager) ✓
+- **Boundaries:** Zählen NICHT! ✓
+
+---
+
+### Zusammenfassung der Zählregel:
+
+```
+Kontrollfluss-Regel für jeden Controller:
+├─ Eingänge (von Controllern): 
+│  └─ Parallel gruppiert = 1 Eingang
+│
+├─ Ausgänge (zu Controllern):
+│  └─ Parallel gruppiert = 1 Ausgang
+│
+└─ Boundaries (zu/von Actors):
+   └─ Zählen NICHT mit
+```
+
+**Valide Controller:**
+- 1 Eingangs-Gruppe + 1 Ausgangs-Gruppe = ✓
+- Beliebig viele Boundary-Verbindungen = egal
+
+**Invalide Controller:**
+- 0 oder 2+ Eingangs-Gruppen = ✗
+- 0 oder 2+ Ausgangs-Gruppen = ✗
+
+---
+
+## Phase 5: Datenfluss-Regeln (RUP)
+
+### Deine strenge RUP-Regeln:
+
+**ERLAUBT:**
+- ✅ Entity → (USE) → Controller
+- ✅ Controller → (PROVIDE) → Entity
+
+**VERBOTEN:**
+- ❌ Actor → Datenfluss (Actors haben KEINE Datenflüsse!)
+- ❌ Controller → Controller Datenfluss (nur Kontrollfluss!)
+- ❌ Entity → Entity Datenfluss (nur über Controller!)
+- ❌ Boundary im Datenfluss (gehören zum Kontrollfluss!)
+
+### Beispiele aus deiner Analyse:
+
+✅ **Korrekt:**
+```
+Kaffeebohnen (Entity) → (USE) → KaffeeManager
+KaffeeManager → (PROVIDE) → Kaffeemehl (Entity)
+Kaffeemehl → (USE) → FilterManager
+```
+
+❌ **Falsch (hätte ich fast gemacht):**
+```
+Benutzer (Actor) → HMI  // Actors haben keine Datenflüsse!
+HMI → ZuckerManager     // Controller→Controller verboten!
+```
+
+---
+
+## Phase 6: Boundary-Regeln (RUP)
+
+### Deine strikte Regel:
+
+**Boundaries existieren NUR zwischen Actor und Controller**
+
+**Struktur:**
+```
+Actor ↔ Boundary ↔ Controller
+```
+
+**NIEMALS:**
+- ❌ Actor ↔ Boundary ↔ Boundary ↔ Controller
+- ❌ Boundary ↔ Entity
+- ❌ Controller ↔ Boundary ↔ Controller
+
+---
+
+### HMI-Regel (für menschliche Actors)
+
+**Deine Regel:** Alle menschlichen Actor-Interaktionen gehen über **HMI**
+
+**Input Boundaries:**
+```
+Benutzer ↔ "Zuckerzugabe" ↔ HMI
+```
+
+**Output Boundaries:**
+```
+HMI ↔ "Getränk fertig" ↔ Benutzer
+HMI ↔ "Tasse Ausgabe" ↔ Benutzer
+HMI ↔ "Fehlermeldung" ↔ Benutzer
+```
+
+**Ausnahme (nicht-menschliche Actors):**
+```
+Zeitsender ↔ "Zeit" ↔ ZeitManager  // NICHT über HMI!
+```
+
+---
+
+## Phase 7: Alternative Abläufe (Fehlerbehandlung)
+
+### Fehlertypen unterscheiden
+
+**Deine Klassifikation:**
+
+#### Fatal Error:
+- **Kriterium:** System kann beschädigt werden
+- **Beispiel:** "Wasserkocher hat zu wenig Wasser" → Überhitzung möglich
+- **Reaktion:** 
+  - Sofortiger Abbruch **aller** Prozesse
+  - Alle Controller brauchen Funktion "Abbrechen" `[implizit]`
+
+#### Non-Fatal Error:
+- **Kriterium:** Kein Systemschaden
+- **Beispiel:** "Zu wenig Milch" → Kein Schaden, nur Funktionseinschränkung
+- **Reaktion:**
+  - Graceful Degradation (Teilleistung)
+  - Keine Abbruch-Funktion nötig
+
+---
+
+### Implizite Funktionen aus Fehlerfall
+
+**Deine Regel:**
+
+**Pattern:** "zu wenig/viel [Objekt]"
+→ Controller braucht: "Füllstand überwachen" `[implizit]`
+
+**Beispiel A1:** "Wasserkocher hat zu wenig Wasser"
+- WasserManager: "Füllstand überwachen" `[implizit]`
+- WasserManager: "Wasserkocher ausschalten"
+- WasserManager: "Abbrechen" `[implizit]` (weil fatal)
+
+**Beispiel A2:** "Zu wenig Milch"
+- MilchManager: "Füllstand überwachen" `[implizit]`
+- MilchManager: "Milchzugabe beenden"
+- **Keine** Abbrechen-Funktion (non-fatal)
+
+---
+
+### Fehlerbehandlungs-Kontrollfluss
+
+**Deine Architektur-Entscheidung:**
+
+**Standard (zentralisiert):**
+```
+FehlerhafterManager → GetränkeOrchestrator → HMI → Fehlermeldung → Actor
+```
+
+**Alternative (dezentral):**
+```
+FehlerhafterManager → HMI → Fehlermeldung → Actor
+```
+
+**NLP soll:** Beide vorschlagen, Default = zentralisiert
+
+---
+
+### Systemzustands-Nachbedingungen
+
+**Deine wichtige Erkenntnis bei A2:**
+
+**Falsche Nachbedingung:**
+❌ "Benutzer hat keinen Kaffee bekommen"
+
+**Korrekte Nachbedingung:**
+✅ "Keine Getränke die Milch beinhalten werden mehr dem Benutzer angeboten"
+
+**Impliziert:**
+- HMI: "Milchbasierte Getränke deaktivieren" `[implizit]`
+
+---
+
+## Phase 8: Erweiterungsszenarien (Optionale Features)
+
+### Erkennung
+
+**Deine Pattern-Erkennung:**
+
+```
+E1 bei B5-B8 (trigger) Benutzer will Zucker in Kaffee
+```
+
+**Bedeutet:**
+- **Trigger:** Actor "Benutzer" ist beteiligt → menschlich
+- **Zeitpunkt:** Zwischen B5 und B8 (flexibel)
+- **Optional:** Nur wenn Benutzer will
+- **Feature:** "Zucker-Feature"
+
+---
+
+### Als Betriebsmittel behandeln
+
+**Deine Vorgehensweise:**
+
+**Schritt 1: Input**
+- Boundary: "Zuckerzugabe" (wenig/mittel/viel)
+- Actor "Benutzer" → Boundary → HMI
+
+**Schritt 2: Lagerung**
+- Controller: ZuckerManager
+- Funktionen: "Zucker lagern", "Zucker zugeben"
+- Markierung: `[optional]`
+
+**Schritt 3: Verwendung**
+- Entity: "Zucker"
+- Entity: "ZuckerWunsch" (Eingabe vom Benutzer)
+- Zucker → (USE) → ZuckerManager
+- ZuckerWunsch → (USE) → ZuckerManager
+
+---
+
+### Parallelität bei Erweiterungen
+
+**Deine Erkenntnis aus Kontext:**
+
+**E1: Zucker zugeben** kann parallel zu **B4: Milch zugeben**
+
+**Begründung aus Kontext:**
+- Zucker kann vor, während oder nach Milch zugegeben werden
+- Keine physikalische Abhängigkeit
+- Reihenfolge egal
+
+**Kontrollfluss:**
+```
+GetränkeManager → MilchManager → HMI
+                → ZuckerManager → HMI (parallel)
+```
+
+---
+
+## Phase 9: UC-Validierung und Verbesserung
+
+### Fehlertypen die du erkennst:
+
+#### 1. Fehlende Vorbedingungen
+
+**Deine Methode:**
+- Entity erscheint im Basisablauf
+- Aber nicht in Vorbedingungen
+- → Fehler!
+
+**Beispiel:**
+- B1 nutzt "eingestellte Uhrzeit"
+- Keine Vorbedingung dazu
+- → Ergänze: "Uhrzeit für automatische Zubereitung ist eingestellt"
+
+---
+
+#### 2. Fehlende Use Cases
+
+**Deine Regel:**
+- Konfiguration-Entity wird benötigt
+- Aber kein UC zum Setzen vorhanden
+- → Neuer UC nötig
+
+**Wichtig:** UC-Titel muss **Kundenmehrwert** beschreiben!
+
+❌ Falsch: "Uhrzeit einstellen" (nur Funktion)
+✅ Richtig: "Automatische Kaffeezubereitung einstellen" (Mehrwert)
+
+---
+
+#### 3. Redundante Schritte
+
+**Beispiel:**
+- B4: "System brüht Kaffee in die Tasse"
+- B8: "System gibt gebrühten Kaffee in die Tasse"
+- → B8 ist redundant!
+
+---
+
+#### 4. Fehlende Schritte
+
+**Beispiel:**
+- UC endet mit "System gibt Meldung aus"
+- ABER: Wie erhält Benutzer die Tasse?
+- → Fehlender Schritt: "System stellt Tasse bereit"
+
+---
+
+#### 5. Falsches Ziel im UC
+
+**Deine Korrektur bei B4:**
+
+**Original:**
+"System beginnt Kaffee zu brühen"
+
+**Problem:** Wohin fließt der Kaffee?
+
+**Korrigiert:**
+"System brüht Kaffee mit der eingestellten Wassermenge in die Tasse"
+
+---
+
+## Phase 10: Implizite Funktionen aus Kontext
+
+### Deine Heuristiken:
+
+#### 1. Hygiene-Kontext
+
+**Wenn:** Objekt hat Lebensmittelkontakt
+**Dann:** 
+- Funktion: "reinigen" `[implizit]`
+- Funktion: "desinfizieren" `[implizit]`
+
+**Beispiel Filter:**
+- Hat Kaffee-Kontakt
+- FilterManager: "Filter reinigen" `[implizit]`
+- FilterManager: "Filter desinfizieren" `[implizit]`
+
+---
+
+#### 2. Wiederverwendbare Objekte
+
+**Wenn:** Objekt wird mehrfach genutzt
+**Dann:**
+- Funktion: "reinigen" `[implizit]`
+
+---
+
+#### 3. Verderbliche Objekte
+
+**Wenn:** Aus Kontext bekannt dass verderblich
+**Dann:**
+- Funktion: "kühlen" `[implizit]`
+
+**Beispiel Milch:**
+- Aus Kontext: Milch ist verderblich
+- MilchManager: "Milch kühlen" `[implizit]`
+
+---
+
+#### 4. Fehlerbehandlung
+
+**Immer bei Fatal Error:**
+- Alle Controller: "Abbrechen" `[implizit]`
+- Orchestrator: "Alle Prozesse abbrechen" `[implizit]`
+
+---
+
+## Phase 11: Generalisierung
+
+### Deine Strategie: Bleibe generisch
+
+**Beispiel GetränkeOrchestrator:**
+
+❌ Nicht: "KaffeeOrchestrator"
+✅ Sondern: "GetränkeOrchestrator"
+
+**Begründung:**
+- Zukunftssicher für UC "Tee zubereiten"
+- Wiederverwendbar über Capabilities hinweg
+- Reduziert Redundanz
+
+---
+
+## Zusammenfassung der Kern-Prinzipien
+
+### 1. Kontextbasiert arbeiten
+- Nutze Domänenwissen
+- Leite implizite Funktionen ab
+- Erkenne Zustandstransformationen
+
+### 2. Systematisch vorgehen
+- 3-Schritte-Schema für Betriebsmittel
+- Schritt-für-Schritt durch Basisablauf
+- Jeder Schritt wird vollständig analysiert
+
+### 3. UC validieren und verbessern
+- Fehlende Vorbedingungen finden
+- Redundanzen erkennen
+- Fehlende Schritte identifizieren
+
+### 4. RUP-Regeln strikt einhalten
+- Kontrollfluss: 1 Ein-/Ausgang pro Controller
+- Datenfluss: Nur Entity ↔ Controller
+- Boundaries: Nur Actor ↔ Controller
+- HMI: Für menschliche Actors
+
+### 5. Unterscheidungen treffen
+- Betriebsmittel vs. System-Elemente
+- Fatal vs. Non-Fatal Errors
+- Explizite vs. Implizite Funktionen
+- Menschliche vs. Nicht-menschliche Actors
+
+### 6. Generisch denken
+- Oberbegriffe statt Spezifika
+- Wiederverwendbarkeit
+- Feature-basierte Variabilität
+
+---
+
+## Das ist DEINE Methodik!
+
+Diese systematische, kontextbasierte Vorgehensweise ermöglicht:
+- ✅ Vollständige Robustheitsanalyse
+- ✅ UC-Qualitätsverbesserung
+- ✅ RUP-Konformität
+- ✅ Feature-Variabilität
+- ✅ Automatisierbarkeit durch NLP

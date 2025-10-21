@@ -1,0 +1,365 @@
+{
+  "objects": {
+    "boundary": [
+      "System Interface",
+      "Notification Interface",
+      "Configuration Interface"
+    ],
+    "entity": [
+      "Espressos",
+      "Pressure",
+      "beans",
+      "Milk",
+      "Container",
+      "Level",
+      "Temperature",
+      "Heater",
+      "Time",
+      "Grounds",
+      "Notification",
+      "Coffee",
+      "Amount",
+      "Sugar",
+      "Compressor",
+      "Water",
+      "User",
+      "Filter",
+      "Cup"
+    ],
+    "control": [
+      "Amount Controller",
+      "Coffee Controller",
+      "Error Handler A2",
+      "System Orchestrator",
+      "Milk Controller",
+      "Filter Controller",
+      "Error Handler A1",
+      "Heater Controller",
+      "Cup Controller",
+      "Notification Controller",
+      "Compressor Controller",
+      "Begin Controller",
+      "Time Controller",
+      "Water Controller"
+    ],
+    "actor": [
+      "User"
+    ]
+  },
+  "relationships": [
+    {
+      "from": "System Orchestrator",
+      "to": "Time Controller",
+      "type": "coordinates",
+      "step": "B1",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "System Controller",
+      "to": "Heater",
+      "type": "activate",
+      "step": "B2",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "System Orchestrator",
+      "to": "Heater Controller",
+      "type": "coordinates",
+      "step": "B2",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "System Controller",
+      "to": "Filter",
+      "type": "prepare",
+      "step": "B3",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "System Orchestrator",
+      "to": "Filter Controller",
+      "type": "coordinates",
+      "step": "B3",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "System Controller",
+      "to": "Amount",
+      "type": "grind",
+      "step": "B4",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "System Orchestrator",
+      "to": "Amount Controller",
+      "type": "coordinates",
+      "step": "B4",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "System Orchestrator",
+      "to": "Filter Controller",
+      "type": "coordinates",
+      "step": "B4",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "System Controller",
+      "to": "Cup",
+      "type": "retrieve",
+      "step": "B5",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "System Orchestrator",
+      "to": "Filter Controller",
+      "type": "coordinates",
+      "step": "B5",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "System Orchestrator",
+      "to": "Cup Controller",
+      "type": "coordinates",
+      "step": "B5",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "System Controller",
+      "to": "Water",
+      "type": "heat",
+      "step": "B6",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "System Orchestrator",
+      "to": "Water Controller",
+      "type": "coordinates",
+      "step": "B6",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "System Orchestrator",
+      "to": "Water Controller",
+      "type": "coordinates",
+      "step": "B7",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "System Orchestrator",
+      "to": "Amount Controller",
+      "type": "coordinates",
+      "step": "B7",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "System Orchestrator",
+      "to": "Begin Controller",
+      "type": "coordinates",
+      "step": "B7",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "System Controller",
+      "to": "Milk",
+      "type": "add",
+      "step": "B8",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "System Orchestrator",
+      "to": "Milk Controller",
+      "type": "coordinates",
+      "step": "B8",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "System Orchestrator",
+      "to": "Cup Controller",
+      "type": "coordinates",
+      "step": "B8",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "System Controller",
+      "to": "Coffee",
+      "type": "add",
+      "step": "B9",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "System Orchestrator",
+      "to": "Coffee Controller",
+      "type": "coordinates",
+      "step": "B9",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "System Orchestrator",
+      "to": "Cup Controller",
+      "type": "coordinates",
+      "step": "B9",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "System Controller",
+      "to": "Notification Interface",
+      "type": "send",
+      "step": "B10",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "User",
+      "to": "System Interface",
+      "type": "interacts",
+      "step": "B10",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "User",
+      "to": "Notification Interface",
+      "type": "interacts",
+      "step": "B10",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "System Orchestrator",
+      "to": "Notification Controller",
+      "type": "coordinates",
+      "step": "B10",
+      "uc": "UC1: Prepare Latte"
+    },
+    {
+      "from": "System Orchestrator",
+      "to": "Time Controller",
+      "type": "coordinates",
+      "step": "B1",
+      "uc": "UC2: Prepare Espresso"
+    },
+    {
+      "from": "System Controller",
+      "to": "Heater",
+      "type": "activate",
+      "step": "B2",
+      "uc": "UC2: Prepare Espresso"
+    },
+    {
+      "from": "System Orchestrator",
+      "to": "Heater Controller",
+      "type": "coordinates",
+      "step": "B2",
+      "uc": "UC2: Prepare Espresso"
+    },
+    {
+      "from": "System Controller",
+      "to": "Filter",
+      "type": "prepare",
+      "step": "B3",
+      "uc": "UC2: Prepare Espresso"
+    },
+    {
+      "from": "System Orchestrator",
+      "to": "Filter Controller",
+      "type": "coordinates",
+      "step": "B3",
+      "uc": "UC2: Prepare Espresso"
+    },
+    {
+      "from": "System Controller",
+      "to": "Amount",
+      "type": "grind",
+      "step": "B4",
+      "uc": "UC2: Prepare Espresso"
+    },
+    {
+      "from": "System Orchestrator",
+      "to": "Amount Controller",
+      "type": "coordinates",
+      "step": "B4",
+      "uc": "UC2: Prepare Espresso"
+    },
+    {
+      "from": "System Orchestrator",
+      "to": "Filter Controller",
+      "type": "coordinates",
+      "step": "B4",
+      "uc": "UC2: Prepare Espresso"
+    },
+    {
+      "from": "System Controller",
+      "to": "Cup",
+      "type": "retrieve",
+      "step": "B5",
+      "uc": "UC2: Prepare Espresso"
+    },
+    {
+      "from": "System Orchestrator",
+      "to": "Filter Controller",
+      "type": "coordinates",
+      "step": "B5",
+      "uc": "UC2: Prepare Espresso"
+    },
+    {
+      "from": "System Orchestrator",
+      "to": "Cup Controller",
+      "type": "coordinates",
+      "step": "B5",
+      "uc": "UC2: Prepare Espresso"
+    },
+    {
+      "from": "System Controller",
+      "to": "Compressor",
+      "type": "start",
+      "step": "B6",
+      "uc": "UC2: Prepare Espresso"
+    },
+    {
+      "from": "System Orchestrator",
+      "to": "Compressor Controller",
+      "type": "coordinates",
+      "step": "B6",
+      "uc": "UC2: Prepare Espresso"
+    },
+    {
+      "from": "System Orchestrator",
+      "to": "Begin Controller",
+      "type": "coordinates",
+      "step": "B7",
+      "uc": "UC2: Prepare Espresso"
+    },
+    {
+      "from": "System Controller",
+      "to": "Notification Interface",
+      "type": "send",
+      "step": "B8",
+      "uc": "UC2: Prepare Espresso"
+    },
+    {
+      "from": "User",
+      "to": "System Interface",
+      "type": "interacts",
+      "step": "B8",
+      "uc": "UC2: Prepare Espresso"
+    },
+    {
+      "from": "User",
+      "to": "Notification Interface",
+      "type": "interacts",
+      "step": "B8",
+      "uc": "UC2: Prepare Espresso"
+    },
+    {
+      "from": "System Orchestrator",
+      "to": "Notification Controller",
+      "type": "coordinates",
+      "step": "B8",
+      "uc": "UC2: Prepare Espresso"
+    }
+  ],
+  "features": {
+    "Coffee Preparation": {
+      "Latte-Feature": "UC1: Prepare Latte",
+      "Espresso-Feature": "UC2: Prepare Espresso"
+    }
+  }
+}

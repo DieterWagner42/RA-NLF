@@ -1,0 +1,761 @@
+{
+  "objects": {
+    "boundary": [
+      {
+        "name": "Timer-Trigger",
+        "use_cases": [
+          "UC2",
+          "UC1"
+        ],
+        "shared": true,
+        "keywords": []
+      },
+      {
+        "name": "Time-Configurator",
+        "use_cases": [
+          "UC2",
+          "UC1"
+        ],
+        "shared": true,
+        "keywords": [
+          "user_configuration",
+          "user_configuration"
+        ]
+      },
+      {
+        "name": "Amount-Selector",
+        "use_cases": [
+          "UC1"
+        ],
+        "shared": false,
+        "keywords": [
+          "user_configuration",
+          "user_configuration"
+        ]
+      },
+      {
+        "name": "Grind-Level-Selector",
+        "use_cases": [
+          "UC2",
+          "UC1"
+        ],
+        "shared": true,
+        "keywords": [
+          "user_configuration",
+          "user_configuration"
+        ]
+      },
+      {
+        "name": "Storage-Access",
+        "use_cases": [
+          "UC2",
+          "UC1"
+        ],
+        "shared": true,
+        "keywords": []
+      },
+      {
+        "name": "Coffee-Type-Selector",
+        "use_cases": [
+          "UC2",
+          "UC1"
+        ],
+        "shared": true,
+        "keywords": [
+          "user_configuration",
+          "user_configuration"
+        ]
+      },
+      {
+        "name": "User-Notification",
+        "use_cases": [
+          "UC2",
+          "UC1"
+        ],
+        "shared": true,
+        "keywords": []
+      }
+    ],
+    "entity": [
+      {
+        "name": "Water",
+        "use_cases": [
+          "UC2",
+          "UC1"
+        ],
+        "shared": true,
+        "keywords": []
+      },
+      {
+        "name": "Filter",
+        "use_cases": [
+          "UC2",
+          "UC1"
+        ],
+        "shared": true,
+        "keywords": []
+      },
+      {
+        "name": "Amount-Setting",
+        "use_cases": [
+          "UC1"
+        ],
+        "shared": false,
+        "keywords": []
+      },
+      {
+        "name": "Grind-Level-Setting",
+        "use_cases": [
+          "UC2",
+          "UC1"
+        ],
+        "shared": true,
+        "keywords": []
+      },
+      {
+        "name": "Cup",
+        "use_cases": [
+          "UC2",
+          "UC1"
+        ],
+        "shared": true,
+        "keywords": []
+      },
+      {
+        "name": "Storage-Container",
+        "use_cases": [
+          "UC2",
+          "UC1"
+        ],
+        "shared": true,
+        "keywords": []
+      },
+      {
+        "name": "Coffee",
+        "use_cases": [
+          "UC1"
+        ],
+        "shared": false,
+        "keywords": []
+      },
+      {
+        "name": "Coffee-Type-Setting",
+        "use_cases": [
+          "UC2",
+          "UC1"
+        ],
+        "shared": true,
+        "keywords": []
+      },
+      {
+        "name": "Milk",
+        "use_cases": [
+          "UC1"
+        ],
+        "shared": false,
+        "keywords": []
+      },
+      {
+        "name": "Brewed-Coffee",
+        "use_cases": [
+          "UC1"
+        ],
+        "shared": false,
+        "keywords": []
+      },
+      {
+        "name": "Coffee-Bean",
+        "use_cases": [
+          "UC2"
+        ],
+        "shared": false,
+        "keywords": []
+      },
+      {
+        "name": "Water-Pressure",
+        "use_cases": [
+          "UC2"
+        ],
+        "shared": false,
+        "keywords": []
+      },
+      {
+        "name": "Coffee-Ground",
+        "use_cases": [
+          "UC2"
+        ],
+        "shared": false,
+        "keywords": []
+      }
+    ],
+    "control": [
+      {
+        "name": "Coffee Preparation-Orchestrator",
+        "use_cases": [
+          "UC2",
+          "UC1"
+        ],
+        "shared": true,
+        "keywords": [
+          "orchestrator",
+          "orchestrator"
+        ]
+      },
+      {
+        "name": "Water-Controller",
+        "use_cases": [
+          "UC2",
+          "UC1"
+        ],
+        "shared": true,
+        "keywords": [
+          "heats_water",
+          "heats_water",
+          "pressurizes_water"
+        ]
+      },
+      {
+        "name": "Filter-Preparation-Controller",
+        "use_cases": [
+          "UC2",
+          "UC1"
+        ],
+        "shared": true,
+        "keywords": []
+      },
+      {
+        "name": "Grinding-Controller",
+        "use_cases": [
+          "UC2",
+          "UC1"
+        ],
+        "shared": true,
+        "keywords": []
+      },
+      {
+        "name": "Cup-Retrieval-Controller",
+        "use_cases": [
+          "UC2",
+          "UC1"
+        ],
+        "shared": true,
+        "keywords": []
+      },
+      {
+        "name": "Brew-Controller",
+        "use_cases": [
+          "UC2",
+          "UC1"
+        ],
+        "shared": true,
+        "keywords": []
+      },
+      {
+        "name": "Supplement-Controller",
+        "use_cases": [
+          "UC1"
+        ],
+        "shared": false,
+        "keywords": [
+          "dispenses_supplements"
+        ]
+      },
+      {
+        "name": "Notification-Controller",
+        "use_cases": [
+          "UC2",
+          "UC1"
+        ],
+        "shared": true,
+        "keywords": []
+      }
+    ]
+  },
+  "shared_objects": {
+    "boundary": [
+      "Timer-Trigger",
+      "Time-Configurator",
+      "Grind-Level-Selector",
+      "Storage-Access",
+      "Coffee-Type-Selector",
+      "User-Notification"
+    ],
+    "entity": [
+      "Water",
+      "Filter",
+      "Grind-Level-Setting",
+      "Cup",
+      "Storage-Container",
+      "Coffee-Type-Setting"
+    ],
+    "control": [
+      "Coffee Preparation-Orchestrator",
+      "Water-Controller",
+      "Filter-Preparation-Controller",
+      "Grinding-Controller",
+      "Cup-Retrieval-Controller",
+      "Brew-Controller",
+      "Notification-Controller"
+    ]
+  },
+  "relationships": [
+    {
+      "from": "Timer-Trigger",
+      "to": "Coffee Preparation-Orchestrator",
+      "type": "triggers",
+      "use_case": "UC1"
+    },
+    {
+      "from": "Time-Configurator",
+      "to": "Coffee Preparation-Orchestrator",
+      "type": "triggers",
+      "use_case": "UC1"
+    },
+    {
+      "from": "Coffee Preparation-Orchestrator",
+      "to": "Water-Controller",
+      "type": "control_flow",
+      "use_case": "UC1"
+    },
+    {
+      "from": "Water-Controller",
+      "to": "Water",
+      "type": "uses",
+      "use_case": "UC1"
+    },
+    {
+      "from": "Water-Controller",
+      "to": "Filter-Preparation-Controller",
+      "type": "control_flow",
+      "use_case": "UC1"
+    },
+    {
+      "from": "Filter-Preparation-Controller",
+      "to": "Filter",
+      "type": "uses",
+      "use_case": "UC1"
+    },
+    {
+      "from": "Filter-Preparation-Controller",
+      "to": "Grinding-Controller",
+      "type": "control_flow",
+      "use_case": "UC1"
+    },
+    {
+      "from": "Grinding-Controller",
+      "to": "Amount-Setting",
+      "type": "uses",
+      "use_case": "UC1"
+    },
+    {
+      "from": "Grinding-Controller",
+      "to": "Grind-Level-Setting",
+      "type": "uses",
+      "use_case": "UC1"
+    },
+    {
+      "from": "Amount-Selector",
+      "to": "Coffee Preparation-Orchestrator",
+      "type": "provides_settings",
+      "use_case": "UC1"
+    },
+    {
+      "from": "Grind-Level-Selector",
+      "to": "Coffee Preparation-Orchestrator",
+      "type": "provides_settings",
+      "use_case": "UC1"
+    },
+    {
+      "from": "Grinding-Controller",
+      "to": "Cup-Retrieval-Controller",
+      "type": "control_flow",
+      "use_case": "UC1"
+    },
+    {
+      "from": "Cup-Retrieval-Controller",
+      "to": "Cup",
+      "type": "uses",
+      "use_case": "UC1"
+    },
+    {
+      "from": "Cup-Retrieval-Controller",
+      "to": "Storage-Container",
+      "type": "uses",
+      "use_case": "UC1"
+    },
+    {
+      "from": "Storage-Access",
+      "to": "Cup-Retrieval-Controller",
+      "type": "accesses",
+      "use_case": "UC1"
+    },
+    {
+      "from": "Cup-Retrieval-Controller",
+      "to": "Brew-Controller",
+      "type": "control_flow",
+      "use_case": "UC1"
+    },
+    {
+      "from": "Brew-Controller",
+      "to": "Water",
+      "type": "uses",
+      "use_case": "UC1"
+    },
+    {
+      "from": "Brew-Controller",
+      "to": "Coffee",
+      "type": "uses",
+      "use_case": "UC1"
+    },
+    {
+      "from": "Brew-Controller",
+      "to": "Amount-Setting",
+      "type": "uses",
+      "use_case": "UC1"
+    },
+    {
+      "from": "Brew-Controller",
+      "to": "Supplement-Controller",
+      "type": "control_flow",
+      "use_case": "UC1"
+    },
+    {
+      "from": "Supplement-Controller",
+      "to": "Coffee-Type-Setting",
+      "type": "uses",
+      "use_case": "UC1"
+    },
+    {
+      "from": "Supplement-Controller",
+      "to": "Milk",
+      "type": "uses",
+      "use_case": "UC1"
+    },
+    {
+      "from": "Supplement-Controller",
+      "to": "Cup",
+      "type": "uses",
+      "use_case": "UC1"
+    },
+    {
+      "from": "Coffee-Type-Selector",
+      "to": "Coffee Preparation-Orchestrator",
+      "type": "provides_settings",
+      "use_case": "UC1"
+    },
+    {
+      "from": "Supplement-Controller",
+      "to": "Brew-Controller",
+      "type": "control_flow",
+      "use_case": "UC1"
+    },
+    {
+      "from": "Brew-Controller",
+      "to": "Brewed-Coffee",
+      "type": "provides",
+      "use_case": "UC1"
+    },
+    {
+      "from": "Brew-Controller",
+      "to": "Cup",
+      "type": "uses",
+      "use_case": "UC1"
+    },
+    {
+      "from": "Brew-Controller",
+      "to": "Notification-Controller",
+      "type": "control_flow",
+      "use_case": "UC1"
+    },
+    {
+      "from": "Notification-Controller",
+      "to": "User-Notification",
+      "type": "sends_to",
+      "use_case": "UC1"
+    },
+    {
+      "from": "Actor",
+      "to": "Time-Configurator",
+      "type": "configures",
+      "use_case": "UC1"
+    },
+    {
+      "from": "Actor",
+      "to": "Amount-Selector",
+      "type": "configures",
+      "use_case": "UC1"
+    },
+    {
+      "from": "Actor",
+      "to": "Grind-Level-Selector",
+      "type": "configures",
+      "use_case": "UC1"
+    },
+    {
+      "from": "Actor",
+      "to": "Coffee-Type-Selector",
+      "type": "configures",
+      "use_case": "UC1"
+    },
+    {
+      "from": "User-Notification",
+      "to": "Actor",
+      "type": "notifies",
+      "use_case": "UC1"
+    },
+    {
+      "from": "Timer-Trigger",
+      "to": "Coffee Preparation-Orchestrator",
+      "type": "triggers",
+      "use_case": "UC2"
+    },
+    {
+      "from": "Time-Configurator",
+      "to": "Coffee Preparation-Orchestrator",
+      "type": "triggers",
+      "use_case": "UC2"
+    },
+    {
+      "from": "Coffee Preparation-Orchestrator",
+      "to": "Water-Controller",
+      "type": "control_flow",
+      "use_case": "UC2"
+    },
+    {
+      "from": "Water-Controller",
+      "to": "Water",
+      "type": "uses",
+      "use_case": "UC2"
+    },
+    {
+      "from": "Water-Controller",
+      "to": "Filter-Preparation-Controller",
+      "type": "control_flow",
+      "use_case": "UC2"
+    },
+    {
+      "from": "Filter-Preparation-Controller",
+      "to": "Filter",
+      "type": "uses",
+      "use_case": "UC2"
+    },
+    {
+      "from": "Filter-Preparation-Controller",
+      "to": "Grinding-Controller",
+      "type": "control_flow",
+      "use_case": "UC2"
+    },
+    {
+      "from": "Grinding-Controller",
+      "to": "Coffee-Bean",
+      "type": "uses",
+      "use_case": "UC2"
+    },
+    {
+      "from": "Grinding-Controller",
+      "to": "Grind-Level-Setting",
+      "type": "uses",
+      "use_case": "UC2"
+    },
+    {
+      "from": "Grinding-Controller",
+      "to": "Cup-Retrieval-Controller",
+      "type": "control_flow",
+      "use_case": "UC2"
+    },
+    {
+      "from": "Cup-Retrieval-Controller",
+      "to": "Cup",
+      "type": "uses",
+      "use_case": "UC2"
+    },
+    {
+      "from": "Cup-Retrieval-Controller",
+      "to": "Storage-Container",
+      "type": "uses",
+      "use_case": "UC2"
+    },
+    {
+      "from": "Storage-Access",
+      "to": "Cup-Retrieval-Controller",
+      "type": "accesses",
+      "use_case": "UC2"
+    },
+    {
+      "from": "Cup-Retrieval-Controller",
+      "to": "Water-Controller",
+      "type": "control_flow",
+      "use_case": "UC2"
+    },
+    {
+      "from": "Water-Controller",
+      "to": "Coffee-Type-Setting",
+      "type": "uses",
+      "use_case": "UC2"
+    },
+    {
+      "from": "Water-Controller",
+      "to": "Water",
+      "type": "uses",
+      "use_case": "UC2"
+    },
+    {
+      "from": "Water-Controller",
+      "to": "Water-Pressure",
+      "type": "uses",
+      "use_case": "UC2"
+    },
+    {
+      "from": "Water-Controller",
+      "to": "Brew-Controller",
+      "type": "control_flow",
+      "use_case": "UC2"
+    },
+    {
+      "from": "Brew-Controller",
+      "to": "Water",
+      "type": "uses",
+      "use_case": "UC2"
+    },
+    {
+      "from": "Brew-Controller",
+      "to": "Coffee-Ground",
+      "type": "uses",
+      "use_case": "UC2"
+    },
+    {
+      "from": "Brew-Controller",
+      "to": "Notification-Controller",
+      "type": "control_flow",
+      "use_case": "UC2"
+    },
+    {
+      "from": "Notification-Controller",
+      "to": "User-Notification",
+      "type": "sends_to",
+      "use_case": "UC2"
+    },
+    {
+      "from": "Actor",
+      "to": "Time-Configurator",
+      "type": "configures",
+      "use_case": "UC2"
+    },
+    {
+      "from": "Actor",
+      "to": "Grind-Level-Selector",
+      "type": "configures",
+      "use_case": "UC2"
+    },
+    {
+      "from": "Actor",
+      "to": "Coffee-Type-Selector",
+      "type": "configures",
+      "use_case": "UC2"
+    },
+    {
+      "from": "User-Notification",
+      "to": "Actor",
+      "type": "notifies",
+      "use_case": "UC2"
+    }
+  ],
+  "warnings": [
+    {
+      "severity": "warning",
+      "category": "missing_provider",
+      "message": "Precondition 'Bean' has no providing Use Case",
+      "use_case": "UC1",
+      "suggestion": "Create a Use Case: 'Establish Coffee Preparation Operational Readiness'"
+    },
+    {
+      "severity": "warning",
+      "category": "missing_provider",
+      "message": "Precondition 'Water' has no providing Use Case",
+      "use_case": "UC1",
+      "suggestion": "Create a Use Case: 'Establish Coffee Preparation Operational Readiness'"
+    },
+    {
+      "severity": "warning",
+      "category": "missing_provider",
+      "message": "Precondition 'Milk' has no providing Use Case",
+      "use_case": "UC1",
+      "suggestion": "Create a Use Case: 'Establish Coffee Preparation Operational Readiness'"
+    },
+    {
+      "severity": "error",
+      "category": "missing_precondition",
+      "message": "Steps reference 'configured time' but no precondition states user has configured it",
+      "use_case": "UC1",
+      "suggestion": "Add precondition: 'User has selected time via HMI' or 'User has configured time'"
+    },
+    {
+      "severity": "error",
+      "category": "missing_precondition",
+      "message": "Steps reference 'configured amount' but no precondition states user has configured it",
+      "use_case": "UC1",
+      "suggestion": "Add precondition: 'User has selected amount via HMI' or 'User has configured amount'"
+    },
+    {
+      "severity": "info",
+      "category": "incomplete_transformation",
+      "message": "Step performs grinding but doesn't mention output product",
+      "use_case": "UC1",
+      "suggestion": "Consider explicitly mentioning the output: coffee ground, ground"
+    },
+    {
+      "severity": "warning",
+      "category": "missing_provider",
+      "message": "Precondition 'Bean' has no providing Use Case",
+      "use_case": "UC2",
+      "suggestion": "Create a Use Case: 'Establish Coffee Preparation Operational Readiness'"
+    },
+    {
+      "severity": "warning",
+      "category": "missing_provider",
+      "message": "Precondition 'Water' has no providing Use Case",
+      "use_case": "UC2",
+      "suggestion": "Create a Use Case: 'Establish Coffee Preparation Operational Readiness'"
+    },
+    {
+      "severity": "error",
+      "category": "missing_precondition",
+      "message": "Steps reference 'configured time' but no precondition states user has configured it",
+      "use_case": "UC2",
+      "suggestion": "Add precondition: 'User has selected time via HMI' or 'User has configured time'"
+    },
+    {
+      "severity": "info",
+      "category": "incomplete_transformation",
+      "message": "Step performs compression but doesn't mention output product",
+      "use_case": "UC2",
+      "suggestion": "Consider explicitly mentioning the output: compressed.*water, pressurized.*water"
+    },
+    {
+      "severity": "warning",
+      "category": "missing_use_case",
+      "message": "Multiple entities without provider: Amount-Setting, Storage-Container, Grind-Level-Setting, Coffee-Bean, Coffee, Milk, Cup, Brewed-Coffee, Water, Water-Pressure, Coffee-Ground, Coffee-Type-Setting, Filter",
+      "use_case": null,
+      "suggestion": "Create Use Case: 'Establish Coffee Preparation Operational Readiness' (covers: Amount-Setting, Storage-Container, Grind-Level-Setting, Coffee-Bean, Coffee, Milk, Cup, Brewed-Coffee, Water, Water-Pressure, Coffee-Ground, Coffee-Type-Setting, Filter)"
+    }
+  ],
+  "statistics": {
+    "total_objects": 28,
+    "boundary_count": 7,
+    "entity_count": 13,
+    "control_count": 8,
+    "shared_count": 19,
+    "warnings_count": 11,
+    "errors_count": 3
+  },
+  "validation": {
+    "rules": {
+      "actors_to_boundary_only": true,
+      "boundary_to_control_entity": true,
+      "no_entity_to_boundary": true,
+      "control_coordinates": true
+    },
+    "violations": [],
+    "valid": true
+  }
+}

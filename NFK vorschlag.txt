@@ -1,0 +1,796 @@
+# Zusammenfassung: Domänen-unabhängige Robustheitsanalyse
+
+## Überblick
+
+Diese Dokumentation beschreibt eine **vollständig domänen-unabhängige Methodik** zur automatischen Robustheitsanalyse aus natürlichsprachlichen Use Cases mittels NLP und LLM-Integration.
+
+---
+
+## Kernprinzip: Keine domänenspezifischen Keywords
+
+### ❌ Was NICHT mehr verwendet wird:
+
+**Domänenspezifische Keywords:**
+- Keine hartcodierten Objekte: "Kaffee", "Wasser", "Milch", "Zucker"
+- Keine hartcodierten Verben: "mahlen", "brühen", "erhitzen"
+- Keine domänenspezifischen Transformationen: "Kaffeebohnen → Kaffeemehl"
+- Keine festen Listen von Eigenschaften: "Milch ist verderblich"
+
+**Stattdessen:**
+
+### ✅ Generische, LLM-basierte Ansätze:
+
+1. **Objekt-Extraktion:** Via NLP (Named Entity Recognition)
+2. **Eigenschaften-Ermittlung:** Via LLM-Queries
+3. **Transformations-Erkennung:** Via Kontext-Anfragen
+4. **Funktions-Ableitung:** Via semantische Analyse
+
+---
+
+## Architektur-Übersicht
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    Use Case (Text)                       │
+└─────────────────────┬───────────────────────────────────┘
+                      │
+                      ▼
+┌─────────────────────────────────────────────────────────┐
+│              NLP-Preprocessing                           │
+│  • POS-Tagging (Verben, Nomen)                         │
+│  • Dependency Parsing                                    │
+│  • Named Entity Recognition                              │
+│  • Pattern Matching (UC-Struktur)                        │
+└─────────────────────┬───────────────────────────────────┘
+                      │
+                      ▼
+┌─────────────────────────────────────────────────────────┐
+│           Kontext-System (LLM-basiert)                   │
+│                                                          │
+│  Beantwortet Fragen wie:                                │
+│  • "Was entsteht aus X durch Verb Y?"                   │
+│  • "Ist X verderblich/hygienekritisch?"                 │
+│  • "Welche Eigenschaften hat X?"                        │
+│  • "Können Schritt A und B parallel laufen?"            │
+│  • "Welcher Controller ist für Aktion X zuständig?"     │
+│                                                          │
+└─────────────────────┬───────────────────────────────────┘
+                      │
+                      ▼
+┌─────────────────────────────────────────────────────────┐
+│        Robustheitsanalyse-Engine                         │
+│                                                          │
+│  • Betriebsmittel-Analyse                               │
+│  • Schritt-für-Schritt-Analyse                         │
+│  • Kontrollfluss-Generierung                            │
+│  • Datenfluss-Generierung                               │
+│  • Implizite Funktionen ableiten                        │
+│  • UC-Validierung                                        │
+│                                                          │
+└─────────────────────┬───────────────────────────────────┘
+                      │
+                      ▼
+┌─────────────────────────────────────────────────────────┐
+│              RUP-Validierung                             │
+│                                                          │
+│  • Kontrollfluss: 1 Ein-/Ausgang pro Controller         │
+│  • Datenfluss: Nur Entity ↔ Controller                  │
+│  • Boundaries: Nur Actor ↔ Controller                   │
+│  • HMI-Regel: Menschliche Actors über HMI               │
+│                                                          │
+└─────────────────────┬───────────────────────────────────┘
+                      │
+                      ▼
+┌─────────────────────────────────────────────────────────┐
+│                 Output                                   │
+│                                                          │
+│  • Robustheitsdiagramm                                  │
+│  • Objekt-Liste (Boundaries, Entities, Controllers)     │
+│  • Funktions-Liste (explizit + implizit)               │
+│  • Graph-Struktur (JSON)                                │
+│  • XMI-Export (für Rhapsody)                            │
+│  • UC-Verbesserungsvorschläge                           │
+│                                                          │
+└─────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Beispiel-Workflow (Domänen-unabhängig)
+
+### Input: Use Case (beliebige Domäne)
+
+```
+Fähigkeit: [Beliebige Fähigkeit]
+Use Case: [UC-Titel]
+Ziel: [Kundenmehrwert]
+
+Vorbedingungen:
+- [Objekt X] ist im System vorhanden
+- [Objekt Y] ist im System vorhanden
+
+Basisablauf:
+B1. [Trigger]
+B2. Das System [Verb1] [Objekt X]
+B3. Das System [Verb2] [Objekt Y] in [Objekt Z]
+...
+```
+
+### Verarbeitung (generisch):
+
+#### 1. NLP-Extraktion
+```python
+# Verb extrahieren (POS-Tagging)
+verb = pos_tag_and_extract_verb("Das System [Verb1] [Objekt X]")
+# → verb = "[Verb1]"
+
+# Objekt extrahieren (NER)
+objekt = extract_named_entity("Das System [Verb1] [Objekt X]")
+# → objekt = "[Objekt X]"
+```
+
+#### 2. Kontext-Anfragen (LLM)
+```python
+# Eigenschaften ermitteln
+eigenschaften = llm.query(
+    f"Welche Eigenschaften hat '{objekt}' im Kontext von '{fähigkeit}'?"
+)
+# → {"verderblich": True/False, "hygienekritisch": True/False, ...}
+
+# Transformation ermitteln
+transformation = llm.query(
+    f"Was entsteht aus '{objekt}' durch '{verb}'?"
+)
+# → "Transformiertes Objekt" oder "keine Transformation"
+
+# Controller ermitteln
+controller = llm.query(
+    f"Welcher Controller ist zuständig für '{verb} {objekt}'?"
+)
+# → "[Objekt]Manager" oder spezifischer Controller
+```
+
+#### 3. Implizite Funktionen ableiten
+```python
+# Basierend auf Eigenschaften
+if eigenschaften['verderblich']:
+    add_implicit_function(controller, "kühlen")
+
+if eigenschaften['hygienekritisch']:
+    add_implicit_function(controller, "reinigen")
+    add_implicit_function(controller, "desinfizieren")
+
+# Basierend auf Fehlerfall
+if fehlerfall_contains("zu wenig {objekt}"):
+    add_implicit_function(controller, "Füllstand überwachen")
+```
+
+### Output: Robustheitsanalyse
+
+```json
+{
+  "boundaries": [
+    {"name": "[Objekt X] Input", "typ": "input", "controller": "HMI"},
+    {"name": "Fertig", "typ": "output", "controller": "HMI"}
+  ],
+  "entities": [
+    {"name": "[Objekt X]", "typ": "betriebsmittel"},
+    {"name": "[Transformiertes Objekt]", "typ": "transformation"}
+  ],
+  "controllers": [
+    {
+      "name": "[Objekt X]Manager",
+      "funktionen": [
+        {"name": "[Objekt X] lagern", "implizit": false},
+        {"name": "[Objekt X] [Verb1]", "implizit": false},
+        {"name": "kühlen", "implizit": true},
+        {"name": "Abbrechen", "implizit": true}
+      ]
+    },
+    {
+      "name": "HMI",
+      "funktionen": [
+        {"name": "Benutzer benachrichtigen", "implizit": false}
+      ]
+    }
+  ],
+  "kontrollfluss": [...],
+  "datenfluss": [...],
+  "uc_verbesserungen": [...]
+}
+```
+
+---
+
+## Kern-Komponenten im Detail
+
+### 1. Kontext-System (LLM-basiert)
+
+**Zweck:** Ersetzt alle domänenspezifischen Keywords durch dynamische Anfragen
+
+**Hauptfunktionen:**
+
+```python
+class KontextSystem:
+    def get_eigenschaften(self, objekt, kontext_info):
+        """Ermittelt Eigenschaften eines Objekts"""
+        
+    def get_transformation(self, objekt, verb, kontext_info):
+        """Ermittelt was aus Objekt durch Verb entsteht"""
+        
+    def kann_parallel_laufen(self, schritt_a, schritt_b, kontext_info):
+        """Prüft Parallelität zweier Schritte"""
+        
+    def klassifiziere_fehler(self, fehlertext, kontext_info):
+        """Klassifiziert Fehler (fatal/non-fatal)"""
+        
+    def finde_controller(self, verb, objekt, kontext_info):
+        """Ermittelt zuständigen Controller"""
+```
+
+**Beispiel-Query:**
+```
+Input: "Ist Milch verderblich?"
+LLM Prompt:
+  "Welche Eigenschaften hat 'Milch' in der Domäne 'Kaffeezubereitung'?
+   Analysiere: verderblich, hygienekritisch, temperaturkritisch, etc."
+   
+Output: {"verderblich": true, "hygienekritisch": true, ...}
+```
+
+### 2. NLP-Pipeline
+
+**Komponenten:**
+
+1. **POS-Tagging:** Identifiziert Wortarten (Verb, Nomen, Adjektiv)
+2. **Dependency Parsing:** Erkennt grammatikalische Beziehungen
+3. **Named Entity Recognition:** Extrahiert Objekte/Entitäten
+4. **Pattern Matching:** Erkennt UC-Strukturen (Vorbedingungen, Schritte, etc.)
+
+**Beispiel:**
+```
+Input: "Das System mahlt die eingestellte Menge in den Filter"
+
+NLP Output:
+- Verb: "mahlt" [VB]
+- Direktes Objekt: "Menge" [NN]
+- Adjektiv: "eingestellte" [ADJ]
+- Präpositionalobjekt: "Filter" [NN]
+
+Semantic Analysis:
+- Hauptaktion: "mahlen"
+- Verarbeitungsobjekt: "Menge" (Konfiguration wegen "eingestellte")
+- Zielobjekt: "Filter"
+```
+
+### 3. Betriebsmittel-Analyse (3-Schritte-Schema)
+
+**Für jedes Betriebsmittel aus Vorbedingungen:**
+
+```python
+def analysiere_betriebsmittel(objekt, kontext):
+    # Schritt 1: Input
+    if ist_manuell_befüllt(objekt, kontext):
+        boundary = f"{objekt} Input"
+        verbindung = "HMI" if actor_ist_mensch else "spezieller Controller"
+    
+    # Schritt 2: Lagerung/Verarbeitung
+    controller = f"{objekt}Manager"
+    
+    # Eigenschaften via LLM
+    eigenschaften = kontext.get_eigenschaften(objekt)
+    
+    funktionen = ["lagern"]  # Standard
+    
+    # Kontext-basiert
+    if eigenschaften['verderblich']:
+        funktionen.append("kühlen")
+    
+    # Weitere via LLM
+    zusatz = kontext.query(f"Welche Verarbeitung braucht {objekt}?")
+    funktionen.extend(zusatz)
+    
+    # Schritt 3: Output
+    output = kontext.query(f"Was passiert mit {objekt} am Ende?")
+    
+    if output == "Abfallprodukt":
+        boundary = f"{output} Output"
+    elif output == "Teil des Endprodukts":
+        boundary = None  # Kein separater Output
+    
+    return {
+        'entity': objekt,
+        'controller': controller,
+        'input_boundary': boundary_input,
+        'funktionen': funktionen,
+        'output_boundary': boundary_output
+    }
+```
+
+### 4. Implizite Funktionen-Ableitung
+
+**Regelbasiert + Kontext:**
+
+```python
+def leite_implizite_funktionen_ab(controller, objekt, kontext):
+    implizit = []
+    
+    # Eigenschaften-basiert
+    eigenschaften = kontext.get_eigenschaften(objekt)
+    
+    if eigenschaften['verderblich']:
+        implizit.append(("kühlen", "Objekt ist verderblich"))
+    
+    if eigenschaften['wiederverwendbar']:
+        implizit.append(("reinigen", "Objekt wird wiederverwendet"))
+    
+    if eigenschaften['hygienekritisch']:
+        implizit.append(("desinfizieren", "Hygiene erforderlich"))
+    
+    # Fehlerfall-basiert
+    if existiert_fehlerfall(f"zu wenig {objekt}"):
+        implizit.append(("Füllstand überwachen", "Fehlerfall vorhanden"))
+    
+    # Abbruch bei allen Controllern (bei Fatal Errors)
+    if existiert_fatal_error():
+        implizit.append(("Abbrechen", "Fehlerbehandlung"))
+    
+    return implizit
+```
+
+### 5. RUP-Validierung
+
+**Strikte Regeln-Durchsetzung:**
+
+```python
+def validiere_robustheitsanalyse(analyse):
+    fehler = []
+    
+    # Regel 1: Jeder Controller hat genau 1 Eingang und 1 Ausgang
+    for controller in analyse.controllers:
+        eingänge = zähle_eingänge(controller)
+        ausgänge = zähle_ausgänge(controller)
+        
+        if eingänge != 1:
+            fehler.append(f"{controller}: {eingänge} Eingänge (erwartet: 1)")
+        
+        if ausgänge != 1:
+            fehler.append(f"{controller}: {ausgänge} Ausgänge (erwartet: 1)")
+    
+    # Regel 2: Kein Datenfluss mit Actors
+    for fluss in analyse.datenflüsse:
+        if isinstance(fluss.quelle, Actor) or isinstance(fluss.ziel, Actor):
+            fehler.append("Actors dürfen nicht im Datenfluss sein")
+    
+    # Regel 3: Kein Controller-zu-Controller Datenfluss
+    for fluss in analyse.datenflüsse:
+        if isinstance(fluss.quelle, Controller) and isinstance(fluss.ziel, Controller):
+            fehler.append("Controller-zu-Controller Datenfluss verboten")
+    
+    # Regel 4: Boundaries nur zwischen Actor und Controller
+    for boundary in analyse.boundaries:
+        if not (verbindet_actor_und_controller(boundary)):
+            fehler.append(f"Boundary {boundary} nicht zwischen Actor und Controller")
+    
+    # Regel 5: Menschliche Actors über HMI
+    for actor in analyse.actors:
+        if ist_mensch(actor):
+            boundaries = finde_boundaries_für(actor)
+            for boundary in boundaries:
+                if boundary.controller != "HMI":
+                    fehler.append(f"Menschlicher Actor muss über HMI kommunizieren")
+    
+    return fehler
+```
+
+---
+
+## Use Case Validierung
+
+**Automatische Qualitätsprüfung:**
+
+### 1. Fehlende Vorbedingungen
+
+```python
+def prüfe_vorbedingungen(use_case, analyse):
+    fehler = []
+    
+    # Alle Entities die im Basisablauf auftauchen
+    verwendete_entities = extrahiere_entities(use_case.basisablauf)
+    
+    # Alle Entities aus Vorbedingungen
+    vorbedingung_entities = extrahiere_entities(use_case.vorbedingungen)
+    
+    # Finde fehlende
+    for entity in verwendete_entities:
+        if entity.typ in ['betriebsmittel', 'konfiguration']:
+            if entity not in vorbedingung_entities:
+                fehler.append(f"Fehlende Vorbedingung: {entity.name}")
+    
+    return fehler
+```
+
+### 2. Redundante Schritte
+
+```python
+def prüfe_redundanz(schritte):
+    redundant = []
+    
+    for i, schritt_a in enumerate(schritte):
+        for j, schritt_b in enumerate(schritte[i+1:]):
+            # Prüfe semantische Ähnlichkeit
+            if semantisch_ähnlich(schritt_a, schritt_b):
+                redundant.append((schritt_a, schritt_b, "Möglicherweise redundant"))
+    
+    return redundant
+```
+
+### 3. Fehlende Schritte
+
+```python
+def prüfe_vollständigkeit(use_case, analyse):
+    fehler = []
+    
+    # Prüfe: Endet UC mit Output an Actor?
+    letzter_schritt = use_case.basisablauf[-1]
+    if not hat_output_boundary(letzter_schritt):
+        fehler.append("UC endet ohne Output an Actor")
+    
+    # Prüfe: Alle Actors kommen vor?
+    for actor in use_case.actors:
+        if not kommt_vor_in(actor, use_case.basisablauf):
+            fehler.append(f"Actor {actor} kommt nicht vor")
+    
+    return fehler
+```
+
+---
+
+## Parallelität-Erkennung
+
+### Explizite Parallelität
+
+```python
+def erkenne_explizite_parallelität(schritte):
+    """
+    Pattern: B2a, B2b, B2c, B2d
+    → Alle mit gleicher Nummer, verschiedene Buchstaben
+    """
+    pattern = r"B(\d+)([a-z])"
+    gruppen = {}
+    
+    for schritt in schritte:
+        match = re.match(pattern, schritt.id)
+        if match:
+            nummer = match.group(1)
+            if nummer not in gruppen:
+                gruppen[nummer] = []
+            gruppen[nummer].append(schritt)
+    
+    return [gruppe for gruppe in gruppen.values() if len(gruppe) > 1]
+```
+
+### Implizite Parallelität (LLM-basiert)
+
+```python
+def schlage_parallelität_vor(schritt_a, schritt_b, kontext):
+    """Prüft ob zwei Schritte parallel laufen können"""
+    
+    # 1. Datenabhängigkeit
+    if existiert_datenabhängigkeit(schritt_a, schritt_b):
+        return False, "Datenabhängigkeit"
+    
+    # 2. Ressourcen-Konflikt
+    if nutzt_gleiche_ressource(schritt_a, schritt_b):
+        return False, "Ressourcen-Konflikt"
+    
+    # 3. LLM fragen
+    antwort = kontext.llm.query(f"""
+    Können diese Schritte parallel laufen?
+    Schritt A: {schritt_a.text}
+    Schritt B: {schritt_b.text}
+    
+    Antworte mit JA/NEIN und Begründung.
+    """)
+    
+    if "ja" in antwort.lower():
+        return True, antwort
+    else:
+        return False, antwort
+```
+
+---
+
+## Feature-basierte Variabilität
+
+**Product Line Engineering Integration:**
+
+```python
+def analysiere_features(use_case, analyse):
+    features = {
+        'capability': use_case.fähigkeit,
+        'mandatory': [],
+        'optional': []
+    }
+    
+    # Core Features (aus Basisablauf)
+    core_controller = extrahiere_controller(use_case.basisablauf)
+    features['mandatory'] = core_controller
+    
+    # Optional Features (aus Erweiterungen)
+    for erweiterung in use_case.erweiterungen:
+        feature_name = generiere_feature_name(erweiterung)
+        optional_controller = extrahiere_controller(erweiterung)
+        
+        features['optional'].append({
+            'name': feature_name,
+            'controller': optional_controller,
+            'trigger': erweiterung.trigger
+        })
+    
+    # Shared Objects (über mehrere UCs)
+    features['shared_objects'] = identifiziere_shared_objects(analyse)
+    
+    return features
+```
+
+---
+
+## Export-Formate
+
+### JSON (für weitere Verarbeitung)
+
+```json
+{
+  "use_case": "UC1: [Titel]",
+  "capability": "[Fähigkeit]",
+  "objekte": {
+    "boundaries": [
+      {
+        "id": "b1",
+        "name": "[Name]",
+        "typ": "input|output",
+        "actor": "[Actor-ID]",
+        "controller": "[Controller-ID]"
+      }
+    ],
+    "entities": [
+      {
+        "id": "e1",
+        "name": "[Name]",
+        "typ": "betriebsmittel|konfiguration|transformation",
+        "eigenschaften": {},
+        "shared": true|false
+      }
+    ],
+    "controllers": [
+      {
+        "id": "c1",
+        "name": "[Name]",
+        "funktionen": [
+          {
+            "name": "[Funktion]",
+            "implizit": true|false,
+            "grund": "[Begründung wenn implizit]"
+          }
+        ],
+        "optional": true|false,
+        "shared": true|false
+      }
+    ]
+  },
+  "kontrollfluss": [
+    {
+      "von": "[Controller-ID]",
+      "zu": "[Controller-ID]",
+      "label": "B1|B2a|...",
+      "parallel_gruppe": "[Gruppen-ID wenn parallel]"
+    }
+  ],
+  "datenfluss": [
+    {
+      "von": "[Entity-ID oder Controller-ID]",
+      "zu": "[Controller-ID oder Entity-ID]",
+      "typ": "use|provide"
+    }
+  ],
+  "validierung": {
+    "fehler": [],
+    "warnungen": []
+  },
+  "uc_verbesserungen": [
+    {
+      "typ": "fehlende_vorbedingung|redundanter_schritt|...",
+      "beschreibung": "[Text]",
+      "vorschlag": "[Korrektur]"
+    }
+  ]
+}
+```
+
+### XMI (für Rhapsody)
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="2.1" 
+         xmlns:xmi="http://schema.omg.org/spec/XMI/2.1"
+         xmlns:uml="http://www.omg.org/spec/UML/2.1">
+  
+  <!-- Actors -->
+  <packagedElement xmi:type="uml:Actor" xmi:id="[id]" name="[name]">
+    <stereotype>[human|non-human]</stereotype>
+  </packagedElement>
+  
+  <!-- Boundary Objects -->
+  <packagedElement xmi:type="uml:Class" xmi:id="[id]" name="[name]">
+    <stereotype>boundary</stereotype>
+  </packagedElement>
+  
+  <!-- Entity Objects -->
+  <packagedElement xmi:type="uml:Class" xmi:id="[id]" name="[name]">
+    <stereotype>entity</stereotype>
+    <category>[betriebsmittel|konfiguration|transformation]</category>
+  </packagedElement>
+  
+  <!-- Control Objects -->
+  <packagedElement xmi:type="uml:Class" xmi:id="[id]" name="[name]">
+    <stereotype>control</stereotype>
+    <ownedOperation name="[funktion]">
+      <implicit>[true|false]</implicit>
+    </ownedOperation>
+  </packagedElement>
+  
+  <!-- Control Flow -->
+  <packagedElement xmi:type="uml:Association" xmi:id="[id]">
+    <memberEnd xmi:idref="[controller1_id]"/>
+    <memberEnd xmi:idref="[controller2_id]"/>
+    <stereotype>controlFlow</stereotype>
+    <label>[B1|B2a|...]</label>
+  </packagedElement>
+  
+  <!-- Data Flow -->
+  <packagedElement xmi:type="uml:Dependency" xmi:id="[id]">
+    <client xmi:idref="[entity_id oder controller_id]"/>
+    <supplier xmi:idref="[controller_id oder entity_id]"/>
+    <stereotype>[use|provide]</stereotype>
+  </packagedElement>
+  
+</xmi:XMI>
+```
+
+---
+
+## Implementierungs-Roadmap
+
+### Phase 1: Prototyp (MVP)
+**Ziel:** Basis-Funktionalität ohne LLM
+
+1. ✅ UC-Parser (Struktur erkennen)
+2. ✅ NLP-Pipeline (spaCy)
+3. ✅ Regelbasierte Extraktion (Patterns)
+4. ✅ RUP-Validierung
+5. ✅ JSON-Export
+
+### Phase 2: LLM-Integration
+**Ziel:** Domänen-Unabhängigkeit
+
+1. ✅ Kontext-System implementieren
+2. ✅ LLM-Anbindung (GPT-4/Claude)
+3. ✅ Eigenschaften-Queries
+4. ✅ Transformations-Erkennung
+5. ✅ Parallelitäts-Prüfung
+
+### Phase 3: UC-Qualität
+**Ziel:** Automatische Verbesserungen
+
+1. ✅ Vorbedingungen-Prüfung
+2. ✅ Redundanz-Erkennung
+3. ✅ Vollständigkeits-Prüfung
+4. ✅ Vorschläge generieren
+
+### Phase 4: Rhapsody-Integration
+**Ziel:** Bi-direktionale Synchronisation
+
+1. ⬜ XMI-Export
+2. ⬜ XMI-Import
+3. ⬜ Rhapsody-Plugin
+4. ⬜ Sync-Mechanismus
+
+### Phase 5: Multi-UC-Analyse
+**Ziel:** Cross-UC Optimierung
+
+1. ⬜ Shared Objects erkennen
+2. ⬜ Inkonsistenzen finden
+3. ⬜ Feature-Modell generieren
+4. ⬜ Delta-Analyse
+
+---
+
+## Qualitätsmetriken
+
+### Automatische Bewertung
+
+```python
+def bewerte_analyse_qualität(analyse):
+    metriken = {
+        'vollständigkeit': 0.0,
+        'korrektheit': 0.0,
+        'konsistenz': 0.0,
+        'wiederverwendbarkeit': 0.0
+    }
+    
+    # Vollständigkeit
+    alle_betriebsmittel_erfasst = len(analyse.fehlende_vorbedingungen) == 0
+    alle_schritte_analysiert = len(analyse.unanalysierte_schritte) == 0
+    alle_actors_verwendet = len(analyse.ungenutzte_actors) == 0
+    
+    metriken['vollständigkeit'] = (
+        int(alle_betriebsmittel_erfasst) +
+        int(alle_schritte_analysiert) +
+        int(alle_actors_verwendet)
+    ) / 3.0
+    
+    # Korrektheit (RUP-Regeln)
+    validierungsfehler = validiere_robustheitsanalyse(analyse)
+    metriken['korrektheit'] = 1.0 - (len(validierungsfehler) / 10.0)  # Max 10 Fehler
+    
+    # Konsistenz
+    naming_konsistent = prüfe_naming_conventions(analyse)
+    markierungen_konsistent = prüfe_markierungen(analyse)  # [implizit], [optional]
+    
+    metriken['konsistenz'] = (
+        int(naming_konsistent) +
+        int(markierungen_konsistent)
+    ) / 2.0
+    
+    # Wiederverwendbarkeit
+    generische_namen = prüfe_generalisierung(analyse)  # GetränkeManager statt KaffeeManager
+    shared_objects_identifiziert = len(analyse.shared_objects) > 0
+    
+    metriken['wiederverwendbarkeit'] = (
+        generische_namen +
+        int(shared_objects_identifiziert)
+    ) / 2.0
+    
+    # Gesamt-Score
+    metriken['gesamt'] = sum(metriken.values()) / 4.0
+    
+    return metriken
+```
+
+---
+
+## Best Practices
+
+### 1. LLM-Prompting
+
+**Gute Prompts:**
+```
+✅ "Welche Eigenschaften hat '{objekt}' im Kontext von '{fähigkeit}'?
+    Analysiere: verderblich, hygienekritisch, temperaturkritisch, 
+    lagerungspflichtig, wiederverwendbar."
+
+✅ "Was entsteht aus '{objekt}' durch '{verb}' in der Domäne '{domäne}'?
+    Wenn eine Transformation stattfindet, nenne das Ergebnis.
+    Wenn keine Transformation, antworte 'keine Transformation'."
+```
+
+**Schlechte Prompts:**
+```
+❌ "Ist Milch verderblich?" (zu domänenspezifisch)
+❌ "Was macht man mit Kaffee?" (zu vage)
+```
+
+### 2. Caching
+
+```python
+# Häufige Anfragen cachen
+cache = {
+    "eigenschaften:Objekt:Domäne": ergebnis,
+    "transformation:Objekt:Verb:Domäne": ergebnis,
+    ...
+}
+
+# Vor LLM-Anfrage prüfen
+def query_mit_cache(frage, kontext):
+    key = generate_cache_key(frage

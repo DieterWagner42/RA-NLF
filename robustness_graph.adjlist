@@ -1,0 +1,39 @@
+#vis.py
+# GMT Wed Oct 15 21:13:55 2025
+# 
+System Interface
+Notification Interface
+Configuration Interface
+Espressos
+Pressure
+beans
+Milk
+Container
+Level
+Temperature
+Heater
+Time
+Grounds
+Notification
+Coffee
+Amount
+Sugar
+Compressor
+Water
+User System Interface Notification Interface
+Filter
+Cup
+Amount Controller
+Coffee Controller
+Error Handler A2
+System Orchestrator Time Controller Heater Controller Filter Controller Amount Controller Cup Controller Water Controller Begin Controller Milk Controller Coffee Controller Notification Controller Compressor Controller
+Milk Controller
+Filter Controller
+Error Handler A1
+Heater Controller
+Cup Controller
+Notification Controller
+Compressor Controller
+Begin Controller
+Time Controller
+Water Controller
