@@ -1,0 +1,78 @@
+{
+  "summary": "Enhanced control flow analysis with validation integration; Created 1 enhanced control flow patterns; Generated 2 validation flow patterns; Analyzed 13 steps with 33 validation requirements; Detected 3 enhanced control flow violations; Applied validation state management and coordination rules",
+  "enhanced_control_flow_patterns": [
+    {
+      "pattern_id": "MainFlowWithValidation",
+      "pattern_type": "main_flow_validated",
+      "steps_count": 13,
+      "validation_patterns_count": 2,
+      "coordination_sequence": [
+        "1. Timer triggers validation sequence",
+        "2. Parallel validation of all input resources",
+        "3. Coordinator confirms all validations complete",
+        "4. Parallel processing of validated resources",
+        "5. Sequential assembly and delivery"
+      ]
+    }
+  ],
+  "validation_flow_patterns": [
+    {
+      "pattern_id": "InputValidationFlow",
+      "pattern_type": "input_validation",
+      "processing_sequence": [
+        "1. Accept all input resources simultaneously",
+        "2. Validate each resource in parallel (quality, quantity, safety)",
+        "3. Confirm validation completion for each resource",
+        "4. Forward all validated resources to respective managers"
+      ],
+      "coordination_rules": [
+        "GeträenkeOrchestrator waits for all validations to complete",
+        "No processing starts until all resources validated",
+        "Validation failures trigger error handling"
+      ]
+    },
+    {
+      "pattern_id": "ProcessingValidationFlow",
+      "pattern_type": "processing_validation",
+      "processing_sequence": [
+        "1. Begin parallel processing of validated resources (B2a||B2b||B2c||B2d)",
+        "2. Transition validated resources to processed state",
+        "3. Sequential brewing with processed ingredients (B3a)",
+        "4. Final assembly with validated milk (B3b)",
+        "5. Transition to ready state for user delivery"
+      ],
+      "coordination_rules": [
+        "GeträenkeOrchestrator coordinates parallel processing",
+        "Sequential dependencies respected (grinding before brewing)",
+        "State transitions monitored throughout"
+      ]
+    }
+  ],
+  "coordination_rules": {
+    "validation_coordination": [
+      "GeträenkeOrchestrator ensures all resources validated before processing",
+      "Validation failures trigger coordinated error handling",
+      "Parallel validations coordinated for efficiency"
+    ],
+    "processing_coordination": [
+      "GeträenkeOrchestrator sequences processing after validation completion",
+      "Parallel processing coordinated for independent resources",
+      "Sequential dependencies respected for dependent operations"
+    ],
+    "state_coordination": [
+      "State transitions coordinated throughout system",
+      "Invalid state transitions prevented by coordinator",
+      "State consistency maintained across all resources"
+    ],
+    "error_coordination": [
+      "Validation errors propagate through coordination hierarchy",
+      "Processing errors trigger appropriate recovery actions",
+      "Critical failures escalate to user notification"
+    ]
+  },
+  "violations": [
+    "Processing step B6 lacks validation state preconditions",
+    "Invalid state transition in step B3b: ValidationState.VALIDATED -> [<ValidationState.READY: 'ready'>]",
+    "Invalid state transition in step B3b: ValidationState.VALIDATED -> [<ValidationState.READY: 'ready'>]"
+  ]
+}

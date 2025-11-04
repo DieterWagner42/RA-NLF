@@ -1,0 +1,58 @@
+Capability: Coffee Preparation
+Feature: Milk Coffee Feature
+
+Use Case 1: Prepare Milk Coffee
+Goal: User can drink their milk coffee every morning at 7am
+
+Preconditions:
+- Coffee beans are available in the system
+- Water is available in the system
+- Milk is available in the system
+- Sugar is available in the system
+
+Actors: User
+
+Basic Flow:
+B1 (trigger) System clock reaches the user defined time of 7:00h (Radio clock)
+B2a The system activates the water heater
+B2b The system prepares filter
+B2c The system grinds the user defined amount of coffe beens with the user defined grinding degree directly into the filter
+B2d The system retrieves cup from storage container and places it under the filter
+B3a The system begins brewing coffee with the defined amount of water into the cup
+B3b The system adds milk to the cup
+B4 The system outputs a message to user
+B5 The system presents cup to user
+B6 End UC
+
+Postcondition:
+User has received coffee on time.
+
+Alternative Flows:
+A1 at B2a Water heater has too little water
+A1.1 The system switches off water heater
+A1.2 The system outputs an error message to user
+A1.3 End UC
+
+Postcondition:
+User has not received any coffee.
+
+A2 at B3b Too little milk
+A2.1 The system stops milk addition
+A2.2 The system outputs an error message to user
+A2.3 End UC
+
+Postcondition:
+No beverages containing milk will be offered to the user anymore.
+
+A3 at any time Overheat detected
+A3.1 The system stops all actions
+A3.2 The system switch of itself
+A3.3 End UC
+
+Postcondition:
+System is out of order and needs to be repaired.
+
+Extension Flows:
+E1 B3-B5 (trigger) User wants sugar in coffee
+E1.1 The system adds defined amount of sugar to the cup
+E1.2 Continue in main flow

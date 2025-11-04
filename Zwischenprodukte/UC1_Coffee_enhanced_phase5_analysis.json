@@ -1,0 +1,201 @@
+{
+  "summary": "Analyzed 9 data entities (4 ingredients, 1 products); Identified 5 data transformations; Created 14 data flows; Detected 8 data flow violations; Applied UC-Methode data flow rules",
+  "data_entities": [
+    {
+      "entity_id": "input_coffee_beans",
+      "name": "coffee beans",
+      "data_type": "ingredient",
+      "initial_state": "raw",
+      "current_state": "raw",
+      "managed_by": "CoffeeBeansManager",
+      "dependencies": []
+    },
+    {
+      "entity_id": "processed_processed_ground_coffee",
+      "name": "processed ground coffee",
+      "data_type": "intermediate",
+      "initial_state": "processed",
+      "current_state": "processed",
+      "managed_by": "CoffeeBeansManager",
+      "dependencies": [
+        "input_coffee_beans"
+      ]
+    },
+    {
+      "entity_id": "input_water",
+      "name": "water",
+      "data_type": "ingredient",
+      "initial_state": "raw",
+      "current_state": "raw",
+      "managed_by": "WaterManager",
+      "dependencies": []
+    },
+    {
+      "entity_id": "processed_processed_hot_water",
+      "name": "processed hot water",
+      "data_type": "intermediate",
+      "initial_state": "processed",
+      "current_state": "processed",
+      "managed_by": "WaterManager",
+      "dependencies": [
+        "input_water"
+      ]
+    },
+    {
+      "entity_id": "input_milk",
+      "name": "milk",
+      "data_type": "ingredient",
+      "initial_state": "raw",
+      "current_state": "raw",
+      "managed_by": "MilkManager",
+      "dependencies": []
+    },
+    {
+      "entity_id": "processed_processed_steamed_milk",
+      "name": "processed steamed milk",
+      "data_type": "intermediate",
+      "initial_state": "processed",
+      "current_state": "processed",
+      "managed_by": "MilkManager",
+      "dependencies": [
+        "input_milk"
+      ]
+    },
+    {
+      "entity_id": "input_cup",
+      "name": "cup",
+      "data_type": "ingredient",
+      "initial_state": "raw",
+      "current_state": "raw",
+      "managed_by": "CupManager",
+      "dependencies": []
+    },
+    {
+      "entity_id": "processed_processed_cup",
+      "name": "processed cup",
+      "data_type": "intermediate",
+      "initial_state": "processed",
+      "current_state": "processed",
+      "managed_by": "CupManager",
+      "dependencies": [
+        "input_cup"
+      ]
+    },
+    {
+      "entity_id": "final_milk_coffee",
+      "name": "milk coffee",
+      "data_type": "product",
+      "initial_state": "ready",
+      "current_state": "ready",
+      "managed_by": "GeträenkeOrchestrator",
+      "dependencies": [
+        "input_coffee_beans",
+        "processed_processed_ground_coffee",
+        "input_water",
+        "processed_processed_hot_water",
+        "input_milk",
+        "processed_processed_steamed_milk",
+        "input_cup",
+        "processed_processed_cup"
+      ]
+    }
+  ],
+  "data_transformations": [
+    {
+      "transformation_id": "T1",
+      "name": "grinding validated beans",
+      "transformation_type": "physical",
+      "responsible_controller": "CoffeeBeansManager",
+      "input_entities": [],
+      "output_entities": [
+        "processed_processed_ground_coffee"
+      ],
+      "validation_rules": [
+        "Validate validated beans quality",
+        "Verify grinding completion"
+      ]
+    },
+    {
+      "transformation_id": "T2",
+      "name": "heating validated water",
+      "transformation_type": "physical",
+      "responsible_controller": "WaterManager",
+      "input_entities": [],
+      "output_entities": [
+        "processed_processed_hot_water"
+      ],
+      "validation_rules": [
+        "Validate validated water quality",
+        "Verify heating completion"
+      ]
+    },
+    {
+      "transformation_id": "T3",
+      "name": "steaming validated milk",
+      "transformation_type": "physical",
+      "responsible_controller": "MilkManager",
+      "input_entities": [],
+      "output_entities": [
+        "processed_processed_steamed_milk"
+      ],
+      "validation_rules": [
+        "Validate validated milk quality",
+        "Verify steaming completion"
+      ]
+    },
+    {
+      "transformation_id": "T4",
+      "name": "usage validated cup",
+      "transformation_type": "physical",
+      "responsible_controller": "CupManager",
+      "input_entities": [],
+      "output_entities": [
+        "processed_processed_cup"
+      ],
+      "validation_rules": [
+        "Validate validated cup quality",
+        "Verify usage completion"
+      ]
+    },
+    {
+      "transformation_id": "T5",
+      "name": "assemble milk coffee",
+      "transformation_type": "aggregation",
+      "responsible_controller": "GeträenkeOrchestrator",
+      "input_entities": [
+        "input_coffee_beans",
+        "processed_processed_ground_coffee",
+        "input_water",
+        "processed_processed_hot_water",
+        "input_milk",
+        "processed_processed_steamed_milk",
+        "input_cup",
+        "processed_processed_cup"
+      ],
+      "output_entities": [
+        "final_milk_coffee"
+      ],
+      "validation_rules": [
+        "Verify all components present",
+        "Check temperature",
+        "Confirm quality"
+      ]
+    }
+  ],
+  "violations": [
+    "Entity processed_processed_ground_coffee depends on unprocessed entity input_coffee_beans",
+    "Entity processed_processed_hot_water depends on unprocessed entity input_water",
+    "Entity processed_processed_steamed_milk depends on unprocessed entity input_milk",
+    "Entity processed_processed_cup depends on unprocessed entity input_cup",
+    "Entity final_milk_coffee depends on unprocessed entity input_coffee_beans",
+    "Entity final_milk_coffee depends on unprocessed entity input_water",
+    "Entity final_milk_coffee depends on unprocessed entity input_milk",
+    "Entity final_milk_coffee depends on unprocessed entity input_cup"
+  ],
+  "enhanced_features": [
+    "Validation state management integrated",
+    "RAW -> VALIDATED -> PROCESSED -> READY flow",
+    "Proper entity state tracking",
+    "Enhanced transformation validation"
+  ]
+}

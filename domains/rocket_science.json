@@ -1,0 +1,412 @@
+{
+  "domain_name": "rocket_science",
+  "description": "Rocket launch operations, spacecraft systems, and space mission control",
+  "keywords": ["rocket", "launch", "spacecraft", "propulsion", "orbital", "space", "mission", "trajectory"],
+  "non_human_indicators": [
+    "launch sequencer", "automated guidance system", "telemetry system",
+    "navigation computer", "attitude control system", "propulsion controller",
+    "flight computer", "mission timer", "countdown system", "abort system",
+    "range safety system", "tracking radar", "ground control computer",
+    "orbital mechanics computer", "life support system", "thermal control system",
+    "communication satellite", "deep space network", "mission control center",
+    "launch control system", "engine controller", "fuel management system",
+    "telemetry processor", "data acquisition system", "command uplink system",
+    "downlink communication", "ground station", "satellite communication",
+    "mission operations center", "flight dynamics facility", "range control center",
+    "launch operations center", "mission control room", "flight control team",
+    "ground support equipment", "umbilical systems", "launch pad systems",
+    "vehicle health monitoring", "real-time telemetry", "command & data handling",
+    "spacecraft bus", "payload operations center", "network control center",
+    "mission planning system", "trajectory analysis system", "orbital determination system",
+    "space surveillance network", "deep space communication complex"
+  ],
+  "domain_knowledge": [
+    "Safety is paramount in rocket operations",
+    "Precise timing is critical for launches",
+    "Multiple redundant systems are required",
+    "Environmental conditions affect operations",
+    "Fuel handling requires extreme caution",
+    "Trajectory calculations must be precise",
+    "Abort procedures are essential for safety",
+    "Communication with spacecraft is vital",
+    "Orbital mechanics govern spacecraft movement",
+    "Telemetry provides real-time vehicle status",
+    "Command & control systems manage missions",
+    "Ground networks enable global communication",
+    "Human-Equipment-Unit coordination is critical",
+    "Mission operations require 24/7 monitoring",
+    "Data downlink enables mission analysis",
+    "Redundant communication paths prevent loss",
+    "Command validation prevents erroneous operations"
+  ],
+  "term_specific_knowledge": {
+    "rocket": [
+      "Fuel systems require precise control",
+      "Launch windows are time-critical",
+      "Telemetry monitors all systems",
+      "Range safety ensures public protection",
+      "Multi-stage separation sequences",
+      "Thrust vector control for steering"
+    ],
+    "spacecraft": [
+      "Life support systems are critical",
+      "Communication with ground is essential",
+      "Orbital mechanics determine trajectories",
+      "Thermal control maintains temperatures",
+      "Attitude control maintains orientation",
+      "Power systems must be reliable"
+    ],
+    "launch": [
+      "Weather conditions must be acceptable",
+      "All systems must be go for launch",
+      "Abort capabilities must be ready",
+      "Range must be clear of traffic"
+    ],
+    "mission": [
+      "Mission planning requires precision",
+      "Contingency procedures must exist",
+      "Real-time monitoring is essential",
+      "Communication windows are limited"
+    ],
+    "telemetry": [
+      "Real-time data transmission is vital",
+      "Health and status monitoring continuous",
+      "Data validation prevents false alarms",
+      "Multiple telemetry streams provide redundancy"
+    ],
+    "communication": [
+      "Ground stations provide global coverage",
+      "Backup communication paths essential",
+      "Command authentication prevents errors",
+      "Data encryption protects mission security"
+    ],
+    "control": [
+      "Command & control systems manage operations",
+      "Human-Equipment-Unit interfaces critical",
+      "Automated systems provide rapid response",
+      "Manual override capabilities required"
+    ]
+  },
+  "exclusion_patterns": {
+    "rocket": [
+      "Rocket manufacturing",
+      "Component procurement", 
+      "Historical mission analysis",
+      "Theoretical physics research",
+      "Rocket engine design"
+    ],
+    "spacecraft": [
+      "Spacecraft design process",
+      "Material science research", 
+      "Vendor negotiations",
+      "Component testing procedures"
+    ],
+    "mission": [
+      "Mission funding",
+      "Political considerations",
+      "Public relations activities"
+    ]
+  },
+  "related_capabilities": {
+    "rocket": ["Satellite Deployment", "Space Station Operations", "Planetary Missions"],
+    "spacecraft": ["Orbital Maneuvers", "Re-entry Operations", "Deep Space Navigation"],
+    "launch": ["Mission Planning", "Range Operations", "Recovery Operations"],
+    "mission": ["Flight Operations", "Ground Support", "Data Analysis"]
+  },
+  "verb_classification": {
+    "transaction_verbs": {
+      "description": "Boundary identification: Data flow to/from system boundaries (domain-specific)",
+      "verbs": {
+        "deploy": "delivers payload to Space boundary",
+        "confirm": "sends confirmation to Ground Control boundary"
+      }
+    },
+    "transformation_verbs": {
+      "description": "Process chain: Entity Input -> Entity Output (domain-specific)",
+      "verbs": {
+        "ignite": "Fuel + Oxidizer -> Thrust",
+        "burn": "Propellant -> Exhaust + Thrust",
+        "separate": "CombinedStage -> Stage1 + Stage2",
+        "pressurize": "Fuel -> PressurizedFuel",
+        "navigate": "Position + Velocity -> NewTrajectory"
+      }
+    },
+    "function_verbs": {
+      "description": "General system actions without direct transformation (domain-specific)",
+      "verbs": {
+        "abort": "terminates system operation",
+        "arm": "prepares system for operation",
+        "disarm": "makes system safe"
+      }
+    }
+  },
+  "implementation_elements": {
+    "description": "Implementation elements that should be replaced with functional activities",
+    "elements": {
+      "engine": {
+        "warning": "Engine is implementation element - use functional activity",
+        "functional_suggestion": "The system generates thrust",
+        "transformation": "Fuel -> Thrust"
+      },
+      "antenna": {
+        "warning": "Antenna is implementation element - use functional activity",
+        "functional_suggestion": "The system transmits signals",
+        "transformation": "Data -> RadioSignal"
+      },
+      "thruster": {
+        "warning": "Thruster is implementation element - use functional activity",
+        "functional_suggestion": "The system controls attitude",
+        "transformation": "ControlSignal -> AttitudeChange"
+      },
+      "gyroscope": {
+        "warning": "Gyroscope is implementation element - use functional activity",
+        "functional_suggestion": "The system measures orientation",
+        "transformation": "Rotation -> OrientationData"
+      },
+      "accelerometer": {
+        "warning": "Accelerometer is implementation element - use functional activity",
+        "functional_suggestion": "The system measures acceleration",
+        "transformation": "Motion -> AccelerationData"
+      },
+      "computer": {
+        "warning": "Computer is implementation element - use functional activity",
+        "functional_suggestion": "The system processes/calculates data",
+        "transformation": "InputData -> ProcessedData"
+      },
+      "guidancecomputer": {
+        "warning": "GuidanceComputer is implementation element - use functional activity",
+        "functional_suggestion": "The system provides navigation/guidance capability",
+        "transformation": "FlightProgram -> GuidanceCommands"
+      },
+      "sequencer": {
+        "warning": "Sequencer is implementation element - use functional activity", 
+        "functional_suggestion": "The system controls sequence/timing",
+        "transformation": "SequenceData -> TimedActions"
+      },
+      "launchsequencer": {
+        "warning": "LaunchSequencer is implementation element - use functional activity",
+        "functional_suggestion": "The system controls launch sequence",
+        "transformation": "LaunchPlan -> LaunchActions"
+      },
+      "processor": {
+        "warning": "Processor is implementation element - use functional activity",
+        "functional_suggestion": "The system computes/processes data",
+        "transformation": "InputData -> ComputedResult"
+      },
+      "controller": {
+        "warning": "Controller is implementation element - use functional activity",
+        "functional_suggestion": "The system manages/controls operation",
+        "transformation": "ControlInput -> ControlOutput"
+      },
+      "groundsystem": {
+        "warning": "GroundSystem is implementation element - use functional activity",
+        "functional_suggestion": "The system provides ground support capability",
+        "transformation": "SupportRequest -> SupportService"
+      },
+      "groundsystems": {
+        "warning": "GroundSystems is implementation element - use functional activity", 
+        "functional_suggestion": "The system provides ground support capability",
+        "transformation": "SupportRequest -> SupportService"
+      }
+    }
+  },
+  "compound_nouns": {
+    "flight_operations": [
+      "flight program", "flight data", "flight telemetry", "flight computer", "flight path"
+    ],
+    "propulsion": [
+      "propellant flow", "thrust vector", "engine control", "fuel system", "oxidizer system"
+    ],
+    "guidance_navigation": [
+      "guidance computer", "guidance correction", "navigation data", "trajectory data", "attitude control"
+    ],
+    "mission_control": [
+      "launch sequence", "abort sequence", "mission control", "launch window", "countdown timer"
+    ],
+    "deployment_operations": [
+      "satellite deployment", "orbital insertion", "stage separation", "payload deployment"
+    ],
+    "telemetry_communication": [
+      "telemetry data", "telemetry stream", "communication system", "data stream", "command system"
+    ],
+    "system_validation": [
+      "system check", "validation process", "diagnostic data", "status report", "health monitoring"
+    ]
+  },
+  "technical_context_mapping": {
+    "time_keywords": ["time", "clock", "timer", "7:00h", "reaches set time", "schedule"],
+    "thermal_keywords": ["heater", "heat", "temperature", "activate", "warm", "hot", "cool"],
+    "mechanical_keywords": ["grind", "motor", "mechanical", "degree", "amount", "grinding"],
+    "liquid_keywords": ["brew", "pour", "flow", "water", "milk", "liquid", "steam"],
+    "filter_keywords": ["filter", "prepare", "clean", "filtration"],
+    "container_keywords": ["cup", "container", "storage", "retrieve", "place", "tank"],
+    "communication_keywords": ["message", "output", "user", "display", "present", "interface"],
+    "error_keywords": ["error", "too little", "overheat", "safety", "stop", "failure"],
+    "power_keywords": ["switch", "power", "electrical", "on", "off", "energy"],
+    "contexts": {
+      "Zeit": ["time_keywords"],
+      "Wärmeregelung": ["thermal_keywords"],
+      "Mechanische Steuerung": ["mechanical_keywords"],
+      "Flüssigkeitssteuerung": ["liquid_keywords"],
+      "Filtervorbereitung": ["filter_keywords"],
+      "Behälterverwaltung": ["container_keywords"],
+      "Benutzerschnittstelle": ["communication_keywords"],
+      "Fehlerbehandlung": ["error_keywords"],
+      "Stromversorgung": ["power_keywords"]
+    }
+  },
+  "context_classification": {
+    "step_phases": {
+      "initialization": {
+        "keywords": ["opens", "window", "trigger", "start", "begin", "initialize"],
+        "patterns": ["(trigger)", "window opens", "start", "begin"]
+      },
+      "validation": {
+        "keywords": ["validates", "check", "verify", "confirm", "test", "ensure"],
+        "patterns": ["validates", "check.*criteria", "verify.*system", "confirm.*status"]
+      },
+      "execution": {
+        "keywords": ["calculates", "generates", "loads", "initiates", "ignites", "monitors", "separates", "deploys"],
+        "patterns": ["calculates.*trajectory", "generates.*sequence", "loads.*program", "ignites.*engine"]
+      },
+      "completion": {
+        "keywords": ["transmits", "report", "end", "complete", "finish", "success"],
+        "patterns": ["transmits.*report", "end uc", "mission.*success", "complete.*operation"]
+      },
+      "error_handling": {
+        "keywords": ["fails", "failure", "error", "abort", "exception", "attempts"],
+        "patterns": [".*fails.*", ".*failure.*", "abort.*", "attempts.*recovery"]
+      }
+    },
+    "business_contexts": {
+      "Mission Planning & Trajectory Calculation": {
+        "keywords": ["trajectory", "calculate", "plan", "sequence", "optimal", "orbital", "path"],
+        "patterns": ["trajectory.*target", "calculate.*optimal", "plan.*mission", "sequence.*timing"]
+      },
+      "Launch Operations & Engine Control": {
+        "keywords": ["launch", "ignite", "propellant", "engines", "thrust", "combustion", "window"],
+        "patterns": ["launch.*window", "ignite.*engine", "propellant.*flow", "thrust.*control"]
+      },
+      "Flight Monitoring & Control": {
+        "keywords": ["monitors", "telemetry", "flight", "separate", "stage", "loads", "confirms"],
+        "patterns": ["monitors.*telemetry", "flight.*data", "stage.*separation", "loads.*program"]
+      },
+      "Satellite Deployment & Positioning": {
+        "keywords": ["satellite", "deploy", "orbital", "position", "target", "payload"],
+        "patterns": ["deploy.*satellite", "orbital.*position", "satellite.*target", "payload.*deploy"]
+      },
+      "Mission Validation & Quality Assurance": {
+        "keywords": ["validates", "criteria", "check", "subsystem", "verification"],
+        "patterns": ["validates.*subsystem", "check.*criteria", "verify.*status", "validation.*process"]
+      },
+      "Mission Reporting & Communication": {
+        "keywords": ["transmit", "report", "communication", "notification", "success", "data"],
+        "patterns": ["transmit.*report", "mission.*success", "communication.*ground", "send.*notification"]
+      },
+      "System Initialization & Setup": {
+        "keywords": ["window", "opens", "trigger", "initialize", "setup", "start"],
+        "patterns": ["window.*opens", "trigger.*system", "initialize.*operation", "setup.*mission"]
+      },
+      "Error Handling & Recovery": {
+        "keywords": ["fails", "failure", "abort", "attempts", "recovery", "exception"],
+        "patterns": [".*fails.*", "abort.*sequence", "attempts.*recovery", "failure.*detected"]
+      }
+    },
+    "technical_contexts": {
+      "Event-driven system trigger": {
+        "keywords": ["trigger", "opens", "window", "scheduled", "time"],
+        "patterns": ["(trigger)", "window.*opens", "scheduled.*time", "event.*driven"]
+      },
+      "Data processing and computational operations": {
+        "keywords": ["calculates", "generates", "processes", "computes", "analysis"],
+        "patterns": ["calculates.*", "generates.*", "processes.*data", "computational.*"]
+      },
+      "System validation and verification": {
+        "keywords": ["validates", "confirms", "verifies", "checks", "ensures"],
+        "patterns": ["validates.*system", "confirms.*status", "verifies.*data", "checks.*criteria"]
+      },
+      "Hardware control and actuation": {
+        "keywords": ["ignites", "initiates", "separates", "deploys", "controls", "actuates"],
+        "patterns": ["ignites.*engine", "initiates.*flow", "separates.*stage", "deploys.*satellite"]
+      },
+      "Data communication and transmission": {
+        "keywords": ["send", "transmit", "loads", "transfers", "communication"],
+        "patterns": ["send.*data", "transmit.*report", "loads.*program", "communication.*system"]
+      },
+      "System monitoring and feedback control": {
+        "keywords": ["monitors", "telemetry", "feedback", "tracking", "surveillance"],
+        "patterns": ["monitors.*telemetry", "flight.*monitoring", "feedback.*control", "tracking.*data"]
+      },
+      "Error handling and recovery procedures": {
+        "keywords": ["fails", "abort", "attempts", "recovery", "exception", "failure"],
+        "patterns": [".*fails.*", "abort.*procedure", "attempts.*recovery", "error.*handling"]
+      }
+    },
+    "controller_mapping": {
+      "Event-driven system trigger": {
+        "controller_pattern": "{Entity}TriggerController",
+        "description_pattern": "Controls {entity} trigger events in {step_id}",
+        "keywords": ["trigger", "opens", "window", "scheduled", "time"],
+        "examples": {
+          "launch window": "LaunchWindowTriggerController",
+          "system": "SystemEventController",
+          "timer": "TimerTriggerController"
+        }
+      },
+      "Data processing and computational operations": {
+        "controller_pattern": "{Entity}ProcessingController",
+        "description_pattern": "Processes {entity} data and performs calculations in {step_id}",
+        "keywords": ["calculates", "generates", "processes", "computes"],
+        "examples": {
+          "trajectory": "TrajectoryProcessingController",
+          "sequence": "SequenceProcessingController"
+        }
+      },
+      "System validation and verification": {
+        "controller_pattern": "{Entity}ValidationController", 
+        "description_pattern": "Validates and verifies {entity} in {step_id}",
+        "keywords": ["validates", "confirms", "verifies", "checks"],
+        "examples": {
+          "subsystems": "SubsystemValidationController",
+          "criteria": "CriteriaValidationController"
+        }
+      },
+      "Hardware control and actuation": {
+        "controller_pattern": "{Entity}ActuationController",
+        "description_pattern": "Controls and actuates {entity} hardware in {step_id}",
+        "keywords": ["ignites", "initiates", "separates", "deploys"],
+        "examples": {
+          "engines": "EngineActuationController",
+          "stage": "StageSeparationController"
+        }
+      },
+      "Data communication and transmission": {
+        "controller_pattern": "{Entity}CommunicationController",
+        "description_pattern": "Manages {entity} communication and data transmission in {step_id}",
+        "keywords": ["send", "transmit", "loads", "transfers"],
+        "examples": {
+          "trajectory": "TrajectoryCommunicationController",
+          "program": "ProgramTransmissionController"
+        }
+      },
+      "System monitoring and feedback control": {
+        "controller_pattern": "{Entity}MonitoringController",
+        "description_pattern": "Monitors {entity} and provides feedback control in {step_id}",
+        "keywords": ["monitors", "telemetry", "feedback", "tracking"],
+        "examples": {
+          "telemetry": "TelemetryMonitoringController",
+          "flight": "FlightMonitoringController"
+        }
+      },
+      "Error handling and recovery procedures": {
+        "controller_pattern": "{Entity}RecoveryController",
+        "description_pattern": "Handles {entity} errors and recovery procedures in {step_id}",
+        "keywords": ["fails", "abort", "attempts", "recovery"],
+        "examples": {
+          "subsystem": "SubsystemRecoveryController",
+          "stage": "StageRecoveryController"
+        }
+      }
+    }
+  }
+}

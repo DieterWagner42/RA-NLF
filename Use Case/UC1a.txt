@@ -1,0 +1,76 @@
+Capability: Satellite Deployment
+Feature: Autonomous Rocket Launch
+
+Use Case 3: Execute Satellite Launch Mission
+Goal: Mission Control successfully deploys satellite into target orbit autonomously
+
+Preconditions:
+- Rocket propellant is loaded and verified
+- Satellite payload is integrated and tested
+- Weather conditions meet launch criteria
+- Launch window is calculated and available
+- Ground systems are operational and ready
+
+Actors: Mission Control, Launch Sequencer, Ground Systems
+
+Main Flow:
+B1 (trigger) Launch window opens at scheduled time
+B2a The system validates all subsystems against launch criteria
+B2b The system calculates optimal trajectory for target orbit
+B2c The system generates launch sequence with timing parameters
+B2d The system loads flight program into guidance computer
+B3a The system initiates propellant flow to combustion chamber
+B3b The system ignites main engines with thrust vector control
+B3c The system monitors flight telemetry against planned trajectory
+B4a The system separates first stage at calculated altitude
+B4b The system ignites second stage for orbital insertion
+B5a The system deploys satellite at target orbital position
+B5b The system confirms satellite deployment with telemetry data
+B6 The system transmits mission success report to mission control
+B7 End UC
+
+Postcondition:
+Satellite is successfully deployed in target orbit with confirmed telemetry.
+
+Alternative Flows:
+A1 at B2a Critical subsystem fails validation
+A1.1 The system generates failure report with diagnostic data
+A1.2 The system activates abort sequence with safety protocols
+A1.3 The system transmits abort notification to mission control
+A1.4 End UC
+
+Postcondition:
+Launch is safely aborted, all systems secured.
+
+A2 at B3c Trajectory deviation exceeds tolerance limits
+A2.1 The system calculates corrective thrust vector commands
+A2.2 The system applies guidance correction with engine gimbaling
+A2.3 If correction succeeds, system continues with normal sequence
+A2.4 If correction fails, system executes emergency abort sequence
+A2.5 The system transmits trajectory status to mission control
+A2.6 End UC
+
+Postcondition:
+Flight path is corrected or mission is safely aborted.
+
+A3 at B4a Stage separation failure detected
+A3.1 The system attempts secondary separation mechanism
+A3.2 If separation succeeds, system continues with second stage ignition
+A3.3 If separation fails, system executes mission abort procedures
+A3.4 The system transmits separation status to mission control
+A3.5 End UC
+
+Postcondition:
+Stage separation completed or mission safely terminated.
+
+Extension Flows:
+E1 at B5a Satellite requires orbital adjustment
+E1.1 The system calculates orbital correction parameters
+E1.2 The system executes satellite thruster burn for final positioning
+E1.3 The system verifies satellite orbital parameters against target
+E1.4 Continue with B5b
+
+E2 at any time Ground control requests telemetry data
+E2.1 The system packages current flight data into telemetry stream
+E2.2 The system transmits real-time telemetry to ground stations
+E2.3 Continue with current flow

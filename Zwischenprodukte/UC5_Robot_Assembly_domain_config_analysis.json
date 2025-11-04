@@ -1,0 +1,53 @@
+{
+  "capability_context": {
+    "capability_name": "Robotic Manufacturing",
+    "domain": "robotics",
+    "domain_knowledge": [
+      "Safety interlocks prevent accidents",
+      "Sensor feedback enables autonomous operation",
+      "Calibration ensures precision",
+      "Error handling prevents damage",
+      "Real-time control is often required",
+      "Path planning prevents collisions",
+      "Force control enables safe interaction",
+      "Redundancy improves reliability"
+    ],
+    "excluded_aspects": [],
+    "related_capabilities": [
+      "Assembly Operations",
+      "Material Handling",
+      "Quality Control"
+    ]
+  },
+  "uc_title_analysis": {
+    "uc_title": "Assemble Product Components",
+    "solution_constraints": [],
+    "possible_variants": [],
+    "scope_restrictions": []
+  },
+  "goal_analysis": {
+    "goal_text": "Robot can assemble components with precision",
+    "temporal_requirements": [],
+    "input_requirements": [],
+    "identified_controllers": [],
+    "identified_boundaries": []
+  },
+  "actors": [
+    {
+      "name": "Operator",
+      "type": "human",
+      "description": "Human actor in robotics domain"
+    },
+    {
+      "name": "Quality Control System",
+      "type": "non_human",
+      "description": "Non-human actor in robotics domain"
+    },
+    {
+      "name": "Vision System",
+      "type": "non_human",
+      "description": "Non-human actor in robotics domain"
+    }
+  ],
+  "context_summary": "Domain: robotics; Capability: Robotic Manufacturing; Use Case: Assemble Product Components; Actors: Operator (human), Quality Control System (non_human), Vision System (non_human)"
+}

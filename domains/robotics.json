@@ -1,0 +1,134 @@
+{
+  "domain_name": "robotics", 
+  "description": "Robotic systems, automation, and manufacturing operations",
+  "keywords": ["robot", "automation", "actuator", "sensor", "manipulation", "autonomous"],
+  "non_human_indicators": [
+    "robotic arm", "automated system", "sensor array", "vision system",
+    "motion controller", "servo system", "pneumatic system", "hydraulic system",
+    "PLC controller", "industrial robot", "collaborative robot", "AGV system",
+    "conveyor system", "pick and place system", "assembly robot",
+    "quality control system", "inspection system", "measurement system",
+    "safety monitoring system", "collision detection system", "emergency stop system",
+    "path planning system", "kinematics controller", "force feedback system"
+  ],
+  "domain_knowledge": [
+    "Safety interlocks prevent accidents",
+    "Sensor feedback enables autonomous operation", 
+    "Calibration ensures precision",
+    "Error handling prevents damage",
+    "Real-time control is often required",
+    "Path planning prevents collisions",
+    "Force control enables safe interaction",
+    "Redundancy improves reliability"
+  ],
+  "term_specific_knowledge": {
+    "robot": [
+      "Motion planning prevents collisions",
+      "Sensors provide environmental awareness",
+      "Control loops maintain stability", 
+      "Safety zones protect operators",
+      "Programming defines behavior",
+      "Calibration ensures accuracy"
+    ],
+    "automation": [
+      "Process control maintains quality",
+      "Monitoring systems detect faults",
+      "Feedback systems enable control",
+      "Integration requires communication"
+    ],
+    "sensor": [
+      "Calibration affects accuracy",
+      "Filtering reduces noise",
+      "Fusion improves reliability",
+      "Real-time processing required"
+    ],
+    "actuator": [
+      "Force control prevents damage",
+      "Position feedback enables precision",
+      "Velocity limits ensure safety"
+    ]
+  },
+  "exclusion_patterns": {
+    "robot": [
+      "Robot design and development",
+      "Component manufacturing",
+      "Research and development",
+      "Academic theory"
+    ],
+    "automation": [
+      "Business process automation",
+      "Software automation", 
+      "IT automation"
+    ]
+  },
+  "related_capabilities": {
+    "robot": ["Human-Robot Interaction", "Autonomous Navigation", "Task Planning"],
+    "automation": ["Process Control", "Quality Assurance", "Predictive Maintenance"],
+    "sensor": ["Data Acquisition", "Signal Processing", "Fault Detection"],
+    "manufacturing": ["Assembly Operations", "Material Handling", "Quality Control"]
+  },
+  "verb_classification": {
+    "transaction_verbs": {
+      "description": "Boundary identification: Data flow to/from system boundaries (domain-specific)",
+      "verbs": {
+        "place": "delivers product to Output boundary",
+        "mark": "labels item at Quality boundary"
+      }
+    },
+    "transformation_verbs": {
+      "description": "Process chain: Entity Input -> Entity Output (domain-specific)",
+      "verbs": {
+        "assemble": "Components -> AssembledProduct",
+        "weld": "Parts -> WeldedJoint",
+        "screw": "Component + Screw -> SecuredComponent",
+        "join": "Part1 + Part2 -> JoinedParts",
+        "pick": "ItemLocation -> GraspedItem",
+        "move": "Item -> MovedItem",
+        "position": "Component -> PositionedComponent",
+        "orient": "Item -> OrientedItem",
+        "apply": "Tool -> ProcessedWorkpiece",
+        "scan": "WorkArea -> PositionData"
+      }
+    },
+    "function_verbs": {
+      "description": "General system actions without direct transformation (domain-specific)",
+      "verbs": {
+        "plan": "determines operation sequence",
+        "home": "moves robot to home position",
+        "teach": "records robot movements",
+        "program": "configures robot behavior",
+        "optimize": "improves operation efficiency"
+      }
+    }
+  },
+  "implementation_elements": {
+    "description": "Implementation elements that should be replaced with functional activities",
+    "elements": {
+      "gripper": {
+        "warning": "Gripper is implementation element - use functional activity",
+        "functional_suggestion": "The system grasps the part",
+        "transformation": "Object -> GraspedObject"
+      },
+      "camera": {
+        "warning": "Camera is implementation element - use functional activity",
+        "functional_suggestion": "The system captures image data",
+        "transformation": "VisualScene -> ImageData"
+      },
+      "laser": {
+        "warning": "Laser is implementation element - use functional activity",
+        "functional_suggestion": "The system measures distance",
+        "transformation": "LaserBeam -> DistanceData"
+      },
+      "tool": {
+        "warning": "Tool is implementation element - use functional activity",
+        "functional_suggestion": "The system applies process to workpiece",
+        "transformation": "RawWorkpiece -> ProcessedWorkpiece"
+      },
+      "conveyor": {
+        "warning": "Conveyor is implementation element - use functional activity",
+        "functional_suggestion": "The system transports items",
+        "transformation": "Item -> TransportedItem"
+      }
+    }
+  }
+}

@@ -1,0 +1,625 @@
+"""
+UC1 Robustness Analysis (RA) Diagram HTML Generator
+Creates HTML representation of UC1 Coffee preparation RA analysis results
+Optimized for Microsoft Edge browser viewing
+"""
+
+import json
+
+def generate_uc1_ra_html():
+    """Generate HTML RA diagram for UC1 based on analysis results"""
+    
+    # Load analysis results
+    with open("Zwischenprodukte/UC1_Coffee_phase2_analysis.json", "r", encoding="utf-8") as f:
+        phase2_data = json.load(f)
+    
+    with open("Zwischenprodukte/UC1_Coffee_phase3_analysis.json", "r", encoding="utf-8") as f:
+        phase3_data = json.load(f)
+    
+    html_content = f"""
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UC1: Prepare Milk Coffee - Robustness Analysis Diagram</title>
+    <style>
+        body {{
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }}
+        
+        .container {{
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }}
+        
+        h1 {{
+            text-align: center;
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }}
+        
+        h2 {{
+            color: #34495e;
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+            margin-top: 30px;
+        }}
+        
+        .section {{
+            margin: 30px 0;
+            padding: 20px;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            background-color: #fafafa;
+        }}
+        
+        /* Actor Styles */
+        .actors {{
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin: 20px 0;
+        }}
+        
+        .actor {{
+            border: 2px solid #e74c3c;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            background-color: #fff5f5;
+            min-width: 120px;
+        }}
+        
+        .actor.human {{
+            border-color: #e74c3c;
+            background-color: #fff5f5;
+        }}
+        
+        .actor.non-human {{
+            border-color: #f39c12;
+            background-color: #fef9e7;
+        }}
+        
+        /* Boundary Styles */
+        .boundaries {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }}
+        
+        .boundary {{
+            border: 2px solid #9b59b6;
+            border-radius: 8px;
+            padding: 15px;
+            background-color: #f8f4fd;
+        }}
+        
+        .boundary.input {{
+            border-color: #3498db;
+            background-color: #ebf3fd;
+        }}
+        
+        .boundary.output {{
+            border-color: #e67e22;
+            background-color: #fdf4e7;
+        }}
+        
+        /* Controller Styles */
+        .controllers {{
+            margin: 20px 0;
+        }}
+        
+        .orchestrator {{
+            border: 3px solid #2c3e50;
+            border-radius: 8px;
+            padding: 20px;
+            background-color: #ecf0f1;
+            text-align: center;
+            margin-bottom: 20px;
+        }}
+        
+        .manager-controllers {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }}
+        
+        .controller {{
+            border: 2px solid #27ae60;
+            border-radius: 8px;
+            padding: 15px;
+            background-color: #eafaf1;
+        }}
+        
+        /* Entity Styles */
+        .entities {{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }}
+        
+        .entity {{
+            border: 2px solid #8e44ad;
+            border-radius: 8px;
+            padding: 15px;
+            background-color: #f4ecf7;
+            text-align: center;
+            min-width: 120px;
+        }}
+        
+        .transformation-arrow {{
+            font-size: 24px;
+            color: #8e44ad;
+            font-weight: bold;
+        }}
+        
+        /* Function Lists */
+        .functions {{
+            margin-top: 10px;
+            font-size: 0.9em;
+        }}
+        
+        .function {{
+            color: #555;
+            margin: 2px 0;
+        }}
+        
+        .function.phase1 {{
+            color: #e74c3c;
+            font-weight: bold;
+        }}
+        
+        .function.phase2 {{
+            color: #27ae60;
+        }}
+        
+        .function.uc-flow {{
+            color: #3498db;
+            font-weight: bold;
+        }}
+        
+        /* Interaction Styles */
+        .interactions {{
+            margin: 20px 0;
+        }}
+        
+        .interaction {{
+            background-color: #fff;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+        }}
+        
+        .interaction.trigger {{
+            border-left: 4px solid #e74c3c;
+        }}
+        
+        .interaction.control-flow {{
+            border-left: 4px solid #3498db;
+        }}
+        
+        .interaction.orchestration {{
+            border-left: 4px solid #2c3e50;
+        }}
+        
+        /* Mapping Table */
+        .mapping-table {{
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }}
+        
+        .mapping-table th,
+        .mapping-table td {{
+            border: 1px solid #bdc3c7;
+            padding: 10px;
+            text-align: left;
+        }}
+        
+        .mapping-table th {{
+            background-color: #34495e;
+            color: white;
+        }}
+        
+        .mapping-table tr:nth-child(even) {{
+            background-color: #f8f9fa;
+        }}
+        
+        .step-type {{
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }}
+        
+        .step-type.trigger {{
+            background-color: #e74c3c;
+            color: white;
+        }}
+        
+        .step-type.parallel {{
+            background-color: #f39c12;
+            color: white;
+        }}
+        
+        .step-type.sequential {{
+            background-color: #27ae60;
+            color: white;
+        }}
+        
+        /* Summary Styles */
+        .summary {{
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }}
+        
+        .summary-grid {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }}
+        
+        .summary-item {{
+            text-align: center;
+            padding: 10px;
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 5px;
+        }}
+        
+        .summary-number {{
+            font-size: 2em;
+            font-weight: bold;
+            color: #3498db;
+        }}
+        
+        /* Responsive */
+        @media (max-width: 768px) {{
+            .actors, .entities {{
+                flex-direction: column;
+                align-items: center;
+            }}
+            
+            .boundaries, .manager-controllers {{
+                grid-template-columns: 1fr;
+            }}
+        }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🍵 UC1: Prepare Milk Coffee<br>Robustness Analysis Diagram</h1>
+        
+        <!-- Actors Section -->
+        <div class="section">
+            <h2>👥 Actors (Phase 1)</h2>
+            <div class="actors">
+                <div class="actor human">
+                    <strong>User</strong><br>
+                    <em>(Human)</em><br>
+                    <small>B5: receives cup</small>
+                </div>
+                <div class="actor non-human">
+                    <strong>Timer</strong><br>
+                    <em>(Non-Human)</em><br>
+                    <small>B1: 7:00h trigger</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Boundary Objects Section -->
+        <div class="section">
+            <h2>🔲 Boundary Objects (Phase 2)</h2>
+            <h3>Input Boundaries</h3>
+            <div class="boundaries">
+                <div class="boundary input">
+                    <strong>&lt;&lt;boundary&gt;&gt;</strong><br>
+                    <strong>CoffeeBeans Input</strong>
+                    <div class="functions">
+                        <div class="function">+ accept_input</div>
+                        <div class="function">+ validate_input</div>
+                        <div class="function phase1">+ provide_user_feedback</div>
+                    </div>
+                </div>
+                <div class="boundary input">
+                    <strong>&lt;&lt;boundary&gt;&gt;</strong><br>
+                    <strong>Water Input</strong>
+                    <div class="functions">
+                        <div class="function">+ accept_input</div>
+                        <div class="function">+ validate_input</div>
+                        <div class="function phase1">+ provide_user_feedback</div>
+                    </div>
+                </div>
+                <div class="boundary input">
+                    <strong>&lt;&lt;boundary&gt;&gt;</strong><br>
+                    <strong>Milk Input</strong>
+                    <div class="functions">
+                        <div class="function">+ accept_input</div>
+                        <div class="function">+ validate_input</div>
+                        <div class="function phase1">+ provide_user_feedback</div>
+                    </div>
+                </div>
+            </div>
+            
+            <h3>Output Boundaries</h3>
+            <div class="boundaries">
+                <div class="boundary output">
+                    <strong>&lt;&lt;boundary&gt;&gt;</strong><br>
+                    <strong>CoffeeBeans Waste Output</strong>
+                    <div class="functions">
+                        <div class="function">+ dispose_waste</div>
+                        <div class="function">+ manage_waste</div>
+                        <div class="function phase1">+ apply_constraints</div>
+                    </div>
+                </div>
+                <div class="boundary output">
+                    <strong>&lt;&lt;boundary&gt;&gt;</strong><br>
+                    <strong>User Presentation</strong>
+                    <div class="functions">
+                        <div class="function uc-flow">+ output_message (B4)</div>
+                        <div class="function uc-flow">+ present_cup (B5)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Controller Objects Section -->
+        <div class="section">
+            <h2>⚙️ Controller Objects (Phase 2 + 3)</h2>
+            
+            <div class="orchestrator">
+                <strong>&lt;&lt;controller&gt;&gt; GeträenkeOrchestrator</strong><br>
+                <div class="functions">
+                    <div class="function">+ coordinate_parallel_steps()</div>
+                    <div class="function">+ manage_sequence()</div>
+                </div>
+                <small><strong>Coordinates:</strong> WaterManager, CoffeeBeansManager, MilkManager</small>
+            </div>
+            
+            <div class="manager-controllers">
+                <div class="controller">
+                    <strong>&lt;&lt;controller&gt;&gt;</strong><br>
+                    <strong>CoffeeBeansManager</strong>
+                    <div class="functions">
+                        <div class="function phase2">+ store_coffeebeans</div>
+                        <div class="function phase2">+ monitor_level</div>
+                        <div class="function phase2">+ provide_coffeebeans</div>
+                        <div class="function phase1">+ schedule_usage (7am)</div>
+                        <div class="function phase2">+ grind_coffee</div>
+                        <div class="function phase2">+ clean_equipment</div>
+                    </div>
+                    <div style="margin-top: 10px; font-weight: bold; color: #3498db;">
+                        UC Flow: B2c (grinds), B3a (begins)
+                    </div>
+                </div>
+                
+                <div class="controller">
+                    <strong>&lt;&lt;controller&gt;&gt;</strong><br>
+                    <strong>WaterManager</strong>
+                    <div class="functions">
+                        <div class="function phase2">+ store_water</div>
+                        <div class="function phase2">+ monitor_level</div>
+                        <div class="function phase2">+ provide_water</div>
+                        <div class="function phase1">+ schedule_usage (7am)</div>
+                        <div class="function phase2">+ heat_water</div>
+                        <div class="function phase2">+ clean_equipment</div>
+                    </div>
+                    <div style="margin-top: 10px; font-weight: bold; color: #3498db;">
+                        UC Flow: B2a (activates), B3a (begins)
+                    </div>
+                </div>
+                
+                <div class="controller">
+                    <strong>&lt;&lt;controller&gt;&gt;</strong><br>
+                    <strong>MilkManager</strong>
+                    <div class="functions">
+                        <div class="function phase2">+ store_milk</div>
+                        <div class="function phase2">+ monitor_level</div>
+                        <div class="function phase2">+ provide_milk</div>
+                        <div class="function phase1">+ schedule_usage (7am)</div>
+                        <div class="function phase2">+ cool_milk</div>
+                        <div class="function phase2">+ steam_milk</div>
+                        <div class="function phase2">+ clean_equipment</div>
+                    </div>
+                    <div style="margin-top: 10px; font-weight: bold; color: #3498db;">
+                        UC Flow: B3b (adds)
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Entity Flows Section -->
+        <div class="section">
+            <h2>🔄 Entity Flows & Transformations (Phase 3)</h2>
+            <div class="entities">
+                <div class="entity">
+                    <strong>&lt;&lt;entity&gt;&gt;</strong><br>
+                    <strong>Kaffeebohnen</strong>
+                </div>
+                <div class="transformation-arrow">
+                    ➡️<br>
+                    <small>beans → grinding<br>→ ground coffee</small>
+                </div>
+                <div class="entity">
+                    <strong>&lt;&lt;entity&gt;&gt;</strong><br>
+                    <strong>Kaffeemehl</strong>
+                </div>
+                <div class="transformation-arrow">
+                    ➡️<br>
+                    <small>to FilterManager</small>
+                </div>
+                <div class="controller" style="max-width: 200px;">
+                    <strong>&lt;&lt;controller&gt;&gt;</strong><br>
+                    <strong>FilterManager</strong><br>
+                    <small>(internal, B2c reference)</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Interaction Flows Section -->
+        <div class="section">
+            <h2>🔗 Interaction Flows (Phase 3)</h2>
+            <div class="interactions">
+                <div class="interaction trigger">
+                    <strong>1. TRIGGER (B1):</strong> Zeit → ZeitManager<br>
+                    <small>Time trigger activates system at 7:00h</small>
+                </div>
+                
+                <div class="interaction control-flow">
+                    <strong>2. CONTROL FLOWS:</strong><br>
+                    • B3a → B3b: CoffeeBeansAreManager → MilkIsManager<br>
+                    • B3a → B3b: WaterIsManager → MilkIsManager
+                </div>
+                
+                <div class="interaction orchestration">
+                    <strong>3. ORCHESTRATION PATTERN:</strong><br>
+                    GeträenkeOrchestrator coordinates parallel execution of:<br>
+                    • WaterIsManager (B2a, B3a)<br>
+                    • CoffeeBeansAreManager (B3a)<br>
+                    • MilkIsManager (B3b)
+                </div>
+            </div>
+        </div>
+        
+        <!-- UC Step Mapping Section -->
+        <div class="section">
+            <h2>📋 UC Step to RA Object Mapping</h2>
+            <table class="mapping-table">
+                <thead>
+                    <tr>
+                        <th>UC Step</th>
+                        <th>RA Object Mapping</th>
+                        <th>Step Type</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>B1</strong></td>
+                        <td>Zeit → ZeitManager</td>
+                        <td><span class="step-type trigger">Trigger</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>B2a</strong></td>
+                        <td>WaterIsManager.activates()</td>
+                        <td><span class="step-type parallel">Parallel</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>B2b</strong></td>
+                        <td>FilterManager (internal)</td>
+                        <td><span class="step-type parallel">Parallel</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>B2c</strong></td>
+                        <td>CoffeeManager.grinds() → Kaffeemehl</td>
+                        <td><span class="step-type parallel">Parallel</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>B2d</strong></td>
+                        <td>TassenManager (internal)</td>
+                        <td><span class="step-type parallel">Parallel</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>B3a</strong></td>
+                        <td>WaterManager + CoffeeManager</td>
+                        <td><span class="step-type parallel">Parallel</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>B3b</strong></td>
+                        <td>MilkManager.adds()</td>
+                        <td><span class="step-type parallel">Parallel</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>B4</strong></td>
+                        <td>HMI.output_message()</td>
+                        <td><span class="step-type sequential">Sequential</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>B5</strong></td>
+                        <td>HMI.present_cup()</td>
+                        <td><span class="step-type sequential">Sequential</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>B6</strong></td>
+                        <td>End</td>
+                        <td><span class="step-type sequential">Sequential</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Summary Section -->
+        <div class="summary">
+            <h2 style="color: white; border-left: 4px solid #3498db;">📊 RA Objects Summary</h2>
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <div class="summary-number">6</div>
+                    <div>Input Boundaries</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-number">6</div>
+                    <div>Manager Controllers</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-number">2</div>
+                    <div>Output Boundaries</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-number">{len(phase3_data.get('entity_flows', []))}</div>
+                    <div>Entity Flows</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-number">{len(phase3_data.get('interactions', []))}</div>
+                    <div>Interactions</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-number">14</div>
+                    <div>Total RA Classes</div>
+                </div>
+            </div>
+            
+            <h3 style="color: white; margin-top: 25px;">Phase Summaries:</h3>
+            <p><strong>Phase 1:</strong> {phase3_data['phase1_summary']}</p>
+            <p><strong>Phase 2:</strong> {phase3_data['phase2_summary']}</p>
+            <p><strong>Phase 3:</strong> {phase3_data['phase3_summary']}</p>
+        </div>
+        
+        <footer style="text-align: center; margin-top: 30px; color: #7f8c8d;">
+            <p>Generated by UC-Methode.txt Implementation | Phases 1-3 Complete</p>
+            <p><small>🤖 Generated with Claude Code | Microsoft Edge Optimized</small></p>
+        </footer>
+    </div>
+</body>
+</html>
+"""
+    
+    # Save HTML file
+    output_file = "Zwischenprodukte/UC1_Coffee_RA_Diagram.html"
+    with open(output_file, 'w', encoding='utf-8') as f:
+        f.write(html_content)
+    
+    print(f"HTML RA diagram generated successfully!")
+    print(f"File saved to: {output_file}")
+    print(f"Open in Microsoft Edge for optimal viewing.")
+    
+    return output_file
+
+if __name__ == "__main__":
+    generate_uc1_ra_html()

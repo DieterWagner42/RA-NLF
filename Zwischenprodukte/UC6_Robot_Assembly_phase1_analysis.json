@@ -1,0 +1,35 @@
+{
+  "capability_context": {
+    "capability_name": "Robotic Manufacturing",
+    "domain": "manufacturing",
+    "domain_knowledge": [],
+    "excluded_aspects": [],
+    "related_capabilities": []
+  },
+  "uc_title_analysis": {
+    "uc_title": "Assemble Product Components",
+    "solution_constraints": [],
+    "possible_variants": [],
+    "scope_restrictions": []
+  },
+  "goal_analysis": {
+    "goal_text": "Robot can assemble components with precision",
+    "temporal_requirements": [],
+    "input_requirements": [],
+    "identified_controllers": [],
+    "identified_boundaries": []
+  },
+  "actors": [
+    {
+      "name": "Operator",
+      "type": "human",
+      "description": "Human actor"
+    },
+    {
+      "name": "Quality Control System",
+      "type": "non_human",
+      "description": "Non-human actor"
+    }
+  ],
+  "context_summary": "Domain: manufacturing; Capability: Robotic Manufacturing; Use Case: Assemble Product Components; Actors: Operator (human), Quality Control System (non_human)"
+}

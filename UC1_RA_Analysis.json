@@ -1,0 +1,211 @@
+{
+  "meta": {
+    "use_case": "UC1",
+    "domain": "beverage_preparation",
+    "total_ra_classes": 50,
+    "analysis_engine": "generic_uc_analyzer.py",
+    "generated_at": "2025-10-28T16:49:26.723694",
+    "json_format_version": "1.0"
+  },
+  "components": {
+    "actors": [
+      {
+        "name": "ExternalTrigger"
+      },
+      {
+        "name": "Timer"
+      },
+      {
+        "name": "User"
+      }
+    ],
+    "controllers": [
+      {
+        "name": "A1ConditionManager"
+      },
+      {
+        "name": "A2ConditionManager"
+      },
+      {
+        "name": "ActionsManager"
+      },
+      {
+        "name": "Beverage_PreparationDomainOrchestrator"
+      },
+      {
+        "name": "CoffeeBeansSupplyController"
+      },
+      {
+        "name": "CoffeeManager"
+      },
+      {
+        "name": "CupManager"
+      },
+      {
+        "name": "ErrormessageManager"
+      },
+      {
+        "name": "FilterManager"
+      },
+      {
+        "name": "HMIController"
+      },
+      {
+        "name": "Manager"
+      },
+      {
+        "name": "MessageManager"
+      },
+      {
+        "name": "MilkManager"
+      },
+      {
+        "name": "MilkSupplyController"
+      },
+      {
+        "name": "MilkadditionManager"
+      },
+      {
+        "name": "SetamountManager"
+      },
+      {
+        "name": "SugarManager"
+      },
+      {
+        "name": "SugarSupplyController"
+      },
+      {
+        "name": "TimeManager"
+      },
+      {
+        "name": "UserRequestManager"
+      },
+      {
+        "name": "WaterSupplyController"
+      },
+      {
+        "name": "WaterheaterManager"
+      }
+    ],
+    "boundaries": [
+      {
+        "name": "CoffeeBeansSupplyBoundary"
+      },
+      {
+        "name": "HMIAdditiveInputBoundary"
+      },
+      {
+        "name": "HMIErrorDisplayBoundary"
+      },
+      {
+        "name": "HMIStatusDisplayBoundary"
+      },
+      {
+        "name": "MilkSupplyBoundary"
+      },
+      {
+        "name": "ProductDeliveryBoundary"
+      },
+      {
+        "name": "SugarSupplyBoundary"
+      },
+      {
+        "name": "TimeTriggerBoundary"
+      },
+      {
+        "name": "WaterSupplyBoundary"
+      }
+    ],
+    "entities": [
+      {
+        "name": "Coffee"
+      },
+      {
+        "name": "CoffeeBeanAmount"
+      },
+      {
+        "name": "CoffeeBeans"
+      },
+      {
+        "name": "Cup"
+      },
+      {
+        "name": "Errormessage"
+      },
+      {
+        "name": "Filter"
+      },
+      {
+        "name": "GrindingDegree"
+      },
+      {
+        "name": "Message"
+      },
+      {
+        "name": "Milk"
+      },
+      {
+        "name": "MilkAddition"
+      },
+      {
+        "name": "StorageContainer"
+      },
+      {
+        "name": "Sugar"
+      },
+      {
+        "name": "Water"
+      },
+      {
+        "name": "WaterAmount"
+      },
+      {
+        "name": "WaterHeater"
+      },
+      {
+        "name": "Waterheater"
+      }
+    ]
+  },
+  "relationships": {
+    "control_flows": [
+      {
+        "source": "SystemBoundary",
+        "destination": "SystemController",
+        "rule": "Rule 1",
+        "description": "External input through boundary"
+      },
+      {
+        "source": "SystemController",
+        "destination": "ProcessManager",
+        "rule": "Rule 2",
+        "description": "Sequential processing"
+      }
+    ],
+    "data_flows": [
+      {
+        "source": "SystemController",
+        "destination": "ProcessData",
+        "type": "use",
+        "entity": "ProcessData"
+      },
+      {
+        "source": "ProcessManager",
+        "destination": "Result",
+        "type": "provide",
+        "entity": "Result"
+      }
+    ],
+    "actor_boundary_connections": []
+  },
+  "summary": {
+    "total_components": 50,
+    "actors_count": 3,
+    "controllers_count": 22,
+    "boundaries_count": 9,
+    "entities_count": 16,
+    "control_flows_count": 2,
+    "data_flows_count": 2,
+    "actor_boundary_connections_count": 0
+  }
+}

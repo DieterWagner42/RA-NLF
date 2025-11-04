@@ -1,0 +1,38 @@
+
+GENERIC UC ANALYZER - WORKFLOW SUMMARY
+=====================================
+
+INPUT:
+- UC File (.txt) mit Steps, Actors, Preconditions
+- Domain Configuration (JSON)
+
+PROCESSING PHASES:
+1. UC File Parsing (Steps, Actors, Preconditions extraction)
+2. Domain Detection (automatic keyword-based)
+3. NLP Preprocessing (compound nouns + spaCy processing)
+4. Verb Analysis (Transaction/Transformation/Function classification)
+5. RA Class Generation (Actor, Boundary, Controller, Entity)
+6. Control Flow Analysis (UC-Methode Rules 1-5 with parallel handling)
+7. Data Flow Analysis (enhanced preposition semantics)
+8. Validation (UC-Methode compliance + Actor usage)
+
+OUTPUT:
+- JSON Export (complete analysis metadata)
+- Enhanced CSV (12 columns with multiple data flows)
+- RA Diagram (SVG/PNG RUP-compliant)
+
+KEY ENHANCEMENTS:
+- Domain-agnostic (works with any domain)
+- Enhanced UC-Methode Rules (Actor+TransVerb→Boundary)
+- Parallel flow handling (correct step linking)
+- Multiple data flows per step (multiple USE/PROVIDE entities)
+- Preposition semantics (before=USE, after=PROVIDE)
+- Comprehensive validation & warnings
+
+EXAMPLE RESULTS (UC3 Rocket Launch):
+- 99 RA Classes generated
+- 65 Control Flows analyzed
+- 15 Data Flows detected
+- 35 UC Steps processed
+- 5 Parallel patterns identified
+    

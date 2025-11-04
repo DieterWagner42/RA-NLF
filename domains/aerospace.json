@@ -1,0 +1,85 @@
+{
+  "domain_name": "aerospace",
+  "description": "Aircraft systems, flight operations, and aviation control",
+  "keywords": ["aircraft", "flight", "aviation", "aerodynamics", "navigation", "altitude", "pilot"],
+  "non_human_indicators": [
+    "autopilot system", "flight management system", "navigation system",
+    "air traffic control system", "weather radar system", "collision avoidance system",
+    "engine monitoring system", "flight control system", "landing system",
+    "communication system", "transponder system", "GPS navigation system",
+    "inertial navigation system", "flight data recorder", "cockpit voice recorder",
+    "pressurization system", "environmental control system", "ice protection system",
+    "fuel management system", "hydraulic system", "electrical system",
+    "air traffic management", "ground control station", "flight operations center",
+    "aircraft communications addressing and reporting system", "satellite communication",
+    "very high frequency radio", "high frequency radio", "datalink communication",
+    "flight data monitoring", "quick access recorder", "aircraft condition monitoring",
+    "maintenance planning system", "flight dispatch system", "operations control center",
+    "meteorological data system", "notice to airmen system", "flight information service",
+    "area control center", "approach control", "tower control", "ground movement radar",
+    "precision approach radar", "secondary surveillance radar", "mode s transponder"
+  ],
+  "domain_knowledge": [
+    "Flight safety protocols are mandatory",
+    "Weather conditions affect operations",
+    "Navigation systems require calibration",
+    "Maintenance schedules are critical",
+    "Altitude affects system performance", 
+    "Emergency procedures must be available",
+    "Communication is essential for safety",
+    "Multiple backup systems are required",
+    "Air traffic control coordinates aircraft movements",
+    "Flight data monitoring enables safety analysis",
+    "Communication systems provide global coverage",
+    "Human-Equipment-Unit coordination critical in cockpit",
+    "Real-time weather data essential for safety",
+    "Command & control systems manage air traffic",
+    "Datalink reduces communication workload",
+    "Surveillance systems track aircraft positions"
+  ],
+  "term_specific_knowledge": {
+    "aircraft": [
+      "Multiple redundant systems ensure safety",
+      "Regular inspections are mandatory",
+      "Weight and balance affect performance",
+      "Fuel planning is critical"
+    ],
+    "flight": [
+      "Weather affects flight operations",
+      "Navigation accuracy is essential",
+      "Communication with ATC required",
+      "Emergency procedures must be ready"
+    ],
+    "navigation": [
+      "Multiple systems provide redundancy",
+      "GPS accuracy varies by location",
+      "Backup systems are required",
+      "Regular updates ensure accuracy"
+    ],
+    "engine": [
+      "Continuous monitoring required",
+      "Temperature limits must be observed",
+      "Fuel flow affects performance",
+      "Maintenance intervals are strict"
+    ]
+  },
+  "exclusion_patterns": {
+    "aircraft": [
+      "Aircraft manufacturing",
+      "Airline operations",
+      "Airport management",
+      "Regulatory compliance"
+    ],
+    "flight": [
+      "Pilot training",
+      "Flight planning software",
+      "Air traffic management"
+    ]
+  },
+  "related_capabilities": {
+    "aircraft": ["Air Traffic Control", "Weather Systems", "Maintenance Operations"],
+    "flight": ["Navigation Systems", "Communication Systems", "Emergency Procedures"],
+    "navigation": ["GPS Systems", "Radar Systems", "Communication Systems"],
+    "engine": ["Monitoring Systems", "Fuel Systems", "Maintenance Systems"]
+  }
+}

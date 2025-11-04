@@ -1,0 +1,76 @@
+{
+  "capability_context": {
+    "capability_name": "Network Operations",
+    "domain": "telecommunications",
+    "domain_knowledge": [
+      "Network reliability requires redundancy",
+      "Quality of service affects user experience",
+      "Security protocols protect data transmission",
+      "Network management enables proactive maintenance",
+      "Command & control systems coordinate operations",
+      "Real-time monitoring prevents service degradation",
+      "Human-Equipment-Unit interfaces enable management",
+      "Automation reduces operational complexity",
+      "Fault management ensures service continuity",
+      "Performance monitoring optimizes resources",
+      "Configuration management maintains consistency",
+      "Security management protects network integrity",
+      "Multiple routing paths provide redundancy",
+      "Load balancing optimizes performance",
+      "Traffic engineering manages congestion",
+      "Network slicing enables service differentiation"
+    ],
+    "excluded_aspects": [
+      "Network equipment manufacturing",
+      "Standards development",
+      "Regulatory compliance procedures"
+    ],
+    "related_capabilities": [
+      "Network Security",
+      "Network Optimization",
+      "Fault Management"
+    ]
+  },
+  "uc_title_analysis": {
+    "uc_title": "Monitor Network Performance",
+    "solution_constraints": [
+      "Domain-specific constraint: network"
+    ],
+    "possible_variants": [
+      "Network Security",
+      "Network Optimization",
+      "Fault Management"
+    ],
+    "scope_restrictions": []
+  },
+  "goal_analysis": {
+    "goal_text": "Network operations center can monitor network performance in real-time",
+    "temporal_requirements": [],
+    "input_requirements": [],
+    "identified_controllers": [],
+    "identified_boundaries": []
+  },
+  "actors": [
+    {
+      "name": "Network Operator",
+      "type": "human",
+      "description": "Human actor in telecommunications domain"
+    },
+    {
+      "name": "Network Management System",
+      "type": "non_human",
+      "description": "Non-human actor in telecommunications domain"
+    },
+    {
+      "name": "Telemetry Processor",
+      "type": "human",
+      "description": "Human actor in telecommunications domain"
+    },
+    {
+      "name": "Command and Control System",
+      "type": "non_human",
+      "description": "Non-human actor in telecommunications domain"
+    }
+  ],
+  "context_summary": "Domain: telecommunications; Capability: Network Operations; Use Case: Monitor Network Performance; Actors: Network Operator (human), Network Management System (non_human), Telemetry Processor (human), Command and Control System (non_human); Excluded: Network equipment manufacturing, Standards development..."
+}

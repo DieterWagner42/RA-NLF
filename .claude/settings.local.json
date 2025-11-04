@@ -1,7 +1,25 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(python:*)",
+      "Bash(grep:*)",
+      "Bash(mv:*)",
+      "Bash(find:*)",
+      "Bash(wc:*)",
+      "Bash(ls:*)",
+      "Bash(rm:*)",
+      "Bash(cp:*)",
+      "Bash(tail:*)",
+      "WebFetch(domain:de.wikipedia.org)",
+      "Bash(sed:*)",
+      "Bash(rg:*)",
+      "Bash(mkdir:*)",
+      "Bash(timeout 10 python src/generic_uc_analyzer.py)",
+      "Bash(grep -n \"contextual\" src/generic_uc_analyzer.py)",
+      "Bash(PYTHONPATH=src python tests/test_uc1_uc2.py)",
+      "Bash(PYTHONPATH=src python -c \"\nfrom generic_uc_analyzer import GenericUCAnalyzer\nanalyzer = GenericUCAnalyzer(''beverage_preparation'')\nprint(''Testing B2a step analysis...'')\n\")",
+      "Bash(git config:*)"
     ],
     "deny": []
   }

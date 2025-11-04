@@ -1,0 +1,464 @@
+{
+  "summary": "Enhanced analysis of 13 data entities with validation states; Created 4 enhanced transformations with state management; Generated 12 enhanced data flows with validation; Processed 8 ingredients and 1 products; Detected 0 enhanced data flow violations; Applied validation state consistency and transition rules",
+  "enhanced_data_entities": [
+    {
+      "entity_id": "input_coffee_beans",
+      "name": "coffee beans (input)",
+      "data_type": "ingredient",
+      "validation_state": "raw",
+      "managed_by": "coffeebeansInput",
+      "validated_dependencies": [],
+      "state_history": [
+        "raw"
+      ]
+    },
+    {
+      "entity_id": "validated_coffee_beans",
+      "name": "coffee beans (validated)",
+      "data_type": "ingredient",
+      "validation_state": "validated",
+      "managed_by": "coffeebeansValidator",
+      "validated_dependencies": [
+        "input_coffee_beans"
+      ],
+      "state_history": [
+        "raw",
+        "validated"
+      ]
+    },
+    {
+      "entity_id": "processed_ground_coffee",
+      "name": "ground coffee",
+      "data_type": "intermediate",
+      "validation_state": "processed",
+      "managed_by": "CoffeeBeansManager",
+      "validated_dependencies": [
+        "validated_coffee_beans"
+      ],
+      "state_history": [
+        "raw",
+        "validated",
+        "processed"
+      ]
+    },
+    {
+      "entity_id": "input_water",
+      "name": "water (input)",
+      "data_type": "ingredient",
+      "validation_state": "raw",
+      "managed_by": "waterInput",
+      "validated_dependencies": [],
+      "state_history": [
+        "raw"
+      ]
+    },
+    {
+      "entity_id": "validated_water",
+      "name": "water (validated)",
+      "data_type": "ingredient",
+      "validation_state": "validated",
+      "managed_by": "waterValidator",
+      "validated_dependencies": [
+        "input_water"
+      ],
+      "state_history": [
+        "raw",
+        "validated"
+      ]
+    },
+    {
+      "entity_id": "processed_hot_water",
+      "name": "hot water",
+      "data_type": "intermediate",
+      "validation_state": "processed",
+      "managed_by": "WaterManager",
+      "validated_dependencies": [
+        "validated_water"
+      ],
+      "state_history": [
+        "raw",
+        "validated",
+        "processed"
+      ]
+    },
+    {
+      "entity_id": "input_milk",
+      "name": "milk (input)",
+      "data_type": "ingredient",
+      "validation_state": "raw",
+      "managed_by": "milkInput",
+      "validated_dependencies": [],
+      "state_history": [
+        "raw"
+      ]
+    },
+    {
+      "entity_id": "validated_milk",
+      "name": "milk (validated)",
+      "data_type": "ingredient",
+      "validation_state": "validated",
+      "managed_by": "milkValidator",
+      "validated_dependencies": [
+        "input_milk"
+      ],
+      "state_history": [
+        "raw",
+        "validated"
+      ]
+    },
+    {
+      "entity_id": "processed_steamed_milk",
+      "name": "steamed milk",
+      "data_type": "intermediate",
+      "validation_state": "processed",
+      "managed_by": "MilkManager",
+      "validated_dependencies": [
+        "validated_milk"
+      ],
+      "state_history": [
+        "raw",
+        "validated",
+        "processed"
+      ]
+    },
+    {
+      "entity_id": "input_cup",
+      "name": "cup (input)",
+      "data_type": "ingredient",
+      "validation_state": "raw",
+      "managed_by": "cupInput",
+      "validated_dependencies": [],
+      "state_history": [
+        "raw"
+      ]
+    },
+    {
+      "entity_id": "validated_cup",
+      "name": "cup (validated)",
+      "data_type": "ingredient",
+      "validation_state": "validated",
+      "managed_by": "cupValidator",
+      "validated_dependencies": [
+        "input_cup"
+      ],
+      "state_history": [
+        "raw",
+        "validated"
+      ]
+    },
+    {
+      "entity_id": "processed_cup",
+      "name": "cup",
+      "data_type": "intermediate",
+      "validation_state": "processed",
+      "managed_by": "CupManager",
+      "validated_dependencies": [
+        "validated_cup"
+      ],
+      "state_history": [
+        "raw",
+        "validated",
+        "processed"
+      ]
+    },
+    {
+      "entity_id": "final_milk_coffee",
+      "name": "milk coffee",
+      "data_type": "product",
+      "validation_state": "ready",
+      "managed_by": "GeträenkeOrchestrator",
+      "validated_dependencies": [
+        "processed_ground_coffee",
+        "processed_hot_water",
+        "processed_steamed_milk",
+        "processed_cup"
+      ],
+      "state_history": [
+        "processed",
+        "ready"
+      ]
+    }
+  ],
+  "enhanced_data_transformations": [
+    {
+      "transformation_id": "ET1",
+      "name": "heating water",
+      "transformation_type": "physical",
+      "responsible_controller": "WaterManager",
+      "input_entities": [
+        "validated_water"
+      ],
+      "output_entities": [
+        "processed_hot_water"
+      ],
+      "input_state_required": "validated",
+      "output_state_produced": "processed",
+      "state_transition_valid": true,
+      "validation_rules": [
+        "Verify water is in VALIDATED state",
+        "Perform heating operation",
+        "Confirm hot water reaches PROCESSED state"
+      ]
+    },
+    {
+      "transformation_id": "ET2",
+      "name": "steaming milk",
+      "transformation_type": "physical",
+      "responsible_controller": "MilkManager",
+      "input_entities": [
+        "validated_milk"
+      ],
+      "output_entities": [
+        "processed_steamed_milk"
+      ],
+      "input_state_required": "validated",
+      "output_state_produced": "processed",
+      "state_transition_valid": true,
+      "validation_rules": [
+        "Verify milk is in VALIDATED state",
+        "Perform steaming operation",
+        "Confirm steamed milk reaches PROCESSED state"
+      ]
+    },
+    {
+      "transformation_id": "ET3",
+      "name": "usage cup",
+      "transformation_type": "physical",
+      "responsible_controller": "CupManager",
+      "input_entities": [
+        "validated_cup"
+      ],
+      "output_entities": [
+        "processed_cup"
+      ],
+      "input_state_required": "validated",
+      "output_state_produced": "processed",
+      "state_transition_valid": true,
+      "validation_rules": [
+        "Verify cup is in VALIDATED state",
+        "Perform usage operation",
+        "Confirm cup reaches PROCESSED state"
+      ]
+    },
+    {
+      "transformation_id": "ET4",
+      "name": "assemble milk coffee",
+      "transformation_type": "aggregation",
+      "responsible_controller": "GeträenkeOrchestrator",
+      "input_entities": [
+        "processed_ground_coffee",
+        "processed_hot_water",
+        "processed_steamed_milk",
+        "processed_cup"
+      ],
+      "output_entities": [
+        "final_milk_coffee"
+      ],
+      "input_state_required": "processed",
+      "output_state_produced": "ready",
+      "state_transition_valid": true,
+      "validation_rules": [
+        "Verify all ingredients are in PROCESSED state",
+        "Perform coffee assembly",
+        "Confirm final product reaches READY state"
+      ]
+    }
+  ],
+  "enhanced_data_flows": [
+    {
+      "flow_id": "EF1",
+      "source_entity": "input_coffee_beans",
+      "target_entity": "validated_coffee_beans",
+      "flow_type": "validation_output",
+      "responsible_controller": "coffeebeansValidator",
+      "source_state": "raw",
+      "target_state": "validated",
+      "state_transition_valid": true
+    },
+    {
+      "flow_id": "EF2",
+      "source_entity": "input_water",
+      "target_entity": "validated_water",
+      "flow_type": "validation_output",
+      "responsible_controller": "waterValidator",
+      "source_state": "raw",
+      "target_state": "validated",
+      "state_transition_valid": true
+    },
+    {
+      "flow_id": "EF3",
+      "source_entity": "input_milk",
+      "target_entity": "validated_milk",
+      "flow_type": "validation_output",
+      "responsible_controller": "milkValidator",
+      "source_state": "raw",
+      "target_state": "validated",
+      "state_transition_valid": true
+    },
+    {
+      "flow_id": "EF4",
+      "source_entity": "input_cup",
+      "target_entity": "validated_cup",
+      "flow_type": "validation_output",
+      "responsible_controller": "cupValidator",
+      "source_state": "raw",
+      "target_state": "validated",
+      "state_transition_valid": true
+    },
+    {
+      "flow_id": "EF5",
+      "source_entity": "validated_water",
+      "target_entity": "processed_hot_water",
+      "flow_type": "processing_output",
+      "responsible_controller": "WaterManager",
+      "source_state": "validated",
+      "target_state": "processed",
+      "state_transition_valid": true
+    },
+    {
+      "flow_id": "EF6",
+      "source_entity": "validated_milk",
+      "target_entity": "processed_steamed_milk",
+      "flow_type": "processing_output",
+      "responsible_controller": "MilkManager",
+      "source_state": "validated",
+      "target_state": "processed",
+      "state_transition_valid": true
+    },
+    {
+      "flow_id": "EF7",
+      "source_entity": "validated_cup",
+      "target_entity": "processed_cup",
+      "flow_type": "processing_output",
+      "responsible_controller": "CupManager",
+      "source_state": "validated",
+      "target_state": "processed",
+      "state_transition_valid": true
+    },
+    {
+      "flow_id": "EF8",
+      "source_entity": "processed_ground_coffee",
+      "target_entity": "final_milk_coffee",
+      "flow_type": "aggregation",
+      "responsible_controller": "GeträenkeOrchestrator",
+      "source_state": "processed",
+      "target_state": "ready",
+      "state_transition_valid": true
+    },
+    {
+      "flow_id": "EF9",
+      "source_entity": "processed_hot_water",
+      "target_entity": "final_milk_coffee",
+      "flow_type": "aggregation",
+      "responsible_controller": "GeträenkeOrchestrator",
+      "source_state": "processed",
+      "target_state": "ready",
+      "state_transition_valid": true
+    },
+    {
+      "flow_id": "EF10",
+      "source_entity": "processed_steamed_milk",
+      "target_entity": "final_milk_coffee",
+      "flow_type": "aggregation",
+      "responsible_controller": "GeträenkeOrchestrator",
+      "source_state": "processed",
+      "target_state": "ready",
+      "state_transition_valid": true
+    },
+    {
+      "flow_id": "EF11",
+      "source_entity": "processed_cup",
+      "target_entity": "final_milk_coffee",
+      "flow_type": "aggregation",
+      "responsible_controller": "GeträenkeOrchestrator",
+      "source_state": "processed",
+      "target_state": "ready",
+      "state_transition_valid": true
+    },
+    {
+      "flow_id": "EF12",
+      "source_entity": "final_milk_coffee",
+      "target_entity": "user",
+      "flow_type": "user_output",
+      "responsible_controller": "UserInterfaceManager",
+      "source_state": "ready",
+      "target_state": "consumed",
+      "state_transition_valid": true
+    }
+  ],
+  "validation_state_patterns": [
+    {
+      "pattern_id": "VSP_coffee_beans",
+      "resource_name": "coffee beans",
+      "state_sequence": [
+        "raw",
+        "validated",
+        "processed"
+      ],
+      "transition_validations": [
+        "coffee beans: raw -> validated",
+        "coffee beans: validated -> processed"
+      ],
+      "entity_mappings": {
+        "raw": "input_coffee_beans",
+        "validated": "validated_coffee_beans",
+        "processed": "processed_ground_coffee"
+      }
+    },
+    {
+      "pattern_id": "VSP_water",
+      "resource_name": "water",
+      "state_sequence": [
+        "raw",
+        "validated",
+        "processed"
+      ],
+      "transition_validations": [
+        "water: raw -> validated",
+        "water: validated -> processed"
+      ],
+      "entity_mappings": {
+        "raw": "input_water",
+        "validated": "validated_water",
+        "processed": "processed_hot_water"
+      }
+    },
+    {
+      "pattern_id": "VSP_milk",
+      "resource_name": "milk",
+      "state_sequence": [
+        "raw",
+        "validated",
+        "processed"
+      ],
+      "transition_validations": [
+        "milk: raw -> validated",
+        "milk: validated -> processed"
+      ],
+      "entity_mappings": {
+        "raw": "input_milk",
+        "validated": "validated_milk",
+        "processed": "processed_steamed_milk"
+      }
+    },
+    {
+      "pattern_id": "VSP_cup",
+      "resource_name": "cup",
+      "state_sequence": [
+        "raw",
+        "validated",
+        "processed"
+      ],
+      "transition_validations": [
+        "cup: raw -> validated",
+        "cup: validated -> processed"
+      ],
+      "entity_mappings": {
+        "raw": "input_cup",
+        "validated": "validated_cup",
+        "processed": "processed_cup"
+      }
+    }
+  ],
+  "violations": []
+}

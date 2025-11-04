@@ -1,0 +1,83 @@
+{
+  "capability_context": {
+    "capability_name": "Nuclear Reactor Control",
+    "domain": "nuclear",
+    "domain_knowledge": [
+      "Safety is the highest priority",
+      "Radiation monitoring is continuous",
+      "Containment systems are critical",
+      "Emergency shutdown procedures exist",
+      "Personnel protection is mandatory",
+      "Multiple barriers prevent radiation release",
+      "Redundant safety systems are required",
+      "Regular maintenance is essential",
+      "Strict regulatory compliance required",
+      "Command & control systems ensure safe operation",
+      "Real-time plant monitoring is essential",
+      "Emergency communication systems vital",
+      "Human-Equipment-Unit coordination critical",
+      "Data acquisition enables trend analysis",
+      "Automated safety systems provide rapid response",
+      "Multiple communication paths ensure reliability",
+      "Emergency response requires coordination",
+      "Control rods regulate reactions",
+      "Cooling systems prevent overheating",
+      "Pressure vessels contain reactions",
+      "Monitoring systems track parameters",
+      "Emergency systems provide shutdown",
+      "Containment prevents radiation release",
+      "Automated control systems ensure safety",
+      "Human-Equipment-Unit interfaces critical",
+      "Command validation prevents errors",
+      "Manual backup systems available"
+    ],
+    "excluded_aspects": [
+      "Reactor design",
+      "Nuclear waste disposal",
+      "Regulatory compliance",
+      "Nuclear fuel fabrication"
+    ],
+    "related_capabilities": [
+      "Waste Management",
+      "Safety Systems",
+      "Maintenance Operations"
+    ]
+  },
+  "uc_title_analysis": {
+    "uc_title": "Emergency Reactor Shutdown",
+    "solution_constraints": [
+      "Domain-specific constraint: reactor"
+    ],
+    "possible_variants": [
+      "Evacuation Procedures",
+      "Communication Systems",
+      "Response Coordination"
+    ],
+    "scope_restrictions": []
+  },
+  "goal_analysis": {
+    "goal_text": "Reactor can be safely shut down in emergency",
+    "temporal_requirements": [],
+    "input_requirements": [],
+    "identified_controllers": [],
+    "identified_boundaries": []
+  },
+  "actors": [
+    {
+      "name": "Operator",
+      "type": "human",
+      "description": "Human actor in nuclear domain"
+    },
+    {
+      "name": "Reactor Protection System",
+      "type": "non_human",
+      "description": "Non-human actor in nuclear domain"
+    },
+    {
+      "name": "Emergency Core Cooling System",
+      "type": "non_human",
+      "description": "Non-human actor in nuclear domain"
+    }
+  ],
+  "context_summary": "Domain: nuclear; Capability: Nuclear Reactor Control; Use Case: Emergency Reactor Shutdown; Actors: Operator (human), Reactor Protection System (non_human), Emergency Core Cooling System (non_human); Excluded: Reactor design, Nuclear waste disposal..."
+}

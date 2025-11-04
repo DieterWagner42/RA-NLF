@@ -1,0 +1,311 @@
+{
+  "phase1_summary": "Domain: beverage_preparation; Capability: Coffee Preparation; Use Case: Prepare Espresso; Actors: User (human), Brew Timer (non_human); Excluded: Manual coffee preparation, Bean sourcing and purchasing...",
+  "phase2_summary": "Analyzed 4 resources from preconditions; Created 4 Manager Controllers; Identified 4 Boundary Objects; Found 6 context-based transformations; Domain: beverage_preparation",
+  "resource_analyses": [
+    {
+      "resource_name": "coffee beans",
+      "input_boundary": {
+        "name": "CoffeeBeans Input",
+        "functions": [
+          {
+            "name": "accept_input",
+            "source": "implicit",
+            "description": "Accept coffee beans from external source"
+          },
+          {
+            "name": "validate_input",
+            "source": "implicit",
+            "description": "Validate coffee beans quality and quantity"
+          },
+          {
+            "name": "provide_user_feedback",
+            "source": "phase1_integration",
+            "description": "Provide feedback to human actors about coffee beans status"
+          }
+        ]
+      },
+      "manager_controller": {
+        "name": "CoffeeBeansManager",
+        "functions": [
+          {
+            "name": "store_coffeebeans",
+            "source": "implicit",
+            "description": "Store and manage coffee beans"
+          },
+          {
+            "name": "monitor_coffeebeans_level",
+            "source": "implicit",
+            "description": "Monitor available quantity of coffee beans"
+          },
+          {
+            "name": "provide_coffeebeans",
+            "source": "implicit",
+            "description": "Provide coffee beans when requested"
+          },
+          {
+            "name": "grind_coffee",
+            "source": "context",
+            "description": "Grind coffee beans to required consistency"
+          },
+          {
+            "name": "clean_equipment",
+            "source": "context",
+            "description": "Clean equipment used with coffee beans"
+          },
+          {
+            "name": "sanitize_surfaces",
+            "source": "context",
+            "description": "Sanitize surfaces in contact with resource"
+          }
+        ],
+        "domain_specific": true
+      },
+      "output_boundary": {
+        "name": "CoffeeBeans Waste Output",
+        "functions": [
+          {
+            "name": "dispose_waste",
+            "source": "implicit",
+            "description": "Dispose of waste products from coffee beans"
+          },
+          {
+            "name": "manage_waste",
+            "source": "implicit",
+            "description": "Manage waste disposal processes"
+          }
+        ]
+      },
+      "entities": [],
+      "transformations": [
+        "beans -> grinding -> ground coffee"
+      ]
+    },
+    {
+      "resource_name": "coffee beans are",
+      "input_boundary": {
+        "name": "CoffeeBeansAre Input",
+        "functions": [
+          {
+            "name": "accept_input",
+            "source": "implicit",
+            "description": "Accept coffee beans are from external source"
+          },
+          {
+            "name": "validate_input",
+            "source": "implicit",
+            "description": "Validate coffee beans are quality and quantity"
+          },
+          {
+            "name": "provide_user_feedback",
+            "source": "phase1_integration",
+            "description": "Provide feedback to human actors about coffee beans are status"
+          }
+        ]
+      },
+      "manager_controller": {
+        "name": "CoffeeBeansAreManager",
+        "functions": [
+          {
+            "name": "store_coffeebeansare",
+            "source": "implicit",
+            "description": "Store and manage coffee beans are"
+          },
+          {
+            "name": "monitor_coffeebeansare_level",
+            "source": "implicit",
+            "description": "Monitor available quantity of coffee beans are"
+          },
+          {
+            "name": "provide_coffeebeansare",
+            "source": "implicit",
+            "description": "Provide coffee beans are when requested"
+          },
+          {
+            "name": "grind_coffee",
+            "source": "context",
+            "description": "Grind coffee beans to required consistency"
+          },
+          {
+            "name": "clean_equipment",
+            "source": "context",
+            "description": "Clean equipment used with coffee beans are"
+          },
+          {
+            "name": "sanitize_surfaces",
+            "source": "context",
+            "description": "Sanitize surfaces in contact with resource"
+          }
+        ],
+        "domain_specific": true
+      },
+      "output_boundary": {
+        "name": "CoffeeBeansAre Waste Output",
+        "functions": [
+          {
+            "name": "dispose_waste",
+            "source": "implicit",
+            "description": "Dispose of waste products from coffee beans are"
+          },
+          {
+            "name": "manage_waste",
+            "source": "implicit",
+            "description": "Manage waste disposal processes"
+          }
+        ]
+      },
+      "entities": [],
+      "transformations": [
+        "beans -> grinding -> ground coffee"
+      ]
+    },
+    {
+      "resource_name": "water",
+      "input_boundary": {
+        "name": "Water Input",
+        "functions": [
+          {
+            "name": "accept_input",
+            "source": "implicit",
+            "description": "Accept water from external source"
+          },
+          {
+            "name": "validate_input",
+            "source": "implicit",
+            "description": "Validate water quality and quantity"
+          },
+          {
+            "name": "provide_user_feedback",
+            "source": "phase1_integration",
+            "description": "Provide feedback to human actors about water status"
+          }
+        ]
+      },
+      "manager_controller": {
+        "name": "WaterManager",
+        "functions": [
+          {
+            "name": "store_water",
+            "source": "implicit",
+            "description": "Store and manage water"
+          },
+          {
+            "name": "monitor_water_level",
+            "source": "implicit",
+            "description": "Monitor available quantity of water"
+          },
+          {
+            "name": "provide_water",
+            "source": "implicit",
+            "description": "Provide water when requested"
+          },
+          {
+            "name": "heat_water",
+            "source": "context",
+            "description": "Heat water to brewing temperature"
+          },
+          {
+            "name": "clean_equipment",
+            "source": "context",
+            "description": "Clean equipment used with water"
+          },
+          {
+            "name": "sanitize_surfaces",
+            "source": "context",
+            "description": "Sanitize surfaces in contact with resource"
+          }
+        ],
+        "domain_specific": true
+      },
+      "output_boundary": null,
+      "entities": [],
+      "transformations": [
+        "water -> heating -> hot water",
+        "water -> heating -> hot water"
+      ]
+    },
+    {
+      "resource_name": "water is",
+      "input_boundary": {
+        "name": "WaterIs Input",
+        "functions": [
+          {
+            "name": "accept_input",
+            "source": "implicit",
+            "description": "Accept water is from external source"
+          },
+          {
+            "name": "validate_input",
+            "source": "implicit",
+            "description": "Validate water is quality and quantity"
+          },
+          {
+            "name": "provide_user_feedback",
+            "source": "phase1_integration",
+            "description": "Provide feedback to human actors about water is status"
+          }
+        ]
+      },
+      "manager_controller": {
+        "name": "WaterIsManager",
+        "functions": [
+          {
+            "name": "store_wateris",
+            "source": "implicit",
+            "description": "Store and manage water is"
+          },
+          {
+            "name": "monitor_wateris_level",
+            "source": "implicit",
+            "description": "Monitor available quantity of water is"
+          },
+          {
+            "name": "provide_wateris",
+            "source": "implicit",
+            "description": "Provide water is when requested"
+          },
+          {
+            "name": "heat_water",
+            "source": "context",
+            "description": "Heat water to brewing temperature"
+          },
+          {
+            "name": "clean_equipment",
+            "source": "context",
+            "description": "Clean equipment used with water is"
+          },
+          {
+            "name": "sanitize_surfaces",
+            "source": "context",
+            "description": "Sanitize surfaces in contact with resource"
+          }
+        ],
+        "domain_specific": true
+      },
+      "output_boundary": null,
+      "entities": [],
+      "transformations": [
+        "water -> heating -> hot water",
+        "water -> heating -> hot water"
+      ]
+    }
+  ],
+  "all_objects": {
+    "input_boundaries": [
+      "CoffeeBeans Input",
+      "CoffeeBeansAre Input",
+      "Water Input",
+      "WaterIs Input"
+    ],
+    "manager_controllers": [
+      "CoffeeBeansManager",
+      "CoffeeBeansAreManager",
+      "WaterManager",
+      "WaterIsManager"
+    ],
+    "output_boundaries": [
+      "CoffeeBeans Waste Output",
+      "CoffeeBeansAre Waste Output"
+    ],
+    "entities": []
+  }
+}

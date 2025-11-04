@@ -1,0 +1,4526 @@
+GENERIC UC ANALYZER - JSON Export Demonstration
+============================================================
+
+=== SINGLE UC JSON EXPORT DEMONSTRATION ===
+
+Exporting UC1 Coffee analysis to JSON: Use Case/UC1.txt
+Loaded common domain configuration
+Loaded domain configuration: nuclear
+Loaded domain configuration: robotics
+Loaded domain configuration: universal_operational_materials
+Loaded domain configuration: beverage_preparation
+Loaded domain configuration: rocket_science
+Loaded domain configuration: aerospace
+Loaded domain configuration: automotive
+Loaded domain configuration: telecommunications
+Loaded verb configuration for domain: beverage_preparation
+Loaded operational materials framework
+
+================================================================================
+JSON EXPORT FOR VISUALIZATION AND SYSTEM ENGINEERING
+================================================================================
+
+================================================================================
+UC ANALYSIS WITH SAFETY/HYGIENE REQUIREMENTS
+================================================================================
+================================================================================
+GENERIC UC GRAMMAR ANALYSIS - ALL FLOWS
+================================================================================
+Main Flow: 10 steps
+Alternative Flows: 12 steps
+Extension Flows: 3 steps
+Domain: beverage_preparation
+Total steps to analyze: 25
+================================================================================
+
+--- B1: System clock reaches set time of 7:00h (Radio clock) ---
+Main verb: reaches (lemma: reach)
+B1 Override: Trigger -> TRANSACTION VERB
+Verb Type: transaction
+Direct Object: None
+Prepositional Objects: []
+
+--- B2a: The system activates the water heater ---
+Main verb: activates (lemma: activate)
+Verb Type: function
+Direct Object: the water heater
+Prepositional Objects: []
+WARNING: Heater is implementation element - use functional activity
+SUGGESTION: The system heats the water
+
+--- B2b: The system prepares filter ---
+Main verb: prepares (lemma: prepare)
+Verb Type: function
+Direct Object: filter
+Prepositional Objects: []
+WARNING: Filter is implementation element - use functional activity
+SUGGESTION: The system filters the liquid
+
+--- B2c: The system grinds the set amount with the set grinding degree directly into the filter ---
+Main verb: grinds (lemma: grind)
+Verb Type: transformation
+Direct Object: the set amount
+Prepositional Objects: [('with', 'the set grinding degree'), ('into', 'the filter')]
+Adjectives in 'with the set grinding degree': ['set']
+
+--- B2d: The system retrieves cup from storage container and places it under the filter ---
+Main verb: retrieves (lemma: retrieve)
+Verb Type: function
+Direct Object: cup
+Prepositional Objects: []
+
+--- B3a: The system begins brewing coffee with the set water amount into the cup ---
+Pattern detected: 'begins brewing' -> using 'brewing' as main verb
+Main verb: brewing (lemma: brew)
+Verb Type: transformation
+Direct Object: coffee
+Prepositional Objects: [('with', 'the set water amount'), ('into', 'the cup')]
+Adjectives in 'with the set water amount': ['set']
+
+--- B3b: The system adds milk to the cup ---
+Main verb: adds (lemma: add)
+Verb Type: transformation
+Direct Object: milk
+Prepositional Objects: [('to', 'the cup')]
+
+--- B4: The system outputs a message to user ---
+Main verb: outputs (lemma: output)
+Verb Type: transaction
+Direct Object: a message
+Prepositional Objects: [('to', 'user')]
+
+--- B5: The system presents cup to user ---
+Main verb: presents (lemma: present)
+Verb Type: transaction
+Direct Object: cup
+Prepositional Objects: [('to', 'user')]
+
+--- B6: End UC --- (Flow control - not analyzed)
+
+--- A1: Water heater has too little water ---
+Main verb: has (lemma: have)
+A1 Override: Trigger -> TRANSACTION VERB
+Verb Type: transaction
+Direct Object: little water
+Adjectives detected: ['little']
+Prepositional Objects: []
+
+--- A1.1: The system switches off water heater ---
+Main verb: switches (lemma: switch)
+Verb Type: function
+Direct Object: water heater
+Prepositional Objects: []
+WARNING: Heater is implementation element - use functional activity
+SUGGESTION: The system heats the water
+
+--- A1.2: The system outputs an error message to user ---
+Main verb: outputs (lemma: output)
+Verb Type: transaction
+Direct Object: an error message
+Prepositional Objects: [('to', 'user')]
+
+--- A1.3: End UC --- (Flow control - not analyzed)
+
+--- A2: Too little milk ---
+
+--- A2.1: The system stops milk addition ---
+Main verb: stops (lemma: stop)
+Verb Type: function
+Direct Object: milk addition
+Prepositional Objects: []
+
+--- A2.2: The system outputs an error message to user ---
+Main verb: outputs (lemma: output)
+Verb Type: transaction
+Direct Object: an error message
+Prepositional Objects: [('to', 'user')]
+
+--- A2.3: End UC --- (Flow control - not analyzed)
+
+--- A3: time Overheat detected ---
+Main verb: detected (lemma: detect)
+A3 Override: Trigger -> TRANSACTION VERB
+Verb Type: transaction
+Direct Object: None
+Prepositional Objects: []
+
+--- A3.1: The system stops all actions ---
+Main verb: stops (lemma: stop)
+Verb Type: function
+Direct Object: all actions
+Prepositional Objects: []
+
+--- A3.2: The system switch of itself ---
+
+--- A3.3: End UC --- (Flow control - not analyzed)
+
+--- E1: B3-B5 User wants sugar in coffee ---
+Main verb: wants (lemma: want)
+E1 Override: Trigger -> TRANSACTION VERB
+Verb Type: transaction
+Direct Object: sugar
+Prepositional Objects: []
+
+--- E1.1: The system adds sugar to the cup ---
+Main verb: adds (lemma: add)
+Verb Type: transformation
+Direct Object: sugar
+Prepositional Objects: [('to', 'the cup')]
+
+--- E1.2: Continue in main flow --- (Flow control - not analyzed)
+
+================================================================================
+PRECONDITION ANALYSIS
+================================================================================
+
+Found 4 preconditions:
+  - Coffee beans are available in the system (UC1)
+  - Water is available in the system (UC1)
+  - Milk is available in the system (UC1)
+  - Sugar is available in the system (UC1)
+
+Generated 12 RA classes from preconditions:
+
+Resource Controllers (4):
+  - CoffeeBeansSupplyController: Manages Coffee beans supply and availability (from precondition)
+  - WaterSupplyController: Manages Water supply and availability (from precondition)
+  - MilkSupplyController: Manages Milk supply and availability (from precondition)
+  - SugarSupplyController: Manages Sugar supply and availability (from precondition)
+
+Resource Entities (4):
+  - CoffeeBeans: Resource: Coffee beans (required as precondition)
+  - Water: Resource: Water (required as precondition)
+  - Milk: Resource: Milk (required as precondition)
+  - Sugar: Resource: Sugar (required as precondition)
+
+Supply Boundaries (4):
+  - CoffeeBeansSupplyBoundary: Boundary for Coffee beans supply monitoring and refill alerts
+  - WaterSupplyBoundary: Boundary for Water supply monitoring and refill alerts
+  - MilkSupplyBoundary: Boundary for Milk supply monitoring and refill alerts
+  - SugarSupplyBoundary: Boundary for Sugar supply monitoring and refill alerts
+
+UC-Methode Rule Compliance:
+  [OK] Each precondition generates Controller + Entity + Boundary
+  [OK] Domain Orchestrator implicitly coordinates all controllers
+  [WARNING] Preconditions should be handled by separate UCs
+  [WARNING] Missing UCs for: Coffee beans, Water, Milk, Sugar
+
+Next Step: Create separate UCs for resource supply management
+
+================================================================================
+KONTROLLFLUSS ANALYSIS (UC-METHODE)
+================================================================================
+
+Regel 1: Boundary -> Controller (Externe Eingaben) (7 Flows):
+------------------------------------------------------------
+  [B4] HMIErrorDisplayBoundary -> HMIController
+      Rule 1: HMIErrorDisplayBoundary triggers HMIController (external input)
+  [B4] HMIStatusDisplayBoundary -> HMIController
+      Rule 1: HMIStatusDisplayBoundary triggers HMIController (external input)
+  [A1.2] HMIErrorDisplayBoundary -> HMIController
+      Rule 1: HMIErrorDisplayBoundary triggers HMIController (external input)
+  [A1.2] HMIErrorDisplayBoundary -> HMIController
+      Rule 1: HMIErrorDisplayBoundary triggers HMIController (external input)
+  [A2.2] HMIErrorDisplayBoundary -> HMIController
+      Rule 1: HMIErrorDisplayBoundary triggers HMIController (external input)
+  [A2.2] HMIErrorDisplayBoundary -> HMIController
+      Rule 1: HMIErrorDisplayBoundary triggers HMIController (external input)
+  [E1] HMIAdditiveInputBoundary -> HMIController
+      Rule 1: HMIAdditiveInputBoundary triggers HMIController (external input)
+
+Regel 2: Controller -> Controller (Interne Verarbeitung) (21 Flows):
+------------------------------------------------------------
+  [B2a] TimeManager -> HeaterManager
+      Rule 2: TimeManager calls HeaterManager (sequential processing)
+  [B2b] HeaterManager -> FilterManager
+      Rule 2: HeaterManager calls FilterManager (sequential processing)
+  [B2c] FilterManager -> AmountManager
+      Rule 2: FilterManager calls AmountManager (sequential processing)
+  [B2d] AmountManager -> CupManager
+      Rule 2: AmountManager calls CupManager (sequential processing)
+  [B3a] CupManager -> CoffeeManager
+      Rule 2: CupManager calls CoffeeManager (sequential processing)
+  [B3b] CoffeeManager -> MilkManager
+      Rule 2: CoffeeManager calls MilkManager (sequential processing)
+  [B4] MilkManager -> HMIController
+      Rule 2: MilkManager calls HMIController (sequential processing)
+  [B4] MilkManager -> MessageManager
+      Rule 2: MilkManager calls MessageManager (sequential processing)
+  [B5] HMIController -> CupManager
+      Rule 2: HMIController calls CupManager (sequential processing)
+  [B5] MessageManager -> CupManager
+      Rule 2: MessageManager calls CupManager (sequential processing)
+  [B5] MessageManager -> HMIController
+      Rule 2: MessageManager calls HMIController (sequential processing)
+  [A1.1] A1ConditionManager -> HeaterManager
+      Rule 2: A1ConditionManager calls HeaterManager (sequential processing)
+  [A1.2] HeaterManager -> HMIController
+      Rule 2: HeaterManager calls HMIController (sequential processing)
+  [A1.2] HeaterManager -> MessageManager
+      Rule 2: HeaterManager calls MessageManager (sequential processing)
+  [A2.1] A2ConditionManager -> AdditionManager
+      Rule 2: A2ConditionManager calls AdditionManager (sequential processing)
+  [A2.2] AdditionManager -> HMIController
+      Rule 2: AdditionManager calls HMIController (sequential processing)
+  [A2.2] AdditionManager -> MessageManager
+      Rule 2: AdditionManager calls MessageManager (sequential processing)
+  [A3.1] TimeManager -> ActionsManager
+      Rule 2: TimeManager calls ActionsManager (sequential processing)
+  [A3.2] ActionsManager -> Manager
+      Rule 2: ActionsManager calls Manager (sequential processing)
+  [E1.1] HMIController -> SugarManager
+      Rule 2: HMIController calls SugarManager (sequential processing)
+  [E1.1] UserRequestManager -> SugarManager
+      Rule 2: UserRequestManager calls SugarManager (sequential processing)
+
+Regel 3: Sequentielle Schrittabfolge (24 Flows):
+------------------------------------------------------------
+
+Regel 5: Controller -> Boundary (Externe Ausgaben) (16 Flows):
+------------------------------------------------------------
+  [B4] HMIController -> HMIErrorDisplayBoundary
+      Rule 5: HMIController outputs via HMIErrorDisplayBoundary (external output)
+  [B4] HMIController -> HMIStatusDisplayBoundary
+      Rule 5: HMIController outputs via HMIStatusDisplayBoundary (external output)
+  [B4] MessageManager -> HMIErrorDisplayBoundary
+      Rule 5: MessageManager outputs via HMIErrorDisplayBoundary (external output)
+  [B4] MessageManager -> HMIStatusDisplayBoundary
+      Rule 5: MessageManager outputs via HMIStatusDisplayBoundary (external output)
+  [B5] CupManager -> ProductDeliveryBoundary
+      Rule 5: CupManager outputs via ProductDeliveryBoundary (external output)
+  [B5] CupManager -> ProductDeliveryBoundary
+      Rule 5: CupManager outputs via ProductDeliveryBoundary (external output)
+  [B5] HMIController -> ProductDeliveryBoundary
+      Rule 5: HMIController outputs via ProductDeliveryBoundary (external output)
+  [B5] HMIController -> ProductDeliveryBoundary
+      Rule 5: HMIController outputs via ProductDeliveryBoundary (external output)
+  [A1.2] HMIController -> HMIErrorDisplayBoundary
+      Rule 5: HMIController outputs via HMIErrorDisplayBoundary (external output)
+  [A1.2] HMIController -> HMIErrorDisplayBoundary
+      Rule 5: HMIController outputs via HMIErrorDisplayBoundary (external output)
+  [A1.2] MessageManager -> HMIErrorDisplayBoundary
+      Rule 5: MessageManager outputs via HMIErrorDisplayBoundary (external output)
+  [A1.2] MessageManager -> HMIErrorDisplayBoundary
+      Rule 5: MessageManager outputs via HMIErrorDisplayBoundary (external output)
+  [A2.2] HMIController -> HMIErrorDisplayBoundary
+      Rule 5: HMIController outputs via HMIErrorDisplayBoundary (external output)
+  [A2.2] HMIController -> HMIErrorDisplayBoundary
+      Rule 5: HMIController outputs via HMIErrorDisplayBoundary (external output)
+  [A2.2] MessageManager -> HMIErrorDisplayBoundary
+      Rule 5: MessageManager outputs via HMIErrorDisplayBoundary (external output)
+  [A2.2] MessageManager -> HMIErrorDisplayBoundary
+      Rule 5: MessageManager outputs via HMIErrorDisplayBoundary (external output)
+
+Regel 3: Sequentielle Schrittabfolge (24 Flows):
+------------------------------------------------------------
+  Sequential execution through 24 steps
+  Flow: B1 -> ... -> E1.2
+
+Regel 4: Parallele Verzweigung/Vereinigung (2 Parallel Patterns):
+------------------------------------------------------------
+  Parallel Split: B2a -> B2d
+  Parallel Steps: B2a, B2b, B2c, B2d
+  Description: Rule 4: Parallel execution of B2a, B2b, B2c, B2d
+  Parallel Split: B3a -> B3b
+  Parallel Steps: B3a, B3b
+  Description: Rule 4: Parallel execution of B3a, B3b
+
+KONTROLLFLUSS STATISTIK:
+  Total Control Flows: 68
+  Parallel Patterns: 2
+  Regel 2: 21 flows
+  Regel 3: 24 flows
+  Regel 1: 7 flows
+  Regel 5: 16 flows
+
+UC-Methode Compliance:
+  [OK] Alle 5 Kontrollfluss-Regeln implementiert
+  [OK] Boundary-Controller-Boundary Muster erkannt
+  [OK] Parallele Ausführung identifiziert
+
+DEBUG: Available entity names for data flow: ['Actions', 'Additive', 'Coffee', 'CoffeeBeanAmount', 'CoffeeBeans', 'Cup', 'Error', 'Filter', 'Grinding', 'GrindingDegree', 'GroundCoffee', 'Heater', 'HotWater', 'Message', 'Milk', 'MilkAddition', 'Sugar', 'Water']
+DEBUG: Total entities: 18
+DEBUG: Explicit entities: 15
+DEBUG: Transformation entities: 6
+DEBUG: Processing transaction verb 'reach' with direct_object 'None'
+DEBUG: Processing function verb 'activate' with direct_object 'the water heater'
+DEBUG: Function verb activate -> transformation: -> Water
+DEBUG: Found transformation '-> Water' for verb 'activate'
+DEBUG: Controller for B2a: HeaterManager
+DEBUG: Processing function verb 'prepare' with direct_object 'filter'
+DEBUG: Prepare verb prepare filter -> transformation: -> Filter
+DEBUG: Found transformation '-> Filter' for verb 'prepare'
+DEBUG: Controller for B2b: FilterManager
+DEBUG: Found transformation 'CoffeeBeans -> GroundCoffee' for verb 'grind'
+DEBUG: Controller for B2c: AmountManager
+DEBUG: Step B2c output entities: ['GroundCoffee']
+DEBUG: Preposition 'into' -> use: AmountManager -> Filter
+DEBUG: Processing function verb 'retrieve' with direct_object 'cup'
+DEBUG: Function verb retrieve -> transformation: -> Cup
+DEBUG: Found transformation '-> Cup' for verb 'retrieve'
+DEBUG: Controller for B2d: CupManager
+DEBUG: Found transformation 'GroundCoffee + HotWater + Filter -> Coffee' for verb 'brew'
+DEBUG: Controller for B3a: CoffeeManager
+DEBUG: Step B3a output entities: ['Coffee']
+DEBUG: Preposition 'with' -> use: CoffeeManager -> Water
+DEBUG: Preposition 'into' -> use: CoffeeManager -> Cup
+DEBUG: Override 'add' transformation for direct_object 'milk': Coffee + Milk -> Coffee
+DEBUG: Found transformation 'Coffee + Milk -> Coffee' for verb 'add'
+DEBUG: Controller for B3b: MilkManager
+DEBUG: Step B3b output entities: ['Coffee']
+DEBUG: Preposition 'to' -> use: MilkManager -> Cup
+DEBUG: Processing transaction verb 'output' with direct_object 'a message'
+DEBUG: Transaction verb output -> transformation: -> Message
+DEBUG: Found transformation '-> Message' for verb 'output'
+DEBUG: Controller for B4: HMIController
+DEBUG: Processing transaction verb 'present' with direct_object 'cup'
+DEBUG: Transaction verb present -> transformation: -> Cup
+DEBUG: Found transformation '-> Cup' for verb 'present'
+DEBUG: Controller for B5: CupManager
+DEBUG: Processing transaction verb 'have' with direct_object 'little water'
+DEBUG: Transaction verb have -> transformation: -> Water
+DEBUG: Found transformation '-> Water' for verb 'have'
+DEBUG: Controller for A1: A1ConditionManager
+DEBUG: Processing function verb 'switch' with direct_object 'water heater'
+DEBUG: Function verb switch -> transformation: -> Water
+DEBUG: Found transformation '-> Water' for verb 'switch'
+DEBUG: Controller for A1.1: HeaterManager
+DEBUG: Processing transaction verb 'output' with direct_object 'an error message'
+DEBUG: Transaction verb output -> transformation: -> Message
+DEBUG: Found transformation '-> Message' for verb 'output'
+DEBUG: Controller for A1.2: HMIController
+DEBUG: Processing function verb '' with direct_object 'None'
+DEBUG: Processing function verb 'stop' with direct_object 'milk addition'
+DEBUG: Function verb stop -> transformation: -> Milk
+DEBUG: Found transformation '-> Milk' for verb 'stop'
+DEBUG: Controller for A2.1: AdditionManager
+DEBUG: Processing transaction verb 'output' with direct_object 'an error message'
+DEBUG: Transaction verb output -> transformation: -> Message
+DEBUG: Found transformation '-> Message' for verb 'output'
+DEBUG: Controller for A2.2: HMIController
+DEBUG: Processing transaction verb 'detect' with direct_object 'None'
+DEBUG: Processing function verb 'stop' with direct_object 'all actions'
+DEBUG: Function verb stop -> transformation: -> All
+DEBUG: Found transformation '-> All' for verb 'stop'
+DEBUG: Controller for A3.1: ActionsManager
+DEBUG: Processing function verb '' with direct_object 'None'
+DEBUG: Processing transaction verb 'want' with direct_object 'sugar'
+DEBUG: Transaction verb want -> transformation: -> Sugar
+DEBUG: Found transformation '-> Sugar' for verb 'want'
+DEBUG: Controller for E1: HMIController
+DEBUG: Override 'add' transformation for direct_object 'sugar': Coffee + Sugar -> Coffee
+DEBUG: Found transformation 'Coffee + Sugar -> Coffee' for verb 'add'
+DEBUG: Controller for E1.1: SugarManager
+DEBUG: Step E1.1 output entities: ['Coffee']
+DEBUG: Preposition 'to' -> use: SugarManager -> Cup
+DEBUG: SupplyController CoffeeBeansSupplyController --provide--> CoffeeBeans
+DEBUG: SupplyController MilkSupplyController --provide--> Milk
+DEBUG: SupplyController SugarSupplyController --provide--> Sugar
+DEBUG: SupplyController WaterSupplyController --provide--> Water
+
+================================================================================
+DATA FLOW ANALYSIS
+================================================================================
+
+Found 21 data flow relationships:
+  - 13 'use' relationships
+  - 8 'provide' relationships
+
+USE RELATIONSHIPS - Controllers use input entities (13):
+------------------------------------------------------------
+  [B2c] AmountManager --use--> CoffeeBeans
+      Transformation: CoffeeBeans -> GroundCoffee
+      Description: AmountManager uses CoffeeBeans for grind operation
+  [B2c] AmountManager --use--> Filter
+      Transformation: preposition: into the filter
+      Description: AmountManager uses Filter as container/target (preposition: 'into')
+  [B3a] CoffeeManager --use--> GroundCoffee
+      Transformation: GroundCoffee + HotWater + Filter -> Coffee
+      Description: CoffeeManager uses GroundCoffee for brew operation
+  [B3a] CoffeeManager --use--> HotWater
+      Transformation: GroundCoffee + HotWater + Filter -> Coffee
+      Description: CoffeeManager uses HotWater for brew operation
+  [B3a] CoffeeManager --use--> Filter
+      Transformation: GroundCoffee + HotWater + Filter -> Coffee
+      Description: CoffeeManager uses Filter for brew operation
+  [B3a] CoffeeManager --use--> Water
+      Transformation: preposition: with the set water amount
+      Description: CoffeeManager uses Water as tool/ingredient (preposition: 'with')
+  [B3a] CoffeeManager --use--> Cup
+      Transformation: preposition: into the cup
+      Description: CoffeeManager uses Cup as container/target (preposition: 'into')
+  [B3b] MilkManager --use--> Coffee
+      Transformation: Coffee + Milk -> Coffee
+      Description: MilkManager uses Coffee for add operation
+  [B3b] MilkManager --use--> Milk
+      Transformation: Coffee + Milk -> Coffee
+      Description: MilkManager uses Milk for add operation
+  [B3b] MilkManager --use--> Cup
+      Transformation: preposition: to the cup
+      Description: MilkManager uses Cup as target/container (preposition: 'to')
+  [E1.1] SugarManager --use--> Coffee
+      Transformation: Coffee + Sugar -> Coffee
+      Description: SugarManager uses Coffee for add operation
+  [E1.1] SugarManager --use--> Sugar
+      Transformation: Coffee + Sugar -> Coffee
+      Description: SugarManager uses Sugar for add operation
+  [E1.1] SugarManager --use--> Cup
+      Transformation: preposition: to the cup
+      Description: SugarManager uses Cup as target/container (preposition: 'to')
+
+PROVIDE RELATIONSHIPS - Controllers provide output entities (8):
+------------------------------------------------------------
+  [B2c] AmountManager --provide--> GroundCoffee
+      Transformation: CoffeeBeans -> GroundCoffee
+      Description: AmountManager provides GroundCoffee from grind operation
+  [B3a] CoffeeManager --provide--> Coffee
+      Transformation: GroundCoffee + HotWater + Filter -> Coffee
+      Description: CoffeeManager provides Coffee from brew operation
+  [B3b] MilkManager --provide--> Coffee
+      Transformation: Coffee + Milk -> Coffee
+      Description: MilkManager provides Coffee from add operation
+  [E1.1] SugarManager --provide--> Coffee
+      Transformation: Coffee + Sugar -> Coffee
+      Description: SugarManager provides Coffee from add operation
+  [SUPPLY] CoffeeBeansSupplyController --provide--> CoffeeBeans
+      Transformation: Supply -> CoffeeBeans
+      Description: CoffeeBeansSupplyController provides CoffeeBeans from supply source
+  [SUPPLY] MilkSupplyController --provide--> Milk
+      Transformation: Supply -> Milk
+      Description: MilkSupplyController provides Milk from supply source
+  [SUPPLY] SugarSupplyController --provide--> Sugar
+      Transformation: Supply -> Sugar
+      Description: SugarSupplyController provides Sugar from supply source
+  [SUPPLY] WaterSupplyController --provide--> Water
+      Transformation: Supply -> Water
+      Description: WaterSupplyController provides Water from supply source
+
+DATA FLOW COMPLIANCE:
+  [OK] Rule 1: Output entities have 'provide' relationships
+  [OK] Rule 2: Input entities have 'use' relationships
+  [OK] All transformation verbs analyzed for data flow
+
+================================================================================
+ALL RA CLASSES - DOMAIN-AGNOSTIC ANALYSIS
+================================================================================
+
+Actor: ExternalTrigger
+  Stereotype: «actor»
+  Element Type: control
+  Steps: A1, A2
+  Description: External trigger source
+
+Actor: Timer
+  Stereotype: «actor»
+  Element Type: control
+  Steps: B1, A3
+  Description: Time-based trigger
+
+Actor: User
+  Stereotype: «actor»
+  Element Type: functional
+  Steps: E1
+  Description: Human actor
+
+Boundary: CoffeeBeansSupplyBoundary
+  Stereotype: «boundary»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Boundary for Coffee beans supply monitoring and refill alerts
+
+Boundary: HMIAdditiveInputBoundary
+  Stereotype: «boundary»
+  Element Type: control
+  Steps: E1
+  Description: HMI boundary for user selection of beverage additives
+
+Boundary: HMIErrorDisplayBoundary
+  Stereotype: «boundary»
+  Element Type: control
+  Steps: B4, A1.2, A1.2, A2.2, A2.2
+  Description: HMI boundary for displaying error messages to user
+
+Boundary: HMIStatusDisplayBoundary
+  Stereotype: «boundary»
+  Element Type: control
+  Steps: B4
+  Description: HMI boundary for displaying status messages (e.g., 'coffee ready')
+
+Boundary: MilkSupplyBoundary
+  Stereotype: «boundary»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Boundary for Milk supply monitoring and refill alerts
+
+Boundary: ProductDeliveryBoundary
+  Stereotype: «boundary»
+  Element Type: functional
+  Steps: B5, B5
+  Description: Boundary for delivering finished products to user
+
+Boundary: SugarSupplyBoundary
+  Stereotype: «boundary»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Boundary for Sugar supply monitoring and refill alerts
+
+Boundary: TimeTriggerBoundary
+  Stereotype: «boundary»
+  Element Type: control
+  Steps: B1
+  Description: Boundary for time-based system triggers
+
+Boundary: WaterSupplyBoundary
+  Stereotype: «boundary»
+  Element Type: functional
+  Steps: A1
+  Description: Boundary for water supply monitoring and refill alerts (also required as precondition)
+
+Controller: A1ConditionManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: A1
+  Description: Controls has operation in A1
+
+Controller: A2ConditionManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: A2
+  Description: Controls  operation in A2
+
+Controller: ActionsManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: A3.1
+  Description: Controls stops operation in A3.1
+
+Controller: AdditionManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: A2.1
+  Description: Controls stops operation in A2.1
+
+Controller: AmountManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B2c
+  Description: Controls grinds operation in B2c
+
+Controller: Beverage_PreparationDomainOrchestrator
+  Stereotype: «control»
+  Element Type: functional
+  Steps: IMPLICIT_COORDINATION
+  Description: Implicit domain orchestrator for beverage_preparation - coordinates all controllers in UC1
+
+Controller: CoffeeBeansSupplyController
+  Stereotype: «control»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Manages Coffee beans supply and availability (from precondition)
+
+Controller: CoffeeManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B3a
+  Description: Controls brewing operation in B3a
+
+Controller: CupManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B2d, B5
+  Description: Controls retrieves operation in B2d
+
+Controller: FilterManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B2b
+  Description: Controls prepares operation in B2b
+
+Controller: HMIController
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B4, B5, A1.2, A2.2, E1
+  Description: Human-Machine Interface controller for user interactions
+
+Controller: HeaterManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B2a, A1.1
+  Description: Controls activates operation in B2a
+
+Controller: Manager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: A3.2
+  Description: Controls  operation in A3.2
+
+Controller: MessageManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B4, A1.2, A2.2
+  Description: Controls outputs operation in B4
+
+Controller: MilkManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B3b
+  Description: Controls adds operation in B3b
+
+Controller: MilkSupplyController
+  Stereotype: «control»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Manages Milk supply and availability (from precondition)
+
+Controller: SugarManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: E1.1
+  Description: Controls adds operation in E1.1
+
+Controller: SugarSupplyController
+  Stereotype: «control»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Manages Sugar supply and availability (from precondition)
+
+Controller: TimeManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B1, A3
+  Description: Controls reaches operation in B1
+
+Controller: UserRequestManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: E1
+  Description: Controls wants operation in E1
+
+Controller: WaterSupplyController
+  Stereotype: «control»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Manages Water supply and availability (from precondition)
+
+Entity: Actions
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: A3.1
+  Description: Domain entity: actions
+
+Entity: Coffee
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B3a
+  Description: Domain entity: coffee
+
+Entity: CoffeeBeanAmount
+  Stereotype: «entity»
+  Element Type: control
+  Steps: B2c, B3a
+  Description: Amount specification for coffee beans
+
+Entity: CoffeeBeans
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Resource: Coffee beans (required as precondition)
+
+Entity: Cup
+  Stereotype: «entity»
+  Element Type: container
+  Steps: B2d, B3a, B3b, B5, E1.1
+  Description: Container: cup
+
+Entity: Error
+  Stereotype: «entity»
+  Element Type: control
+  Steps: A1.2, A2.2
+  Description: Control data: error
+
+Entity: Filter
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B2b, B2c
+  Description: Domain entity: filter
+
+Entity: Grinding
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B2c
+  Description: Domain entity: grinding
+
+Entity: GrindingDegree
+  Stereotype: «entity»
+  Element Type: control
+  Steps: B2c
+  Description: Grinding degree parameter for coffee beans
+
+Entity: Heater
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B2a, A1.1
+  Description: Domain entity: heater
+
+Entity: Message
+  Stereotype: «entity»
+  Element Type: control
+  Steps: B4, A1.2, A2.2
+  Description: Control data: message
+
+Entity: Milk
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B3b, A2.1
+  Description: Domain entity: milk (also required as precondition)
+
+Entity: MilkAddition
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: A2.1
+  Description: Milk addition process
+
+Entity: Sugar
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: E1, E1.1
+  Description: Domain entity: sugar (also required as precondition)
+
+Entity: Water
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B2a, B3a, A1, A1.1
+  Description: Domain entity: water (also required as precondition)
+
+================================================================================
+VERB CLASSIFICATION SUMMARY
+================================================================================
+
+TRANSACTION VERBS - Boundary interactions (8):
+  B1: reaches - System clock reaches set time of 7:00h (Radio clock)
+  B4: outputs - The system outputs a message to user
+  B5: presents - The system presents cup to user
+  A1: has - Water heater has too little water
+  A1.2: outputs - The system outputs an error message to user
+  A2.2: outputs - The system outputs an error message to user
+  A3: detected - time Overheat detected
+  E1: wants - B3-B5 User wants sugar in coffee
+
+TRANSFORMATION VERBS - Entity transformations (4):
+  B2c: grinds -> CoffeeBeans -> GroundCoffee
+  B3a: brewing -> GroundCoffee + HotWater + Filter -> Coffee
+  B3b: adds -> Coffee + Additive -> Coffee
+  E1.1: adds -> Coffee + Additive -> Coffee
+
+FUNCTION VERBS - System actions (8):
+  B2a: activates - The system activates the water heater
+  B2b: prepares - The system prepares filter
+  B2d: retrieves - The system retrieves cup from storage container and places it under the filter
+  A1.1: switches - The system switches off water heater
+  A2:  - Too little milk
+  A2.1: stops - The system stops milk addition
+  A3.1: stops - The system stops all actions
+  A3.2:  - The system switch of itself
+
+STATISTICS:
+   Total verbs analyzed: 20
+   Transaction verbs: 8
+   Transformation verbs: 4
+   Function verbs: 8
+
+================================================================================
+ENHANCING CONTROLLERS WITH SAFETY/HYGIENE FUNCTIONS
+================================================================================
+Generalizing: A1ConditionManager -> ConditionManager
+Generalizing: A2ConditionManager -> ConditionManager
+Generalizing: ActionsManager -> ProcessController
+Generalizing: AdditionManager -> AdditiveManager
+Generalizing: AmountManager -> ProcessController
+Generalizing: CoffeeBeansSupplyController -> SupplyController
+Generalizing: CoffeeManager -> ProcessController
+Generalizing: CupManager -> ContainerManager
+Generalizing: FilterManager -> ProcessController
+Generalizing: HeaterManager -> TemperatureController
+Generalizing: MilkManager -> StorageManager
+Generalizing: MilkSupplyController -> SupplyController
+Generalizing: SugarManager -> AdditiveManager
+Generalizing: SugarSupplyController -> SupplyController
+Generalizing: UserRequestManager -> RequestManager
+Generalizing: WaterSupplyController -> SupplyController
+Adding 4 safety/hygiene functions to TemperatureController:
+  + maintain_food_safety_standards_coffee
+  + monitor_temperature_control_coffee
+  + control_contamination_prevention_coffee
+  + validate_cleaning_procedures_coffee
+Adding 4 safety/hygiene functions to TemperatureController:
+  + maintain_food_safety_standards_coffeebeanamount
+  + monitor_temperature_control_coffeebeanamount
+  + control_contamination_prevention_coffeebeanamount
+  + validate_cleaning_procedures_coffeebeanamount
+Adding 4 safety/hygiene functions to TemperatureController:
+  + maintain_food_safety_standards_coffeebeans
+  + monitor_temperature_control_coffeebeans
+  + control_contamination_prevention_coffeebeans
+  + validate_cleaning_procedures_coffeebeans
+Adding 4 safety/hygiene functions to TemperatureController:
+  + maintain_food_safety_standards_milk
+  + monitor_temperature_control_milk
+  + control_contamination_prevention_milk
+  + validate_cleaning_procedures_milk
+Adding 4 safety/hygiene functions to TemperatureController:
+  + maintain_food_safety_standards_milkaddition
+  + monitor_temperature_control_milkaddition
+  + control_contamination_prevention_milkaddition
+  + validate_cleaning_procedures_milkaddition
+Adding 4 safety/hygiene functions to TemperatureController:
+  + maintain_food_safety_standards_sugar
+  + monitor_temperature_control_sugar
+  + control_contamination_prevention_sugar
+  + validate_cleaning_procedures_sugar
+Adding 4 safety/hygiene functions to TemperatureController:
+  + maintain_food_safety_standards_water
+  + monitor_temperature_control_water
+  + control_contamination_prevention_water
+  + validate_cleaning_procedures_water
+
+Enhanced 21 controllers
+
+DEBUG: Available entity names for data flow: ['Actions', 'Additive', 'Coffee', 'CoffeeBeanAmount', 'CoffeeBeans', 'Cup', 'Error', 'Filter', 'Grinding', 'GrindingDegree', 'GroundCoffee', 'Heater', 'HotWater', 'Message', 'Milk', 'MilkAddition', 'Sugar', 'Water']
+DEBUG: Total entities: 18
+DEBUG: Explicit entities: 15
+DEBUG: Transformation entities: 6
+DEBUG: Processing transaction verb 'reach' with direct_object 'None'
+DEBUG: Processing function verb 'activate' with direct_object 'the water heater'
+DEBUG: Function verb activate -> transformation: -> Water
+DEBUG: Found transformation '-> Water' for verb 'activate'
+DEBUG: Controller for B2a: TemperatureController
+DEBUG: Processing function verb 'prepare' with direct_object 'filter'
+DEBUG: Prepare verb prepare filter -> transformation: -> Filter
+DEBUG: Found transformation '-> Filter' for verb 'prepare'
+DEBUG: Controller for B2b: ProcessController
+DEBUG: Found transformation 'CoffeeBeans -> GroundCoffee' for verb 'grind'
+DEBUG: Controller for B2c: None
+DEBUG: Processing function verb 'retrieve' with direct_object 'cup'
+DEBUG: Function verb retrieve -> transformation: -> Cup
+DEBUG: Found transformation '-> Cup' for verb 'retrieve'
+DEBUG: Controller for B2d: ContainerManager
+DEBUG: Found transformation 'GroundCoffee + HotWater + Filter -> Coffee' for verb 'brew'
+DEBUG: Controller for B3a: None
+DEBUG: Override 'add' transformation for direct_object 'milk': Coffee + Milk -> Coffee
+DEBUG: Found transformation 'Coffee + Milk -> Coffee' for verb 'add'
+DEBUG: Controller for B3b: StorageManager
+DEBUG: Step B3b output entities: ['Coffee']
+DEBUG: Preposition 'to' -> use: StorageManager -> Cup
+DEBUG: Processing transaction verb 'output' with direct_object 'a message'
+DEBUG: Transaction verb output -> transformation: -> Message
+DEBUG: Found transformation '-> Message' for verb 'output'
+DEBUG: Controller for B4: HMIController
+DEBUG: Processing transaction verb 'present' with direct_object 'cup'
+DEBUG: Transaction verb present -> transformation: -> Cup
+DEBUG: Found transformation '-> Cup' for verb 'present'
+DEBUG: Controller for B5: ContainerManager
+DEBUG: Processing transaction verb 'have' with direct_object 'little water'
+DEBUG: Transaction verb have -> transformation: -> Water
+DEBUG: Found transformation '-> Water' for verb 'have'
+DEBUG: Controller for A1: None
+DEBUG: Processing function verb 'switch' with direct_object 'water heater'
+DEBUG: Function verb switch -> transformation: -> Water
+DEBUG: Found transformation '-> Water' for verb 'switch'
+DEBUG: Controller for A1.1: TemperatureController
+DEBUG: Processing transaction verb 'output' with direct_object 'an error message'
+DEBUG: Transaction verb output -> transformation: -> Message
+DEBUG: Found transformation '-> Message' for verb 'output'
+DEBUG: Controller for A1.2: HMIController
+DEBUG: Processing function verb '' with direct_object 'None'
+DEBUG: Processing function verb 'stop' with direct_object 'milk addition'
+DEBUG: Function verb stop -> transformation: -> Milk
+DEBUG: Found transformation '-> Milk' for verb 'stop'
+DEBUG: Controller for A2.1: None
+DEBUG: Processing transaction verb 'output' with direct_object 'an error message'
+DEBUG: Transaction verb output -> transformation: -> Message
+DEBUG: Found transformation '-> Message' for verb 'output'
+DEBUG: Controller for A2.2: HMIController
+DEBUG: Processing transaction verb 'detect' with direct_object 'None'
+DEBUG: Processing function verb 'stop' with direct_object 'all actions'
+DEBUG: Function verb stop -> transformation: -> All
+DEBUG: Found transformation '-> All' for verb 'stop'
+DEBUG: Controller for A3.1: None
+DEBUG: Processing function verb '' with direct_object 'None'
+DEBUG: Processing transaction verb 'want' with direct_object 'sugar'
+DEBUG: Transaction verb want -> transformation: -> Sugar
+DEBUG: Found transformation '-> Sugar' for verb 'want'
+DEBUG: Controller for E1: HMIController
+DEBUG: Override 'add' transformation for direct_object 'sugar': Coffee + Sugar -> Coffee
+DEBUG: Found transformation 'Coffee + Sugar -> Coffee' for verb 'add'
+DEBUG: Controller for E1.1: AdditiveManager
+DEBUG: Step E1.1 output entities: ['Coffee']
+DEBUG: Preposition 'to' -> use: AdditiveManager -> Cup
+
+================================================================================
+OPERATIONAL MATERIALS ANALYSIS
+================================================================================
+
+Found 7 operational materials:
+
+Coffee:
+  Safety Class: standard
+  Hygiene Level: food_grade
+  Addressing ID: STANDARD-FOOD_GRADE-COFFEE-B20251027-LOC001
+  Special Requirements: Dry storage, Pest control, Freshness monitoring
+  Storage Conditions: temperature=ambient, humidity=<60%, atmosphere=dry
+
+CoffeeBeanAmount:
+  Safety Class: standard
+  Hygiene Level: food_grade
+  Addressing ID: STANDARD-FOOD_GRADE-COFFEEBEANAMOUNT-B20251027-LOC001
+  Special Requirements: Dry storage, Pest control, Freshness monitoring
+  Storage Conditions: temperature=ambient, humidity=<60%, atmosphere=dry
+
+CoffeeBeans:
+  Safety Class: standard
+  Hygiene Level: food_grade
+  Addressing ID: STANDARD-FOOD_GRADE-COFFEEBEANS-B20251027-LOC001
+  Special Requirements: Dry storage, Pest control, Freshness monitoring
+  Storage Conditions: temperature=ambient, humidity=<60%, atmosphere=dry
+
+Milk:
+  Safety Class: standard
+  Hygiene Level: food_grade
+  Addressing ID: STANDARD-FOOD_GRADE-MILK-B20251027-LOC001
+  Special Requirements: Cold chain maintenance, Pasteurization verification, Microbiological testing
+  Storage Conditions: temperature=2-8°C, humidity=controlled
+
+MilkAddition:
+  Safety Class: standard
+  Hygiene Level: food_grade
+  Addressing ID: STANDARD-FOOD_GRADE-MILKADDITION-B20251027-LOC001
+  Special Requirements: Cold chain maintenance, Pasteurization verification, Microbiological testing
+  Storage Conditions: temperature=2-8°C, humidity=controlled
+
+Sugar:
+  Safety Class: standard
+  Hygiene Level: food_grade
+  Addressing ID: STANDARD-FOOD_GRADE-SUGAR-B20251027-LOC001
+  Special Requirements: Moisture control, Sealed containers
+  Storage Conditions: temperature=ambient, humidity=<50%
+
+Water:
+  Safety Class: standard
+  Hygiene Level: food_grade
+  Addressing ID: STANDARD-FOOD_GRADE-WATER-B20251027-LOC001
+  Special Requirements: Quality testing, Filtration, Chlorine monitoring
+  Storage Conditions: temperature=ambient, quality=potable
+
+================================================================================
+SAFETY CONSTRAINTS ANALYSIS
+================================================================================
+
+================================================================================
+HYGIENE REQUIREMENTS ANALYSIS
+================================================================================
+
+DEBUG: Available entity names for data flow: ['Actions', 'Additive', 'Coffee', 'CoffeeBeanAmount', 'CoffeeBeans', 'Cup', 'Error', 'Filter', 'Grinding', 'GrindingDegree', 'GroundCoffee', 'Heater', 'HotWater', 'Message', 'Milk', 'MilkAddition', 'Sugar', 'Water']
+DEBUG: Total entities: 18
+DEBUG: Explicit entities: 15
+DEBUG: Transformation entities: 6
+DEBUG: Processing transaction verb 'reach' with direct_object 'None'
+DEBUG: Processing function verb 'activate' with direct_object 'the water heater'
+DEBUG: Function verb activate -> transformation: -> Water
+DEBUG: Found transformation '-> Water' for verb 'activate'
+DEBUG: Controller for B2a: TemperatureController
+DEBUG: Processing function verb 'prepare' with direct_object 'filter'
+DEBUG: Prepare verb prepare filter -> transformation: -> Filter
+DEBUG: Found transformation '-> Filter' for verb 'prepare'
+DEBUG: Controller for B2b: ProcessController
+DEBUG: Found transformation 'CoffeeBeans -> GroundCoffee' for verb 'grind'
+DEBUG: Controller for B2c: None
+DEBUG: Processing function verb 'retrieve' with direct_object 'cup'
+DEBUG: Function verb retrieve -> transformation: -> Cup
+DEBUG: Found transformation '-> Cup' for verb 'retrieve'
+DEBUG: Controller for B2d: ContainerManager
+DEBUG: Found transformation 'GroundCoffee + HotWater + Filter -> Coffee' for verb 'brew'
+DEBUG: Controller for B3a: None
+DEBUG: Override 'add' transformation for direct_object 'milk': Coffee + Milk -> Coffee
+DEBUG: Found transformation 'Coffee + Milk -> Coffee' for verb 'add'
+DEBUG: Controller for B3b: StorageManager
+DEBUG: Step B3b output entities: ['Coffee']
+DEBUG: Preposition 'to' -> use: StorageManager -> Cup
+DEBUG: Processing transaction verb 'output' with direct_object 'a message'
+DEBUG: Transaction verb output -> transformation: -> Message
+DEBUG: Found transformation '-> Message' for verb 'output'
+DEBUG: Controller for B4: HMIController
+DEBUG: Processing transaction verb 'present' with direct_object 'cup'
+DEBUG: Transaction verb present -> transformation: -> Cup
+DEBUG: Found transformation '-> Cup' for verb 'present'
+DEBUG: Controller for B5: ContainerManager
+DEBUG: Processing transaction verb 'have' with direct_object 'little water'
+DEBUG: Transaction verb have -> transformation: -> Water
+DEBUG: Found transformation '-> Water' for verb 'have'
+DEBUG: Controller for A1: None
+DEBUG: Processing function verb 'switch' with direct_object 'water heater'
+DEBUG: Function verb switch -> transformation: -> Water
+DEBUG: Found transformation '-> Water' for verb 'switch'
+DEBUG: Controller for A1.1: TemperatureController
+DEBUG: Processing transaction verb 'output' with direct_object 'an error message'
+DEBUG: Transaction verb output -> transformation: -> Message
+DEBUG: Found transformation '-> Message' for verb 'output'
+DEBUG: Controller for A1.2: HMIController
+DEBUG: Processing function verb '' with direct_object 'None'
+DEBUG: Processing function verb 'stop' with direct_object 'milk addition'
+DEBUG: Function verb stop -> transformation: -> Milk
+DEBUG: Found transformation '-> Milk' for verb 'stop'
+DEBUG: Controller for A2.1: None
+DEBUG: Processing transaction verb 'output' with direct_object 'an error message'
+DEBUG: Transaction verb output -> transformation: -> Message
+DEBUG: Found transformation '-> Message' for verb 'output'
+DEBUG: Controller for A2.2: HMIController
+DEBUG: Processing transaction verb 'detect' with direct_object 'None'
+DEBUG: Processing function verb 'stop' with direct_object 'all actions'
+DEBUG: Function verb stop -> transformation: -> All
+DEBUG: Found transformation '-> All' for verb 'stop'
+DEBUG: Controller for A3.1: None
+DEBUG: Processing function verb '' with direct_object 'None'
+DEBUG: Processing transaction verb 'want' with direct_object 'sugar'
+DEBUG: Transaction verb want -> transformation: -> Sugar
+DEBUG: Found transformation '-> Sugar' for verb 'want'
+DEBUG: Controller for E1: HMIController
+DEBUG: Override 'add' transformation for direct_object 'sugar': Coffee + Sugar -> Coffee
+DEBUG: Found transformation 'Coffee + Sugar -> Coffee' for verb 'add'
+DEBUG: Controller for E1.1: AdditiveManager
+DEBUG: Step E1.1 output entities: ['Coffee']
+DEBUG: Preposition 'to' -> use: AdditiveManager -> Cup
+
+JSON export completed for UC1
+   Main analysis: output/UC1_complete_analysis_20251027_152909.json
+   System engineering: output/UC1_system_engineering_20251027_152909.json
+   Visualization: output/UC1_visualization_20251027_152909.json
+   Safety/Hygiene: output/UC1_safety_hygiene_20251027_152909.json
+   Total components: 48 RA classes
+   Data flows: 8
+   Control flows: 86
+UC1 JSON export completed. Files generated: 4
+
+================================================================================
+JSON EXPORT FOR VISUALIZATION AND SYSTEM ENGINEERING
+================================================================================
+================================================================================
+GENERIC UC GRAMMAR ANALYSIS - ALL FLOWS
+================================================================================
+Main Flow: 10 steps
+Alternative Flows: 12 steps
+Extension Flows: 3 steps
+Domain: beverage_preparation
+Total steps to analyze: 25
+================================================================================
+
+--- B1: System clock reaches set time of 7:00h (Radio clock) ---
+Main verb: reaches (lemma: reach)
+B1 Override: Trigger -> TRANSACTION VERB
+Verb Type: transaction
+Direct Object: None
+Prepositional Objects: []
+
+--- B2a: The system activates the water heater ---
+Main verb: activates (lemma: activate)
+Verb Type: function
+Direct Object: the water heater
+Prepositional Objects: []
+WARNING: Heater is implementation element - use functional activity
+SUGGESTION: The system heats the water
+
+--- B2b: The system prepares filter ---
+Main verb: prepares (lemma: prepare)
+Verb Type: function
+Direct Object: filter
+Prepositional Objects: []
+WARNING: Filter is implementation element - use functional activity
+SUGGESTION: The system filters the liquid
+
+--- B2c: The system grinds the set amount with the set grinding degree directly into the filter ---
+Main verb: grinds (lemma: grind)
+Verb Type: transformation
+Direct Object: the set amount
+Prepositional Objects: [('with', 'the set grinding degree'), ('into', 'the filter')]
+Adjectives in 'with the set grinding degree': ['set']
+
+--- B2d: The system retrieves cup from storage container and places it under the filter ---
+Main verb: retrieves (lemma: retrieve)
+Verb Type: function
+Direct Object: cup
+Prepositional Objects: []
+
+--- B3a: The system begins brewing coffee with the set water amount into the cup ---
+Pattern detected: 'begins brewing' -> using 'brewing' as main verb
+Main verb: brewing (lemma: brew)
+Verb Type: transformation
+Direct Object: coffee
+Prepositional Objects: [('with', 'the set water amount'), ('into', 'the cup')]
+Adjectives in 'with the set water amount': ['set']
+
+--- B3b: The system adds milk to the cup ---
+Main verb: adds (lemma: add)
+Verb Type: transformation
+Direct Object: milk
+Prepositional Objects: [('to', 'the cup')]
+
+--- B4: The system outputs a message to user ---
+Main verb: outputs (lemma: output)
+Verb Type: transaction
+Direct Object: a message
+Prepositional Objects: [('to', 'user')]
+
+--- B5: The system presents cup to user ---
+Main verb: presents (lemma: present)
+Verb Type: transaction
+Direct Object: cup
+Prepositional Objects: [('to', 'user')]
+
+--- B6: End UC --- (Flow control - not analyzed)
+
+--- A1: Water heater has too little water ---
+Main verb: has (lemma: have)
+A1 Override: Trigger -> TRANSACTION VERB
+Verb Type: transaction
+Direct Object: little water
+Adjectives detected: ['little']
+Prepositional Objects: []
+
+--- A1.1: The system switches off water heater ---
+Main verb: switches (lemma: switch)
+Verb Type: function
+Direct Object: water heater
+Prepositional Objects: []
+WARNING: Heater is implementation element - use functional activity
+SUGGESTION: The system heats the water
+
+--- A1.2: The system outputs an error message to user ---
+Main verb: outputs (lemma: output)
+Verb Type: transaction
+Direct Object: an error message
+Prepositional Objects: [('to', 'user')]
+
+--- A1.3: End UC --- (Flow control - not analyzed)
+
+--- A2: Too little milk ---
+
+--- A2.1: The system stops milk addition ---
+Main verb: stops (lemma: stop)
+Verb Type: function
+Direct Object: milk addition
+Prepositional Objects: []
+
+--- A2.2: The system outputs an error message to user ---
+Main verb: outputs (lemma: output)
+Verb Type: transaction
+Direct Object: an error message
+Prepositional Objects: [('to', 'user')]
+
+--- A2.3: End UC --- (Flow control - not analyzed)
+
+--- A3: time Overheat detected ---
+Main verb: detected (lemma: detect)
+A3 Override: Trigger -> TRANSACTION VERB
+Verb Type: transaction
+Direct Object: None
+Prepositional Objects: []
+
+--- A3.1: The system stops all actions ---
+Main verb: stops (lemma: stop)
+Verb Type: function
+Direct Object: all actions
+Prepositional Objects: []
+
+--- A3.2: The system switch of itself ---
+
+--- A3.3: End UC --- (Flow control - not analyzed)
+
+--- E1: B3-B5 User wants sugar in coffee ---
+Main verb: wants (lemma: want)
+E1 Override: Trigger -> TRANSACTION VERB
+Verb Type: transaction
+Direct Object: sugar
+Prepositional Objects: []
+
+--- E1.1: The system adds sugar to the cup ---
+Main verb: adds (lemma: add)
+Verb Type: transformation
+Direct Object: sugar
+Prepositional Objects: [('to', 'the cup')]
+
+--- E1.2: Continue in main flow --- (Flow control - not analyzed)
+
+================================================================================
+PRECONDITION ANALYSIS
+================================================================================
+
+Found 4 preconditions:
+  - Coffee beans are available in the system (UC1)
+  - Water is available in the system (UC1)
+  - Milk is available in the system (UC1)
+  - Sugar is available in the system (UC1)
+
+Generated 12 RA classes from preconditions:
+
+Resource Controllers (4):
+  - CoffeeBeansSupplyController: Manages Coffee beans supply and availability (from precondition)
+  - WaterSupplyController: Manages Water supply and availability (from precondition)
+  - MilkSupplyController: Manages Milk supply and availability (from precondition)
+  - SugarSupplyController: Manages Sugar supply and availability (from precondition)
+
+Resource Entities (4):
+  - CoffeeBeans: Resource: Coffee beans (required as precondition)
+  - Water: Resource: Water (required as precondition)
+  - Milk: Resource: Milk (required as precondition)
+  - Sugar: Resource: Sugar (required as precondition)
+
+Supply Boundaries (4):
+  - CoffeeBeansSupplyBoundary: Boundary for Coffee beans supply monitoring and refill alerts
+  - WaterSupplyBoundary: Boundary for Water supply monitoring and refill alerts
+  - MilkSupplyBoundary: Boundary for Milk supply monitoring and refill alerts
+  - SugarSupplyBoundary: Boundary for Sugar supply monitoring and refill alerts
+
+UC-Methode Rule Compliance:
+  [OK] Each precondition generates Controller + Entity + Boundary
+  [OK] Domain Orchestrator implicitly coordinates all controllers
+  [WARNING] Preconditions should be handled by separate UCs
+  [WARNING] Missing UCs for: Coffee beans, Water, Milk, Sugar
+
+Next Step: Create separate UCs for resource supply management
+
+================================================================================
+KONTROLLFLUSS ANALYSIS (UC-METHODE)
+================================================================================
+
+Regel 1: Boundary -> Controller (Externe Eingaben) (7 Flows):
+------------------------------------------------------------
+  [B4] HMIErrorDisplayBoundary -> HMIController
+      Rule 1: HMIErrorDisplayBoundary triggers HMIController (external input)
+  [B4] HMIStatusDisplayBoundary -> HMIController
+      Rule 1: HMIStatusDisplayBoundary triggers HMIController (external input)
+  [A1.2] HMIErrorDisplayBoundary -> HMIController
+      Rule 1: HMIErrorDisplayBoundary triggers HMIController (external input)
+  [A1.2] HMIErrorDisplayBoundary -> HMIController
+      Rule 1: HMIErrorDisplayBoundary triggers HMIController (external input)
+  [A2.2] HMIErrorDisplayBoundary -> HMIController
+      Rule 1: HMIErrorDisplayBoundary triggers HMIController (external input)
+  [A2.2] HMIErrorDisplayBoundary -> HMIController
+      Rule 1: HMIErrorDisplayBoundary triggers HMIController (external input)
+  [E1] HMIAdditiveInputBoundary -> HMIController
+      Rule 1: HMIAdditiveInputBoundary triggers HMIController (external input)
+
+Regel 2: Controller -> Controller (Interne Verarbeitung) (21 Flows):
+------------------------------------------------------------
+  [B2a] TimeManager -> HeaterManager
+      Rule 2: TimeManager calls HeaterManager (sequential processing)
+  [B2b] HeaterManager -> FilterManager
+      Rule 2: HeaterManager calls FilterManager (sequential processing)
+  [B2c] FilterManager -> AmountManager
+      Rule 2: FilterManager calls AmountManager (sequential processing)
+  [B2d] AmountManager -> CupManager
+      Rule 2: AmountManager calls CupManager (sequential processing)
+  [B3a] CupManager -> CoffeeManager
+      Rule 2: CupManager calls CoffeeManager (sequential processing)
+  [B3b] CoffeeManager -> MilkManager
+      Rule 2: CoffeeManager calls MilkManager (sequential processing)
+  [B4] MilkManager -> HMIController
+      Rule 2: MilkManager calls HMIController (sequential processing)
+  [B4] MilkManager -> MessageManager
+      Rule 2: MilkManager calls MessageManager (sequential processing)
+  [B5] HMIController -> CupManager
+      Rule 2: HMIController calls CupManager (sequential processing)
+  [B5] MessageManager -> CupManager
+      Rule 2: MessageManager calls CupManager (sequential processing)
+  [B5] MessageManager -> HMIController
+      Rule 2: MessageManager calls HMIController (sequential processing)
+  [A1.1] A1ConditionManager -> HeaterManager
+      Rule 2: A1ConditionManager calls HeaterManager (sequential processing)
+  [A1.2] HeaterManager -> HMIController
+      Rule 2: HeaterManager calls HMIController (sequential processing)
+  [A1.2] HeaterManager -> MessageManager
+      Rule 2: HeaterManager calls MessageManager (sequential processing)
+  [A2.1] A2ConditionManager -> AdditionManager
+      Rule 2: A2ConditionManager calls AdditionManager (sequential processing)
+  [A2.2] AdditionManager -> HMIController
+      Rule 2: AdditionManager calls HMIController (sequential processing)
+  [A2.2] AdditionManager -> MessageManager
+      Rule 2: AdditionManager calls MessageManager (sequential processing)
+  [A3.1] TimeManager -> ActionsManager
+      Rule 2: TimeManager calls ActionsManager (sequential processing)
+  [A3.2] ActionsManager -> Manager
+      Rule 2: ActionsManager calls Manager (sequential processing)
+  [E1.1] HMIController -> SugarManager
+      Rule 2: HMIController calls SugarManager (sequential processing)
+  [E1.1] UserRequestManager -> SugarManager
+      Rule 2: UserRequestManager calls SugarManager (sequential processing)
+
+Regel 3: Sequentielle Schrittabfolge (24 Flows):
+------------------------------------------------------------
+
+Regel 5: Controller -> Boundary (Externe Ausgaben) (16 Flows):
+------------------------------------------------------------
+  [B4] HMIController -> HMIErrorDisplayBoundary
+      Rule 5: HMIController outputs via HMIErrorDisplayBoundary (external output)
+  [B4] HMIController -> HMIStatusDisplayBoundary
+      Rule 5: HMIController outputs via HMIStatusDisplayBoundary (external output)
+  [B4] MessageManager -> HMIErrorDisplayBoundary
+      Rule 5: MessageManager outputs via HMIErrorDisplayBoundary (external output)
+  [B4] MessageManager -> HMIStatusDisplayBoundary
+      Rule 5: MessageManager outputs via HMIStatusDisplayBoundary (external output)
+  [B5] CupManager -> ProductDeliveryBoundary
+      Rule 5: CupManager outputs via ProductDeliveryBoundary (external output)
+  [B5] CupManager -> ProductDeliveryBoundary
+      Rule 5: CupManager outputs via ProductDeliveryBoundary (external output)
+  [B5] HMIController -> ProductDeliveryBoundary
+      Rule 5: HMIController outputs via ProductDeliveryBoundary (external output)
+  [B5] HMIController -> ProductDeliveryBoundary
+      Rule 5: HMIController outputs via ProductDeliveryBoundary (external output)
+  [A1.2] HMIController -> HMIErrorDisplayBoundary
+      Rule 5: HMIController outputs via HMIErrorDisplayBoundary (external output)
+  [A1.2] HMIController -> HMIErrorDisplayBoundary
+      Rule 5: HMIController outputs via HMIErrorDisplayBoundary (external output)
+  [A1.2] MessageManager -> HMIErrorDisplayBoundary
+      Rule 5: MessageManager outputs via HMIErrorDisplayBoundary (external output)
+  [A1.2] MessageManager -> HMIErrorDisplayBoundary
+      Rule 5: MessageManager outputs via HMIErrorDisplayBoundary (external output)
+  [A2.2] HMIController -> HMIErrorDisplayBoundary
+      Rule 5: HMIController outputs via HMIErrorDisplayBoundary (external output)
+  [A2.2] HMIController -> HMIErrorDisplayBoundary
+      Rule 5: HMIController outputs via HMIErrorDisplayBoundary (external output)
+  [A2.2] MessageManager -> HMIErrorDisplayBoundary
+      Rule 5: MessageManager outputs via HMIErrorDisplayBoundary (external output)
+  [A2.2] MessageManager -> HMIErrorDisplayBoundary
+      Rule 5: MessageManager outputs via HMIErrorDisplayBoundary (external output)
+
+Regel 3: Sequentielle Schrittabfolge (24 Flows):
+------------------------------------------------------------
+  Sequential execution through 24 steps
+  Flow: B1 -> ... -> E1.2
+
+Regel 4: Parallele Verzweigung/Vereinigung (2 Parallel Patterns):
+------------------------------------------------------------
+  Parallel Split: B2a -> B2d
+  Parallel Steps: B2a, B2b, B2c, B2d
+  Description: Rule 4: Parallel execution of B2a, B2b, B2c, B2d
+  Parallel Split: B3a -> B3b
+  Parallel Steps: B3a, B3b
+  Description: Rule 4: Parallel execution of B3a, B3b
+
+KONTROLLFLUSS STATISTIK:
+  Total Control Flows: 68
+  Parallel Patterns: 2
+  Regel 2: 21 flows
+  Regel 3: 24 flows
+  Regel 1: 7 flows
+  Regel 5: 16 flows
+
+UC-Methode Compliance:
+  [OK] Alle 5 Kontrollfluss-Regeln implementiert
+  [OK] Boundary-Controller-Boundary Muster erkannt
+  [OK] Parallele Ausführung identifiziert
+
+DEBUG: Available entity names for data flow: ['Actions', 'Additive', 'Coffee', 'CoffeeBeanAmount', 'CoffeeBeans', 'Cup', 'Error', 'Filter', 'Grinding', 'GrindingDegree', 'GroundCoffee', 'Heater', 'HotWater', 'Message', 'Milk', 'MilkAddition', 'Sugar', 'Water']
+DEBUG: Total entities: 18
+DEBUG: Explicit entities: 15
+DEBUG: Transformation entities: 6
+DEBUG: Processing transaction verb 'reach' with direct_object 'None'
+DEBUG: Processing function verb 'activate' with direct_object 'the water heater'
+DEBUG: Function verb activate -> transformation: -> Water
+DEBUG: Found transformation '-> Water' for verb 'activate'
+DEBUG: Controller for B2a: HeaterManager
+DEBUG: Processing function verb 'prepare' with direct_object 'filter'
+DEBUG: Prepare verb prepare filter -> transformation: -> Filter
+DEBUG: Found transformation '-> Filter' for verb 'prepare'
+DEBUG: Controller for B2b: FilterManager
+DEBUG: Found transformation 'CoffeeBeans -> GroundCoffee' for verb 'grind'
+DEBUG: Controller for B2c: AmountManager
+DEBUG: Step B2c output entities: ['GroundCoffee']
+DEBUG: Preposition 'into' -> use: AmountManager -> Filter
+DEBUG: Processing function verb 'retrieve' with direct_object 'cup'
+DEBUG: Function verb retrieve -> transformation: -> Cup
+DEBUG: Found transformation '-> Cup' for verb 'retrieve'
+DEBUG: Controller for B2d: CupManager
+DEBUG: Found transformation 'GroundCoffee + HotWater + Filter -> Coffee' for verb 'brew'
+DEBUG: Controller for B3a: CoffeeManager
+DEBUG: Step B3a output entities: ['Coffee']
+DEBUG: Preposition 'with' -> use: CoffeeManager -> Water
+DEBUG: Preposition 'into' -> use: CoffeeManager -> Cup
+DEBUG: Override 'add' transformation for direct_object 'milk': Coffee + Milk -> Coffee
+DEBUG: Found transformation 'Coffee + Milk -> Coffee' for verb 'add'
+DEBUG: Controller for B3b: MilkManager
+DEBUG: Step B3b output entities: ['Coffee']
+DEBUG: Preposition 'to' -> use: MilkManager -> Cup
+DEBUG: Processing transaction verb 'output' with direct_object 'a message'
+DEBUG: Transaction verb output -> transformation: -> Message
+DEBUG: Found transformation '-> Message' for verb 'output'
+DEBUG: Controller for B4: HMIController
+DEBUG: Processing transaction verb 'present' with direct_object 'cup'
+DEBUG: Transaction verb present -> transformation: -> Cup
+DEBUG: Found transformation '-> Cup' for verb 'present'
+DEBUG: Controller for B5: CupManager
+DEBUG: Processing transaction verb 'have' with direct_object 'little water'
+DEBUG: Transaction verb have -> transformation: -> Water
+DEBUG: Found transformation '-> Water' for verb 'have'
+DEBUG: Controller for A1: A1ConditionManager
+DEBUG: Processing function verb 'switch' with direct_object 'water heater'
+DEBUG: Function verb switch -> transformation: -> Water
+DEBUG: Found transformation '-> Water' for verb 'switch'
+DEBUG: Controller for A1.1: HeaterManager
+DEBUG: Processing transaction verb 'output' with direct_object 'an error message'
+DEBUG: Transaction verb output -> transformation: -> Message
+DEBUG: Found transformation '-> Message' for verb 'output'
+DEBUG: Controller for A1.2: HMIController
+DEBUG: Processing function verb '' with direct_object 'None'
+DEBUG: Processing function verb 'stop' with direct_object 'milk addition'
+DEBUG: Function verb stop -> transformation: -> Milk
+DEBUG: Found transformation '-> Milk' for verb 'stop'
+DEBUG: Controller for A2.1: AdditionManager
+DEBUG: Processing transaction verb 'output' with direct_object 'an error message'
+DEBUG: Transaction verb output -> transformation: -> Message
+DEBUG: Found transformation '-> Message' for verb 'output'
+DEBUG: Controller for A2.2: HMIController
+DEBUG: Processing transaction verb 'detect' with direct_object 'None'
+DEBUG: Processing function verb 'stop' with direct_object 'all actions'
+DEBUG: Function verb stop -> transformation: -> All
+DEBUG: Found transformation '-> All' for verb 'stop'
+DEBUG: Controller for A3.1: ActionsManager
+DEBUG: Processing function verb '' with direct_object 'None'
+DEBUG: Processing transaction verb 'want' with direct_object 'sugar'
+DEBUG: Transaction verb want -> transformation: -> Sugar
+DEBUG: Found transformation '-> Sugar' for verb 'want'
+DEBUG: Controller for E1: HMIController
+DEBUG: Override 'add' transformation for direct_object 'sugar': Coffee + Sugar -> Coffee
+DEBUG: Found transformation 'Coffee + Sugar -> Coffee' for verb 'add'
+DEBUG: Controller for E1.1: SugarManager
+DEBUG: Step E1.1 output entities: ['Coffee']
+DEBUG: Preposition 'to' -> use: SugarManager -> Cup
+DEBUG: SupplyController CoffeeBeansSupplyController --provide--> CoffeeBeans
+DEBUG: SupplyController MilkSupplyController --provide--> Milk
+DEBUG: SupplyController SugarSupplyController --provide--> Sugar
+DEBUG: SupplyController WaterSupplyController --provide--> Water
+
+================================================================================
+DATA FLOW ANALYSIS
+================================================================================
+
+Found 21 data flow relationships:
+  - 13 'use' relationships
+  - 8 'provide' relationships
+
+USE RELATIONSHIPS - Controllers use input entities (13):
+------------------------------------------------------------
+  [B2c] AmountManager --use--> CoffeeBeans
+      Transformation: CoffeeBeans -> GroundCoffee
+      Description: AmountManager uses CoffeeBeans for grind operation
+  [B2c] AmountManager --use--> Filter
+      Transformation: preposition: into the filter
+      Description: AmountManager uses Filter as container/target (preposition: 'into')
+  [B3a] CoffeeManager --use--> GroundCoffee
+      Transformation: GroundCoffee + HotWater + Filter -> Coffee
+      Description: CoffeeManager uses GroundCoffee for brew operation
+  [B3a] CoffeeManager --use--> HotWater
+      Transformation: GroundCoffee + HotWater + Filter -> Coffee
+      Description: CoffeeManager uses HotWater for brew operation
+  [B3a] CoffeeManager --use--> Filter
+      Transformation: GroundCoffee + HotWater + Filter -> Coffee
+      Description: CoffeeManager uses Filter for brew operation
+  [B3a] CoffeeManager --use--> Water
+      Transformation: preposition: with the set water amount
+      Description: CoffeeManager uses Water as tool/ingredient (preposition: 'with')
+  [B3a] CoffeeManager --use--> Cup
+      Transformation: preposition: into the cup
+      Description: CoffeeManager uses Cup as container/target (preposition: 'into')
+  [B3b] MilkManager --use--> Coffee
+      Transformation: Coffee + Milk -> Coffee
+      Description: MilkManager uses Coffee for add operation
+  [B3b] MilkManager --use--> Milk
+      Transformation: Coffee + Milk -> Coffee
+      Description: MilkManager uses Milk for add operation
+  [B3b] MilkManager --use--> Cup
+      Transformation: preposition: to the cup
+      Description: MilkManager uses Cup as target/container (preposition: 'to')
+  [E1.1] SugarManager --use--> Coffee
+      Transformation: Coffee + Sugar -> Coffee
+      Description: SugarManager uses Coffee for add operation
+  [E1.1] SugarManager --use--> Sugar
+      Transformation: Coffee + Sugar -> Coffee
+      Description: SugarManager uses Sugar for add operation
+  [E1.1] SugarManager --use--> Cup
+      Transformation: preposition: to the cup
+      Description: SugarManager uses Cup as target/container (preposition: 'to')
+
+PROVIDE RELATIONSHIPS - Controllers provide output entities (8):
+------------------------------------------------------------
+  [B2c] AmountManager --provide--> GroundCoffee
+      Transformation: CoffeeBeans -> GroundCoffee
+      Description: AmountManager provides GroundCoffee from grind operation
+  [B3a] CoffeeManager --provide--> Coffee
+      Transformation: GroundCoffee + HotWater + Filter -> Coffee
+      Description: CoffeeManager provides Coffee from brew operation
+  [B3b] MilkManager --provide--> Coffee
+      Transformation: Coffee + Milk -> Coffee
+      Description: MilkManager provides Coffee from add operation
+  [E1.1] SugarManager --provide--> Coffee
+      Transformation: Coffee + Sugar -> Coffee
+      Description: SugarManager provides Coffee from add operation
+  [SUPPLY] CoffeeBeansSupplyController --provide--> CoffeeBeans
+      Transformation: Supply -> CoffeeBeans
+      Description: CoffeeBeansSupplyController provides CoffeeBeans from supply source
+  [SUPPLY] MilkSupplyController --provide--> Milk
+      Transformation: Supply -> Milk
+      Description: MilkSupplyController provides Milk from supply source
+  [SUPPLY] SugarSupplyController --provide--> Sugar
+      Transformation: Supply -> Sugar
+      Description: SugarSupplyController provides Sugar from supply source
+  [SUPPLY] WaterSupplyController --provide--> Water
+      Transformation: Supply -> Water
+      Description: WaterSupplyController provides Water from supply source
+
+DATA FLOW COMPLIANCE:
+  [OK] Rule 1: Output entities have 'provide' relationships
+  [OK] Rule 2: Input entities have 'use' relationships
+  [OK] All transformation verbs analyzed for data flow
+
+================================================================================
+ALL RA CLASSES - DOMAIN-AGNOSTIC ANALYSIS
+================================================================================
+
+Actor: ExternalTrigger
+  Stereotype: «actor»
+  Element Type: control
+  Steps: A1, A2
+  Description: External trigger source
+
+Actor: Timer
+  Stereotype: «actor»
+  Element Type: control
+  Steps: B1, A3
+  Description: Time-based trigger
+
+Actor: User
+  Stereotype: «actor»
+  Element Type: functional
+  Steps: E1
+  Description: Human actor
+
+Boundary: CoffeeBeansSupplyBoundary
+  Stereotype: «boundary»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Boundary for Coffee beans supply monitoring and refill alerts
+
+Boundary: HMIAdditiveInputBoundary
+  Stereotype: «boundary»
+  Element Type: control
+  Steps: E1
+  Description: HMI boundary for user selection of beverage additives
+
+Boundary: HMIErrorDisplayBoundary
+  Stereotype: «boundary»
+  Element Type: control
+  Steps: B4, A1.2, A1.2, A2.2, A2.2
+  Description: HMI boundary for displaying error messages to user
+
+Boundary: HMIStatusDisplayBoundary
+  Stereotype: «boundary»
+  Element Type: control
+  Steps: B4
+  Description: HMI boundary for displaying status messages (e.g., 'coffee ready')
+
+Boundary: MilkSupplyBoundary
+  Stereotype: «boundary»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Boundary for Milk supply monitoring and refill alerts
+
+Boundary: ProductDeliveryBoundary
+  Stereotype: «boundary»
+  Element Type: functional
+  Steps: B5, B5
+  Description: Boundary for delivering finished products to user
+
+Boundary: SugarSupplyBoundary
+  Stereotype: «boundary»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Boundary for Sugar supply monitoring and refill alerts
+
+Boundary: TimeTriggerBoundary
+  Stereotype: «boundary»
+  Element Type: control
+  Steps: B1
+  Description: Boundary for time-based system triggers
+
+Boundary: WaterSupplyBoundary
+  Stereotype: «boundary»
+  Element Type: functional
+  Steps: A1
+  Description: Boundary for water supply monitoring and refill alerts (also required as precondition)
+
+Controller: A1ConditionManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: A1
+  Description: Controls has operation in A1
+
+Controller: A2ConditionManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: A2
+  Description: Controls  operation in A2
+
+Controller: ActionsManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: A3.1
+  Description: Controls stops operation in A3.1
+
+Controller: AdditionManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: A2.1
+  Description: Controls stops operation in A2.1
+
+Controller: AmountManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B2c
+  Description: Controls grinds operation in B2c
+
+Controller: Beverage_PreparationDomainOrchestrator
+  Stereotype: «control»
+  Element Type: functional
+  Steps: IMPLICIT_COORDINATION
+  Description: Implicit domain orchestrator for beverage_preparation - coordinates all controllers in UC1
+
+Controller: CoffeeBeansSupplyController
+  Stereotype: «control»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Manages Coffee beans supply and availability (from precondition)
+
+Controller: CoffeeManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B3a
+  Description: Controls brewing operation in B3a
+
+Controller: CupManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B2d, B5
+  Description: Controls retrieves operation in B2d
+
+Controller: FilterManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B2b
+  Description: Controls prepares operation in B2b
+
+Controller: HMIController
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B4, B5, A1.2, A2.2, E1
+  Description: Human-Machine Interface controller for user interactions
+
+Controller: HeaterManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B2a, A1.1
+  Description: Controls activates operation in B2a
+
+Controller: Manager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: A3.2
+  Description: Controls  operation in A3.2
+
+Controller: MessageManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B4, A1.2, A2.2
+  Description: Controls outputs operation in B4
+
+Controller: MilkManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B3b
+  Description: Controls adds operation in B3b
+
+Controller: MilkSupplyController
+  Stereotype: «control»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Manages Milk supply and availability (from precondition)
+
+Controller: SugarManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: E1.1
+  Description: Controls adds operation in E1.1
+
+Controller: SugarSupplyController
+  Stereotype: «control»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Manages Sugar supply and availability (from precondition)
+
+Controller: TimeManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B1, A3
+  Description: Controls reaches operation in B1
+
+Controller: UserRequestManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: E1
+  Description: Controls wants operation in E1
+
+Controller: WaterSupplyController
+  Stereotype: «control»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Manages Water supply and availability (from precondition)
+
+Entity: Actions
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: A3.1
+  Description: Domain entity: actions
+
+Entity: Coffee
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B3a
+  Description: Domain entity: coffee
+
+Entity: CoffeeBeanAmount
+  Stereotype: «entity»
+  Element Type: control
+  Steps: B2c, B3a
+  Description: Amount specification for coffee beans
+
+Entity: CoffeeBeans
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Resource: Coffee beans (required as precondition)
+
+Entity: Cup
+  Stereotype: «entity»
+  Element Type: container
+  Steps: B2d, B3a, B3b, B5, E1.1
+  Description: Container: cup
+
+Entity: Error
+  Stereotype: «entity»
+  Element Type: control
+  Steps: A1.2, A2.2
+  Description: Control data: error
+
+Entity: Filter
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B2b, B2c
+  Description: Domain entity: filter
+
+Entity: Grinding
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B2c
+  Description: Domain entity: grinding
+
+Entity: GrindingDegree
+  Stereotype: «entity»
+  Element Type: control
+  Steps: B2c
+  Description: Grinding degree parameter for coffee beans
+
+Entity: Heater
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B2a, A1.1
+  Description: Domain entity: heater
+
+Entity: Message
+  Stereotype: «entity»
+  Element Type: control
+  Steps: B4, A1.2, A2.2
+  Description: Control data: message
+
+Entity: Milk
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B3b, A2.1
+  Description: Domain entity: milk (also required as precondition)
+
+Entity: MilkAddition
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: A2.1
+  Description: Milk addition process
+
+Entity: Sugar
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: E1, E1.1
+  Description: Domain entity: sugar (also required as precondition)
+
+Entity: Water
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B2a, B3a, A1, A1.1
+  Description: Domain entity: water (also required as precondition)
+
+================================================================================
+VERB CLASSIFICATION SUMMARY
+================================================================================
+
+TRANSACTION VERBS - Boundary interactions (8):
+  B1: reaches - System clock reaches set time of 7:00h (Radio clock)
+  B4: outputs - The system outputs a message to user
+  B5: presents - The system presents cup to user
+  A1: has - Water heater has too little water
+  A1.2: outputs - The system outputs an error message to user
+  A2.2: outputs - The system outputs an error message to user
+  A3: detected - time Overheat detected
+  E1: wants - B3-B5 User wants sugar in coffee
+
+TRANSFORMATION VERBS - Entity transformations (4):
+  B2c: grinds -> CoffeeBeans -> GroundCoffee
+  B3a: brewing -> GroundCoffee + HotWater + Filter -> Coffee
+  B3b: adds -> Coffee + Additive -> Coffee
+  E1.1: adds -> Coffee + Additive -> Coffee
+
+FUNCTION VERBS - System actions (8):
+  B2a: activates - The system activates the water heater
+  B2b: prepares - The system prepares filter
+  B2d: retrieves - The system retrieves cup from storage container and places it under the filter
+  A1.1: switches - The system switches off water heater
+  A2:  - Too little milk
+  A2.1: stops - The system stops milk addition
+  A3.1: stops - The system stops all actions
+  A3.2:  - The system switch of itself
+
+STATISTICS:
+   Total verbs analyzed: 20
+   Transaction verbs: 8
+   Transformation verbs: 4
+   Function verbs: 8
+
+DEBUG: Available entity names for data flow: ['Actions', 'Additive', 'Coffee', 'CoffeeBeanAmount', 'CoffeeBeans', 'Cup', 'Error', 'Filter', 'Grinding', 'GrindingDegree', 'GroundCoffee', 'Heater', 'HotWater', 'Message', 'Milk', 'MilkAddition', 'Sugar', 'Water']
+DEBUG: Total entities: 18
+DEBUG: Explicit entities: 15
+DEBUG: Transformation entities: 6
+DEBUG: Processing transaction verb 'reach' with direct_object 'None'
+DEBUG: Processing function verb 'activate' with direct_object 'the water heater'
+DEBUG: Function verb activate -> transformation: -> Water
+DEBUG: Found transformation '-> Water' for verb 'activate'
+DEBUG: Controller for B2a: HeaterManager
+DEBUG: Processing function verb 'prepare' with direct_object 'filter'
+DEBUG: Prepare verb prepare filter -> transformation: -> Filter
+DEBUG: Found transformation '-> Filter' for verb 'prepare'
+DEBUG: Controller for B2b: FilterManager
+DEBUG: Found transformation 'CoffeeBeans -> GroundCoffee' for verb 'grind'
+DEBUG: Controller for B2c: AmountManager
+DEBUG: Step B2c output entities: ['GroundCoffee']
+DEBUG: Preposition 'into' -> use: AmountManager -> Filter
+DEBUG: Processing function verb 'retrieve' with direct_object 'cup'
+DEBUG: Function verb retrieve -> transformation: -> Cup
+DEBUG: Found transformation '-> Cup' for verb 'retrieve'
+DEBUG: Controller for B2d: CupManager
+DEBUG: Found transformation 'GroundCoffee + HotWater + Filter -> Coffee' for verb 'brew'
+DEBUG: Controller for B3a: CoffeeManager
+DEBUG: Step B3a output entities: ['Coffee']
+DEBUG: Preposition 'with' -> use: CoffeeManager -> Water
+DEBUG: Preposition 'into' -> use: CoffeeManager -> Cup
+DEBUG: Override 'add' transformation for direct_object 'milk': Coffee + Milk -> Coffee
+DEBUG: Found transformation 'Coffee + Milk -> Coffee' for verb 'add'
+DEBUG: Controller for B3b: MilkManager
+DEBUG: Step B3b output entities: ['Coffee']
+DEBUG: Preposition 'to' -> use: MilkManager -> Cup
+DEBUG: Processing transaction verb 'output' with direct_object 'a message'
+DEBUG: Transaction verb output -> transformation: -> Message
+DEBUG: Found transformation '-> Message' for verb 'output'
+DEBUG: Controller for B4: HMIController
+DEBUG: Processing transaction verb 'present' with direct_object 'cup'
+DEBUG: Transaction verb present -> transformation: -> Cup
+DEBUG: Found transformation '-> Cup' for verb 'present'
+DEBUG: Controller for B5: CupManager
+DEBUG: Processing transaction verb 'have' with direct_object 'little water'
+DEBUG: Transaction verb have -> transformation: -> Water
+DEBUG: Found transformation '-> Water' for verb 'have'
+DEBUG: Controller for A1: A1ConditionManager
+DEBUG: Processing function verb 'switch' with direct_object 'water heater'
+DEBUG: Function verb switch -> transformation: -> Water
+DEBUG: Found transformation '-> Water' for verb 'switch'
+DEBUG: Controller for A1.1: HeaterManager
+DEBUG: Processing transaction verb 'output' with direct_object 'an error message'
+DEBUG: Transaction verb output -> transformation: -> Message
+DEBUG: Found transformation '-> Message' for verb 'output'
+DEBUG: Controller for A1.2: HMIController
+DEBUG: Processing function verb '' with direct_object 'None'
+DEBUG: Processing function verb 'stop' with direct_object 'milk addition'
+DEBUG: Function verb stop -> transformation: -> Milk
+DEBUG: Found transformation '-> Milk' for verb 'stop'
+DEBUG: Controller for A2.1: AdditionManager
+DEBUG: Processing transaction verb 'output' with direct_object 'an error message'
+DEBUG: Transaction verb output -> transformation: -> Message
+DEBUG: Found transformation '-> Message' for verb 'output'
+DEBUG: Controller for A2.2: HMIController
+DEBUG: Processing transaction verb 'detect' with direct_object 'None'
+DEBUG: Processing function verb 'stop' with direct_object 'all actions'
+DEBUG: Function verb stop -> transformation: -> All
+DEBUG: Found transformation '-> All' for verb 'stop'
+DEBUG: Controller for A3.1: ActionsManager
+DEBUG: Processing function verb '' with direct_object 'None'
+DEBUG: Processing transaction verb 'want' with direct_object 'sugar'
+DEBUG: Transaction verb want -> transformation: -> Sugar
+DEBUG: Found transformation '-> Sugar' for verb 'want'
+DEBUG: Controller for E1: HMIController
+DEBUG: Override 'add' transformation for direct_object 'sugar': Coffee + Sugar -> Coffee
+DEBUG: Found transformation 'Coffee + Sugar -> Coffee' for verb 'add'
+DEBUG: Controller for E1.1: SugarManager
+DEBUG: Step E1.1 output entities: ['Coffee']
+DEBUG: Preposition 'to' -> use: SugarManager -> Cup
+DEBUG: SupplyController CoffeeBeansSupplyController --provide--> CoffeeBeans
+DEBUG: SupplyController MilkSupplyController --provide--> Milk
+DEBUG: SupplyController SugarSupplyController --provide--> Sugar
+DEBUG: SupplyController WaterSupplyController --provide--> Water
+
+JSON export completed for UC1
+   Main analysis: output/UC1_complete_analysis_20251027_152909.json
+   System engineering: output/UC1_system_engineering_20251027_152909.json
+   Visualization: output/UC1_visualization_20251027_152909.json
+   Total components: 48 RA classes
+   Data flows: 21
+   Control flows: 87
+UC1 basic JSON export completed. Files generated: 3
+
+Exporting UC3 Rocket Launch analysis to JSON: Use Case/UC3_Rocket_Launch.txt
+Loaded common domain configuration
+Loaded domain configuration: nuclear
+Loaded domain configuration: robotics
+Loaded domain configuration: universal_operational_materials
+Loaded domain configuration: beverage_preparation
+Loaded domain configuration: rocket_science
+Loaded domain configuration: aerospace
+Loaded domain configuration: automotive
+Loaded domain configuration: telecommunications
+Loaded verb configuration for domain: rocket_science
+Loaded operational materials framework
+
+================================================================================
+JSON EXPORT FOR VISUALIZATION AND SYSTEM ENGINEERING
+================================================================================
+
+================================================================================
+UC ANALYSIS WITH SAFETY/HYGIENE REQUIREMENTS
+================================================================================
+================================================================================
+GENERIC UC GRAMMAR ANALYSIS - ALL FLOWS
+================================================================================
+Main Flow: 8 steps
+Alternative Flows: 10 steps
+Extension Flows: 0 steps
+Domain: rocket_science
+Total steps to analyze: 18
+================================================================================
+
+--- B1: Launch window opens at scheduled time ---
+Main verb: opens (lemma: open)
+B1 Override: Trigger -> TRANSACTION VERB
+Verb Type: transaction
+Direct Object: None
+Prepositional Objects: [('at', 'scheduled time')]
+Adjectives in 'at scheduled time': ['scheduled']
+
+--- B2a: The system performs final systems check ---
+Main verb: performs (lemma: perform)
+Verb Type: function
+Direct Object: final systems check
+Adjectives detected: ['final']
+Prepositional Objects: []
+
+--- B2b: The system activates launch sequencer ---
+Main verb: activates (lemma: activate)
+Verb Type: function
+Direct Object: launch sequencer
+Prepositional Objects: []
+
+--- B2c: The system initiates engine ignition sequence ---
+Main verb: initiates (lemma: initiate)
+Verb Type: function
+Direct Object: ignition sequence
+Prepositional Objects: []
+
+--- B3: The system monitors trajectory and guidance ---
+Main verb: monitors (lemma: monitor)
+Verb Type: function
+Direct Object: trajectory
+Prepositional Objects: []
+
+--- B4: The system deploys satellite at orbital altitude ---
+Main verb: deploys (lemma: deploy)
+Verb Type: transaction
+Direct Object: satellite
+Prepositional Objects: [('at', 'orbital altitude')]
+Adjectives in 'at orbital altitude': ['orbital']
+
+--- B5: The system confirms successful deployment ---
+Main verb: confirms (lemma: confirm)
+Verb Type: transaction
+Direct Object: successful deployment
+Adjectives detected: ['successful']
+Prepositional Objects: []
+
+--- B6: End UC --- (Flow control - not analyzed)
+
+--- A1: Critical system failure detected ---
+Main verb: detected (lemma: detect)
+A1 Override: Trigger -> TRANSACTION VERB
+Verb Type: transaction
+Direct Object: None
+Prepositional Objects: []
+
+--- A1.1: The system aborts launch sequence ---
+Main verb: aborts (lemma: abort)
+Verb Type: function
+Direct Object: launch sequence
+Prepositional Objects: []
+
+--- A1.2: The system activates safety protocols ---
+Main verb: activates (lemma: activate)
+Verb Type: function
+Direct Object: safety protocols
+Prepositional Objects: []
+
+--- A1.3: The system notifies mission control ---
+
+--- A1.4: End UC --- (Flow control - not analyzed)
+
+--- A2: Trajectory deviation detected ---
+Main verb: detected (lemma: detect)
+A2 Override: Trigger -> TRANSACTION VERB
+Verb Type: transaction
+Direct Object: None
+Prepositional Objects: []
+
+--- A2.1: The system attempts guidance correction ---
+Main verb: attempts (lemma: attempt)
+Verb Type: function
+Direct Object: guidance correction
+Prepositional Objects: []
+
+--- A2.2: If correction fails, system initiates abort sequence ---
+Main verb: initiates (lemma: initiate)
+Verb Type: function
+Direct Object: abort sequence
+Adjectives detected: ['abort']
+Prepositional Objects: []
+
+--- A2.3: The system activates recovery procedures ---
+Main verb: activates (lemma: activate)
+Verb Type: function
+Direct Object: recovery procedures
+Prepositional Objects: []
+
+--- A2.4: End UC --- (Flow control - not analyzed)
+
+================================================================================
+PRECONDITION ANALYSIS
+================================================================================
+
+Found 4 preconditions:
+  - Rocket is fueled and ready (UC3_Rocket_Launch)
+  - Satellite payload is installed (UC3_Rocket_Launch)
+  - Weather conditions are acceptable (UC3_Rocket_Launch)
+  - Launch window is available (UC3_Rocket_Launch)
+
+Generated 12 RA classes from preconditions:
+
+Resource Controllers (4):
+  - RocketIsFueledAndSupplyController: Manages Rocket is fueled and supply and availability (from precondition)
+  - SatelliteSupplyController: Manages Satellite supply and availability (from precondition)
+  - WeatherSupplyController: Manages Weather supply and availability (from precondition)
+  - LaunchWindowSupplyController: Manages Launch window supply and availability (from precondition)
+
+Resource Entities (4):
+  - RocketIsFueledAnd: Resource: Rocket is fueled and (required as precondition)
+  - Satellite: Resource: Satellite (required as precondition)
+  - Weather: Resource: Weather (required as precondition)
+  - LaunchWindow: Resource: Launch window (required as precondition)
+
+Supply Boundaries (4):
+  - RocketIsFueledAndSupplyBoundary: Boundary for Rocket is fueled and supply monitoring and refill alerts
+  - SatelliteSupplyBoundary: Boundary for Satellite supply monitoring and refill alerts
+  - WeatherSupplyBoundary: Boundary for Weather supply monitoring and refill alerts
+  - LaunchWindowSupplyBoundary: Boundary for Launch window supply monitoring and refill alerts
+
+UC-Methode Rule Compliance:
+  [OK] Each precondition generates Controller + Entity + Boundary
+  [OK] Domain Orchestrator implicitly coordinates all controllers
+  [WARNING] Preconditions should be handled by separate UCs
+  [WARNING] Missing UCs for: Rocket is fueled and, Satellite, Weather, Launch window
+
+Next Step: Create separate UCs for resource supply management
+
+================================================================================
+KONTROLLFLUSS ANALYSIS (UC-METHODE)
+================================================================================
+
+Regel 2: Controller -> Controller (Interne Verarbeitung) (12 Flows):
+------------------------------------------------------------
+  [B2a] TimeManager -> CheckManager
+      Rule 2: TimeManager calls CheckManager (sequential processing)
+  [B2b] CheckManager -> SequencerManager
+      Rule 2: CheckManager calls SequencerManager (sequential processing)
+  [B2c] SequencerManager -> SequenceManager
+      Rule 2: SequencerManager calls SequenceManager (sequential processing)
+  [B3] SequenceManager -> TrajectoryManager
+      Rule 2: SequenceManager calls TrajectoryManager (sequential processing)
+  [B4] TrajectoryManager -> SatelliteManager
+      Rule 2: TrajectoryManager calls SatelliteManager (sequential processing)
+  [B5] SatelliteManager -> DeploymentManager
+      Rule 2: SatelliteManager calls DeploymentManager (sequential processing)
+  [A1.1] A1ConditionManager -> SequenceManager
+      Rule 2: A1ConditionManager calls SequenceManager (sequential processing)
+  [A1.2] SequenceManager -> ProtocolsManager
+      Rule 2: SequenceManager calls ProtocolsManager (sequential processing)
+  [A1.3] ProtocolsManager -> Manager
+      Rule 2: ProtocolsManager calls Manager (sequential processing)
+  [A2.1] A2ConditionManager -> CorrectionManager
+      Rule 2: A2ConditionManager calls CorrectionManager (sequential processing)
+  [A2.2] CorrectionManager -> SequenceManager
+      Rule 2: CorrectionManager calls SequenceManager (sequential processing)
+  [A2.3] SequenceManager -> ProceduresManager
+      Rule 2: SequenceManager calls ProceduresManager (sequential processing)
+
+Regel 3: Sequentielle Schrittabfolge (17 Flows):
+------------------------------------------------------------
+
+Regel 3: Sequentielle Schrittabfolge (17 Flows):
+------------------------------------------------------------
+  Sequential execution through 17 steps
+  Flow: B1 -> ... -> A2.4
+
+Regel 4: Parallele Verzweigung/Vereinigung (1 Parallel Patterns):
+------------------------------------------------------------
+  Parallel Split: B2a -> B2c
+  Parallel Steps: B2a, B2b, B2c
+  Description: Rule 4: Parallel execution of B2a, B2b, B2c
+
+KONTROLLFLUSS STATISTIK:
+  Total Control Flows: 29
+  Parallel Patterns: 1
+  Regel 2: 12 flows
+  Regel 3: 17 flows
+
+UC-Methode Compliance:
+  [OK] Alle 5 Kontrollfluss-Regeln implementiert
+  [OK] Boundary-Controller-Boundary Muster erkannt
+  [OK] Parallele Ausführung identifiziert
+
+DEBUG: Available entity names for data flow: ['Abort', 'Altitude', 'Check', 'Correction', 'Deployment', 'Final', 'Guidance', 'Ignition', 'Launch', 'LaunchWindow', 'Orbital', 'Procedures', 'Protocols', 'Recovery', 'RocketIsFueledAnd', 'Safety', 'Satellite', 'Scheduled', 'Sequence', 'Sequencer', 'Successful', 'Systems', 'Time', 'Trajectory', 'Weather']
+DEBUG: Total entities: 25
+DEBUG: Explicit entities: 25
+DEBUG: Transformation entities: 0
+DEBUG: Processing transaction verb 'open' with direct_object 'None'
+DEBUG: Processing function verb 'perform' with direct_object 'final systems check'
+DEBUG: Function verb perform -> transformation: -> Final
+DEBUG: Found transformation '-> Final' for verb 'perform'
+DEBUG: Controller for B2a: CheckManager
+DEBUG: Processing function verb 'activate' with direct_object 'launch sequencer'
+DEBUG: Function verb activate -> transformation: -> Launch
+DEBUG: Found transformation '-> Launch' for verb 'activate'
+DEBUG: Controller for B2b: SequencerManager
+DEBUG: Processing function verb 'initiate' with direct_object 'ignition sequence'
+DEBUG: Function verb initiate -> transformation: -> Ignition
+DEBUG: Found transformation '-> Ignition' for verb 'initiate'
+DEBUG: Controller for B2c: SequenceManager
+DEBUG: Processing function verb 'monitor' with direct_object 'trajectory'
+DEBUG: Function verb monitor -> transformation: -> Trajectory
+DEBUG: Found transformation '-> Trajectory' for verb 'monitor'
+DEBUG: Controller for B3: TrajectoryManager
+DEBUG: Processing transaction verb 'deploy' with direct_object 'satellite'
+DEBUG: Transaction verb deploy -> transformation: -> Satellite
+DEBUG: Found transformation '-> Satellite' for verb 'deploy'
+DEBUG: Controller for B4: SatelliteManager
+DEBUG: Processing transaction verb 'confirm' with direct_object 'successful deployment'
+DEBUG: Transaction verb confirm -> transformation: -> Deployment
+DEBUG: Found transformation '-> Deployment' for verb 'confirm'
+DEBUG: Controller for B5: DeploymentManager
+DEBUG: Processing transaction verb 'detect' with direct_object 'None'
+DEBUG: Processing function verb 'abort' with direct_object 'launch sequence'
+DEBUG: Function verb abort -> transformation: -> Launch
+DEBUG: Found transformation '-> Launch' for verb 'abort'
+DEBUG: Controller for A1.1: SequenceManager
+DEBUG: Processing function verb 'activate' with direct_object 'safety protocols'
+DEBUG: Function verb activate -> transformation: -> Safety
+DEBUG: Found transformation '-> Safety' for verb 'activate'
+DEBUG: Controller for A1.2: ProtocolsManager
+DEBUG: Processing function verb '' with direct_object 'None'
+DEBUG: Processing transaction verb 'detect' with direct_object 'None'
+DEBUG: Processing function verb 'attempt' with direct_object 'guidance correction'
+DEBUG: Function verb attempt -> transformation: -> Guidance
+DEBUG: Found transformation '-> Guidance' for verb 'attempt'
+DEBUG: Controller for A2.1: CorrectionManager
+DEBUG: Processing function verb 'initiate' with direct_object 'abort sequence'
+DEBUG: Function verb initiate -> transformation: -> Abort
+DEBUG: Found transformation '-> Abort' for verb 'initiate'
+DEBUG: Controller for A2.2: SequenceManager
+DEBUG: Processing function verb 'activate' with direct_object 'recovery procedures'
+DEBUG: Function verb activate -> transformation: -> Recovery
+DEBUG: Found transformation '-> Recovery' for verb 'activate'
+DEBUG: Controller for A2.3: ProceduresManager
+DEBUG: SupplyController LaunchWindowSupplyController --provide--> LaunchWindow
+DEBUG: SupplyController RocketIsFueledAndSupplyController --provide--> RocketIsFueledAnd
+DEBUG: SupplyController SatelliteSupplyController --provide--> Satellite
+DEBUG: SupplyController WeatherSupplyController --provide--> Weather
+
+================================================================================
+DATA FLOW ANALYSIS
+================================================================================
+
+Found 4 data flow relationships:
+  - 0 'use' relationships
+  - 4 'provide' relationships
+
+PROVIDE RELATIONSHIPS - Controllers provide output entities (4):
+------------------------------------------------------------
+  [SUPPLY] LaunchWindowSupplyController --provide--> LaunchWindow
+      Transformation: Supply -> LaunchWindow
+      Description: LaunchWindowSupplyController provides LaunchWindow from supply source
+  [SUPPLY] RocketIsFueledAndSupplyController --provide--> RocketIsFueledAnd
+      Transformation: Supply -> RocketIsFueledAnd
+      Description: RocketIsFueledAndSupplyController provides RocketIsFueledAnd from supply source
+  [SUPPLY] SatelliteSupplyController --provide--> Satellite
+      Transformation: Supply -> Satellite
+      Description: SatelliteSupplyController provides Satellite from supply source
+  [SUPPLY] WeatherSupplyController --provide--> Weather
+      Transformation: Supply -> Weather
+      Description: WeatherSupplyController provides Weather from supply source
+
+DATA FLOW COMPLIANCE:
+  [OK] Rule 1: Output entities have 'provide' relationships
+  [OK] Rule 2: Input entities have 'use' relationships
+  [OK] All transformation verbs analyzed for data flow
+
+================================================================================
+ALL RA CLASSES - DOMAIN-AGNOSTIC ANALYSIS
+================================================================================
+
+Actor: ExternalTrigger
+  Stereotype: «actor»
+  Element Type: control
+  Steps: A1, A2
+  Description: External trigger source
+
+Actor: Timer
+  Stereotype: «actor»
+  Element Type: control
+  Steps: B1
+  Description: Time-based trigger
+
+Boundary: LaunchWindowSupplyBoundary
+  Stereotype: «boundary»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Boundary for Launch window supply monitoring and refill alerts
+
+Boundary: RocketIsFueledAndSupplyBoundary
+  Stereotype: «boundary»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Boundary for Rocket is fueled and supply monitoring and refill alerts
+
+Boundary: SatelliteSupplyBoundary
+  Stereotype: «boundary»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Boundary for Satellite supply monitoring and refill alerts
+
+Boundary: WeatherSupplyBoundary
+  Stereotype: «boundary»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Boundary for Weather supply monitoring and refill alerts
+
+Controller: A1ConditionManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: A1
+  Description: Controls detected operation in A1
+
+Controller: A2ConditionManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: A2
+  Description: Controls detected operation in A2
+
+Controller: CheckManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B2a
+  Description: Controls performs operation in B2a
+
+Controller: CorrectionManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: A2.1
+  Description: Controls attempts operation in A2.1
+
+Controller: DeploymentManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B5
+  Description: Controls confirms operation in B5
+
+Controller: LaunchWindowSupplyController
+  Stereotype: «control»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Manages Launch window supply and availability (from precondition)
+
+Controller: Manager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: A1.3
+  Description: Controls  operation in A1.3
+
+Controller: ProceduresManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: A2.3
+  Description: Controls activates operation in A2.3
+
+Controller: ProtocolsManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: A1.2
+  Description: Controls activates operation in A1.2
+
+Controller: RocketIsFueledAndSupplyController
+  Stereotype: «control»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Manages Rocket is fueled and supply and availability (from precondition)
+
+Controller: Rocket_ScienceDomainOrchestrator
+  Stereotype: «control»
+  Element Type: functional
+  Steps: IMPLICIT_COORDINATION
+  Description: Implicit domain orchestrator for rocket_science - coordinates all controllers in UC3_Rocket_Launch
+
+Controller: SatelliteManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B4
+  Description: Controls deploys operation in B4
+
+Controller: SatelliteSupplyController
+  Stereotype: «control»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Manages Satellite supply and availability (from precondition)
+
+Controller: SequenceManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B2c, A1.1, A2.2
+  Description: Controls initiates operation in B2c
+
+Controller: SequencerManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B2b
+  Description: Controls activates operation in B2b
+
+Controller: TimeManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B1
+  Description: Controls opens operation in B1
+
+Controller: TrajectoryManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B3
+  Description: Controls monitors operation in B3
+
+Controller: WeatherSupplyController
+  Stereotype: «control»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Manages Weather supply and availability (from precondition)
+
+Entity: Abort
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: A2.2
+  Description: Domain entity: abort
+
+Entity: Altitude
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B4
+  Description: Domain entity: altitude
+
+Entity: Check
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B2a
+  Description: Domain entity: check
+
+Entity: Correction
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: A2.1
+  Description: Domain entity: correction
+
+Entity: Deployment
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B5
+  Description: Domain entity: deployment
+
+Entity: Final
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B2a
+  Description: Domain entity: final
+
+Entity: Guidance
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: A2.1
+  Description: Domain entity: guidance
+
+Entity: Ignition
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B2c
+  Description: Domain entity: ignition
+
+Entity: Launch
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B2b, A1.1
+  Description: Domain entity: launch
+
+Entity: LaunchWindow
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Resource: Launch window (required as precondition)
+
+Entity: Orbital
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B4
+  Description: Domain entity: orbital
+
+Entity: Procedures
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: A2.3
+  Description: Domain entity: procedures
+
+Entity: Protocols
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: A1.2
+  Description: Domain entity: protocols
+
+Entity: Recovery
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: A2.3
+  Description: Domain entity: recovery
+
+Entity: RocketIsFueledAnd
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Resource: Rocket is fueled and (required as precondition)
+
+Entity: Safety
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: A1.2
+  Description: Domain entity: safety
+
+Entity: Satellite
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B4
+  Description: Domain entity: satellite (also required as precondition)
+
+Entity: Scheduled
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B1
+  Description: Domain entity: scheduled
+
+Entity: Sequence
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B2c, A1.1, A2.2
+  Description: Domain entity: sequence
+
+Entity: Sequencer
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B2b
+  Description: Domain entity: sequencer
+
+Entity: Successful
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B5
+  Description: Domain entity: successful
+
+Entity: Systems
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B2a
+  Description: Domain entity: systems
+
+Entity: Time
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B1
+  Description: Domain entity: time
+
+Entity: Trajectory
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B3
+  Description: Domain entity: trajectory
+
+Entity: Weather
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Resource: Weather (required as precondition)
+
+================================================================================
+VERB CLASSIFICATION SUMMARY
+================================================================================
+
+TRANSACTION VERBS - Boundary interactions (5):
+  B1: opens - Launch window opens at scheduled time
+  B4: deploys - The system deploys satellite at orbital altitude
+  B5: confirms - The system confirms successful deployment
+  A1: detected - Critical system failure detected
+  A2: detected - Trajectory deviation detected
+
+TRANSFORMATION VERBS - Entity transformations (0):
+
+FUNCTION VERBS - System actions (10):
+  B2a: performs - The system performs final systems check
+  B2b: activates - The system activates launch sequencer
+  B2c: initiates - The system initiates engine ignition sequence
+  B3: monitors - The system monitors trajectory and guidance
+  A1.1: aborts - The system aborts launch sequence
+  A1.2: activates - The system activates safety protocols
+  A1.3:  - The system notifies mission control
+  A2.1: attempts - The system attempts guidance correction
+  A2.2: initiates - If correction fails, system initiates abort sequence
+  A2.3: activates - The system activates recovery procedures
+
+STATISTICS:
+   Total verbs analyzed: 15
+   Transaction verbs: 5
+   Transformation verbs: 0
+   Function verbs: 10
+
+================================================================================
+ENHANCING CONTROLLERS WITH SAFETY/HYGIENE FUNCTIONS
+================================================================================
+Generalizing: A1ConditionManager -> ConditionManager
+Generalizing: A2ConditionManager -> ConditionManager
+Generalizing: LaunchWindowSupplyController -> SupplyController
+Generalizing: RocketIsFueledAndSupplyController -> SupplyController
+Generalizing: SatelliteSupplyController -> SupplyController
+Generalizing: WeatherSupplyController -> SupplyController
+
+Enhanced 18 controllers
+
+DEBUG: Available entity names for data flow: ['Abort', 'Altitude', 'Check', 'Correction', 'Deployment', 'Final', 'Guidance', 'Ignition', 'Launch', 'LaunchWindow', 'Orbital', 'Procedures', 'Protocols', 'Recovery', 'RocketIsFueledAnd', 'Safety', 'Satellite', 'Scheduled', 'Sequence', 'Sequencer', 'Successful', 'Systems', 'Time', 'Trajectory', 'Weather']
+DEBUG: Total entities: 25
+DEBUG: Explicit entities: 25
+DEBUG: Transformation entities: 0
+DEBUG: Processing transaction verb 'open' with direct_object 'None'
+DEBUG: Processing function verb 'perform' with direct_object 'final systems check'
+DEBUG: Function verb perform -> transformation: -> Final
+DEBUG: Found transformation '-> Final' for verb 'perform'
+DEBUG: Controller for B2a: CheckManager
+DEBUG: Processing function verb 'activate' with direct_object 'launch sequencer'
+DEBUG: Function verb activate -> transformation: -> Launch
+DEBUG: Found transformation '-> Launch' for verb 'activate'
+DEBUG: Controller for B2b: SequencerManager
+DEBUG: Processing function verb 'initiate' with direct_object 'ignition sequence'
+DEBUG: Function verb initiate -> transformation: -> Ignition
+DEBUG: Found transformation '-> Ignition' for verb 'initiate'
+DEBUG: Controller for B2c: SequenceManager
+DEBUG: Processing function verb 'monitor' with direct_object 'trajectory'
+DEBUG: Function verb monitor -> transformation: -> Trajectory
+DEBUG: Found transformation '-> Trajectory' for verb 'monitor'
+DEBUG: Controller for B3: TrajectoryManager
+DEBUG: Processing transaction verb 'deploy' with direct_object 'satellite'
+DEBUG: Transaction verb deploy -> transformation: -> Satellite
+DEBUG: Found transformation '-> Satellite' for verb 'deploy'
+DEBUG: Controller for B4: SatelliteManager
+DEBUG: Processing transaction verb 'confirm' with direct_object 'successful deployment'
+DEBUG: Transaction verb confirm -> transformation: -> Deployment
+DEBUG: Found transformation '-> Deployment' for verb 'confirm'
+DEBUG: Controller for B5: DeploymentManager
+DEBUG: Processing transaction verb 'detect' with direct_object 'None'
+DEBUG: Processing function verb 'abort' with direct_object 'launch sequence'
+DEBUG: Function verb abort -> transformation: -> Launch
+DEBUG: Found transformation '-> Launch' for verb 'abort'
+DEBUG: Controller for A1.1: SequenceManager
+DEBUG: Processing function verb 'activate' with direct_object 'safety protocols'
+DEBUG: Function verb activate -> transformation: -> Safety
+DEBUG: Found transformation '-> Safety' for verb 'activate'
+DEBUG: Controller for A1.2: ProtocolsManager
+DEBUG: Processing function verb '' with direct_object 'None'
+DEBUG: Processing transaction verb 'detect' with direct_object 'None'
+DEBUG: Processing function verb 'attempt' with direct_object 'guidance correction'
+DEBUG: Function verb attempt -> transformation: -> Guidance
+DEBUG: Found transformation '-> Guidance' for verb 'attempt'
+DEBUG: Controller for A2.1: CorrectionManager
+DEBUG: Processing function verb 'initiate' with direct_object 'abort sequence'
+DEBUG: Function verb initiate -> transformation: -> Abort
+DEBUG: Found transformation '-> Abort' for verb 'initiate'
+DEBUG: Controller for A2.2: SequenceManager
+DEBUG: Processing function verb 'activate' with direct_object 'recovery procedures'
+DEBUG: Function verb activate -> transformation: -> Recovery
+DEBUG: Found transformation '-> Recovery' for verb 'activate'
+DEBUG: Controller for A2.3: ProceduresManager
+
+================================================================================
+OPERATIONAL MATERIALS ANALYSIS
+================================================================================
+
+Found 1 operational materials:
+
+RocketIsFueledAnd:
+  Safety Class: standard
+  Hygiene Level: standard
+  Addressing ID: STANDARD-STANDARD-ROCKETISFUELEDAND-B20251027-LOC001
+
+================================================================================
+SAFETY CONSTRAINTS ANALYSIS
+================================================================================
+
+================================================================================
+HYGIENE REQUIREMENTS ANALYSIS
+================================================================================
+
+DEBUG: Available entity names for data flow: ['Abort', 'Altitude', 'Check', 'Correction', 'Deployment', 'Final', 'Guidance', 'Ignition', 'Launch', 'LaunchWindow', 'Orbital', 'Procedures', 'Protocols', 'Recovery', 'RocketIsFueledAnd', 'Safety', 'Satellite', 'Scheduled', 'Sequence', 'Sequencer', 'Successful', 'Systems', 'Time', 'Trajectory', 'Weather']
+DEBUG: Total entities: 25
+DEBUG: Explicit entities: 25
+DEBUG: Transformation entities: 0
+DEBUG: Processing transaction verb 'open' with direct_object 'None'
+DEBUG: Processing function verb 'perform' with direct_object 'final systems check'
+DEBUG: Function verb perform -> transformation: -> Final
+DEBUG: Found transformation '-> Final' for verb 'perform'
+DEBUG: Controller for B2a: CheckManager
+DEBUG: Processing function verb 'activate' with direct_object 'launch sequencer'
+DEBUG: Function verb activate -> transformation: -> Launch
+DEBUG: Found transformation '-> Launch' for verb 'activate'
+DEBUG: Controller for B2b: SequencerManager
+DEBUG: Processing function verb 'initiate' with direct_object 'ignition sequence'
+DEBUG: Function verb initiate -> transformation: -> Ignition
+DEBUG: Found transformation '-> Ignition' for verb 'initiate'
+DEBUG: Controller for B2c: SequenceManager
+DEBUG: Processing function verb 'monitor' with direct_object 'trajectory'
+DEBUG: Function verb monitor -> transformation: -> Trajectory
+DEBUG: Found transformation '-> Trajectory' for verb 'monitor'
+DEBUG: Controller for B3: TrajectoryManager
+DEBUG: Processing transaction verb 'deploy' with direct_object 'satellite'
+DEBUG: Transaction verb deploy -> transformation: -> Satellite
+DEBUG: Found transformation '-> Satellite' for verb 'deploy'
+DEBUG: Controller for B4: SatelliteManager
+DEBUG: Processing transaction verb 'confirm' with direct_object 'successful deployment'
+DEBUG: Transaction verb confirm -> transformation: -> Deployment
+DEBUG: Found transformation '-> Deployment' for verb 'confirm'
+DEBUG: Controller for B5: DeploymentManager
+DEBUG: Processing transaction verb 'detect' with direct_object 'None'
+DEBUG: Processing function verb 'abort' with direct_object 'launch sequence'
+DEBUG: Function verb abort -> transformation: -> Launch
+DEBUG: Found transformation '-> Launch' for verb 'abort'
+DEBUG: Controller for A1.1: SequenceManager
+DEBUG: Processing function verb 'activate' with direct_object 'safety protocols'
+DEBUG: Function verb activate -> transformation: -> Safety
+DEBUG: Found transformation '-> Safety' for verb 'activate'
+DEBUG: Controller for A1.2: ProtocolsManager
+DEBUG: Processing function verb '' with direct_object 'None'
+DEBUG: Processing transaction verb 'detect' with direct_object 'None'
+DEBUG: Processing function verb 'attempt' with direct_object 'guidance correction'
+DEBUG: Function verb attempt -> transformation: -> Guidance
+DEBUG: Found transformation '-> Guidance' for verb 'attempt'
+DEBUG: Controller for A2.1: CorrectionManager
+DEBUG: Processing function verb 'initiate' with direct_object 'abort sequence'
+DEBUG: Function verb initiate -> transformation: -> Abort
+DEBUG: Found transformation '-> Abort' for verb 'initiate'
+DEBUG: Controller for A2.2: SequenceManager
+DEBUG: Processing function verb 'activate' with direct_object 'recovery procedures'
+DEBUG: Function verb activate -> transformation: -> Recovery
+DEBUG: Found transformation '-> Recovery' for verb 'activate'
+DEBUG: Controller for A2.3: ProceduresManager
+
+JSON export completed for UC3_Rocket_Launch
+   Main analysis: output/UC3_Rocket_Launch_complete_analysis_20251027_152910.json
+   System engineering: output/UC3_Rocket_Launch_system_engineering_20251027_152910.json
+   Visualization: output/UC3_Rocket_Launch_visualization_20251027_152910.json
+   Safety/Hygiene: output/UC3_Rocket_Launch_safety_hygiene_20251027_152910.json
+   Total components: 49 RA classes
+   Data flows: 0
+   Control flows: 46
+UC3 JSON export completed. Files generated: 4
+
+=== MULTI-UC JSON EXPORT DEMONSTRATION ===
+
+Exporting combined UC1 + UC2 analysis to JSON
+Loaded common domain configuration
+Loaded domain configuration: nuclear
+Loaded domain configuration: robotics
+Loaded domain configuration: universal_operational_materials
+Loaded domain configuration: beverage_preparation
+Loaded domain configuration: rocket_science
+Loaded domain configuration: aerospace
+Loaded domain configuration: automotive
+Loaded domain configuration: telecommunications
+Loaded common verb configuration (no domain specified)
+Loaded operational materials framework
+
+================================================================================
+MULTI-UC JSON EXPORT FOR SYSTEM ENGINEERING
+================================================================================
+Using specified domain: beverage_preparation
+================================================================================
+MULTI-UC DOMAIN ANALYSIS
+================================================================================
+Analyzing 2 UC files from same domain
+Domain: beverage_preparation
+================================================================================
+
+------------------------------------------------------------
+ANALYZING UC FILE 1/2: UC1.txt
+------------------------------------------------------------
+================================================================================
+GENERIC UC GRAMMAR ANALYSIS - ALL FLOWS
+================================================================================
+Main Flow: 10 steps
+Alternative Flows: 12 steps
+Extension Flows: 3 steps
+Domain: beverage_preparation
+Total steps to analyze: 25
+================================================================================
+
+--- B1: System clock reaches set time of 7:00h (Radio clock) ---
+Main verb: reaches (lemma: reach)
+B1 Override: Trigger -> TRANSACTION VERB
+Verb Type: transaction
+Direct Object: None
+Prepositional Objects: []
+
+--- B2a: The system activates the water heater ---
+Main verb: activates (lemma: activate)
+Verb Type: function
+Direct Object: the water heater
+Prepositional Objects: []
+WARNING: Heater is implementation element - use functional activity
+SUGGESTION: The system heats the water
+
+--- B2b: The system prepares filter ---
+Main verb: prepares (lemma: prepare)
+Verb Type: function
+Direct Object: filter
+Prepositional Objects: []
+WARNING: Filter is implementation element - use functional activity
+SUGGESTION: The system filters the liquid
+
+--- B2c: The system grinds the set amount with the set grinding degree directly into the filter ---
+Main verb: grinds (lemma: grind)
+Verb Type: transformation
+Direct Object: the set amount
+Prepositional Objects: [('with', 'the set grinding degree'), ('into', 'the filter')]
+Adjectives in 'with the set grinding degree': ['set']
+
+--- B2d: The system retrieves cup from storage container and places it under the filter ---
+Main verb: retrieves (lemma: retrieve)
+Verb Type: function
+Direct Object: cup
+Prepositional Objects: []
+
+--- B3a: The system begins brewing coffee with the set water amount into the cup ---
+Pattern detected: 'begins brewing' -> using 'brewing' as main verb
+Main verb: brewing (lemma: brew)
+Verb Type: transformation
+Direct Object: coffee
+Prepositional Objects: [('with', 'the set water amount'), ('into', 'the cup')]
+Adjectives in 'with the set water amount': ['set']
+
+--- B3b: The system adds milk to the cup ---
+Main verb: adds (lemma: add)
+Verb Type: transformation
+Direct Object: milk
+Prepositional Objects: [('to', 'the cup')]
+
+--- B4: The system outputs a message to user ---
+Main verb: outputs (lemma: output)
+Verb Type: transaction
+Direct Object: a message
+Prepositional Objects: [('to', 'user')]
+
+--- B5: The system presents cup to user ---
+Main verb: presents (lemma: present)
+Verb Type: transaction
+Direct Object: cup
+Prepositional Objects: [('to', 'user')]
+
+--- B6: End UC --- (Flow control - not analyzed)
+
+--- A1: Water heater has too little water ---
+Main verb: has (lemma: have)
+A1 Override: Trigger -> TRANSACTION VERB
+Verb Type: transaction
+Direct Object: little water
+Adjectives detected: ['little']
+Prepositional Objects: []
+
+--- A1.1: The system switches off water heater ---
+Main verb: switches (lemma: switch)
+Verb Type: function
+Direct Object: water heater
+Prepositional Objects: []
+WARNING: Heater is implementation element - use functional activity
+SUGGESTION: The system heats the water
+
+--- A1.2: The system outputs an error message to user ---
+Main verb: outputs (lemma: output)
+Verb Type: transaction
+Direct Object: an error message
+Prepositional Objects: [('to', 'user')]
+
+--- A1.3: End UC --- (Flow control - not analyzed)
+
+--- A2: Too little milk ---
+
+--- A2.1: The system stops milk addition ---
+Main verb: stops (lemma: stop)
+Verb Type: function
+Direct Object: milk addition
+Prepositional Objects: []
+
+--- A2.2: The system outputs an error message to user ---
+Main verb: outputs (lemma: output)
+Verb Type: transaction
+Direct Object: an error message
+Prepositional Objects: [('to', 'user')]
+
+--- A2.3: End UC --- (Flow control - not analyzed)
+
+--- A3: time Overheat detected ---
+Main verb: detected (lemma: detect)
+A3 Override: Trigger -> TRANSACTION VERB
+Verb Type: transaction
+Direct Object: None
+Prepositional Objects: []
+
+--- A3.1: The system stops all actions ---
+Main verb: stops (lemma: stop)
+Verb Type: function
+Direct Object: all actions
+Prepositional Objects: []
+
+--- A3.2: The system switch of itself ---
+
+--- A3.3: End UC --- (Flow control - not analyzed)
+
+--- E1: B3-B5 User wants sugar in coffee ---
+Main verb: wants (lemma: want)
+E1 Override: Trigger -> TRANSACTION VERB
+Verb Type: transaction
+Direct Object: sugar
+Prepositional Objects: []
+
+--- E1.1: The system adds sugar to the cup ---
+Main verb: adds (lemma: add)
+Verb Type: transformation
+Direct Object: sugar
+Prepositional Objects: [('to', 'the cup')]
+
+--- E1.2: Continue in main flow --- (Flow control - not analyzed)
+
+================================================================================
+PRECONDITION ANALYSIS
+================================================================================
+
+Found 4 preconditions:
+  - Coffee beans are available in the system (UC1)
+  - Water is available in the system (UC1)
+  - Milk is available in the system (UC1)
+  - Sugar is available in the system (UC1)
+
+Generated 12 RA classes from preconditions:
+
+Resource Controllers (4):
+  - CoffeeBeansSupplyController: Manages Coffee beans supply and availability (from precondition)
+  - WaterSupplyController: Manages Water supply and availability (from precondition)
+  - MilkSupplyController: Manages Milk supply and availability (from precondition)
+  - SugarSupplyController: Manages Sugar supply and availability (from precondition)
+
+Resource Entities (4):
+  - CoffeeBeans: Resource: Coffee beans (required as precondition)
+  - Water: Resource: Water (required as precondition)
+  - Milk: Resource: Milk (required as precondition)
+  - Sugar: Resource: Sugar (required as precondition)
+
+Supply Boundaries (4):
+  - CoffeeBeansSupplyBoundary: Boundary for Coffee beans supply monitoring and refill alerts
+  - WaterSupplyBoundary: Boundary for Water supply monitoring and refill alerts
+  - MilkSupplyBoundary: Boundary for Milk supply monitoring and refill alerts
+  - SugarSupplyBoundary: Boundary for Sugar supply monitoring and refill alerts
+
+UC-Methode Rule Compliance:
+  [OK] Each precondition generates Controller + Entity + Boundary
+  [OK] Domain Orchestrator implicitly coordinates all controllers
+  [WARNING] Preconditions should be handled by separate UCs
+  [WARNING] Missing UCs for: Coffee beans, Water, Milk, Sugar
+
+Next Step: Create separate UCs for resource supply management
+
+================================================================================
+KONTROLLFLUSS ANALYSIS (UC-METHODE)
+================================================================================
+
+Regel 1: Boundary -> Controller (Externe Eingaben) (7 Flows):
+------------------------------------------------------------
+  [B4] HMIErrorDisplayBoundary -> HMIController
+      Rule 1: HMIErrorDisplayBoundary triggers HMIController (external input)
+  [B4] HMIStatusDisplayBoundary -> HMIController
+      Rule 1: HMIStatusDisplayBoundary triggers HMIController (external input)
+  [A1.2] HMIErrorDisplayBoundary -> HMIController
+      Rule 1: HMIErrorDisplayBoundary triggers HMIController (external input)
+  [A1.2] HMIErrorDisplayBoundary -> HMIController
+      Rule 1: HMIErrorDisplayBoundary triggers HMIController (external input)
+  [A2.2] HMIErrorDisplayBoundary -> HMIController
+      Rule 1: HMIErrorDisplayBoundary triggers HMIController (external input)
+  [A2.2] HMIErrorDisplayBoundary -> HMIController
+      Rule 1: HMIErrorDisplayBoundary triggers HMIController (external input)
+  [E1] HMIAdditiveInputBoundary -> HMIController
+      Rule 1: HMIAdditiveInputBoundary triggers HMIController (external input)
+
+Regel 2: Controller -> Controller (Interne Verarbeitung) (21 Flows):
+------------------------------------------------------------
+  [B2a] TimeManager -> HeaterManager
+      Rule 2: TimeManager calls HeaterManager (sequential processing)
+  [B2b] HeaterManager -> FilterManager
+      Rule 2: HeaterManager calls FilterManager (sequential processing)
+  [B2c] FilterManager -> AmountManager
+      Rule 2: FilterManager calls AmountManager (sequential processing)
+  [B2d] AmountManager -> CupManager
+      Rule 2: AmountManager calls CupManager (sequential processing)
+  [B3a] CupManager -> CoffeeManager
+      Rule 2: CupManager calls CoffeeManager (sequential processing)
+  [B3b] CoffeeManager -> MilkManager
+      Rule 2: CoffeeManager calls MilkManager (sequential processing)
+  [B4] MilkManager -> HMIController
+      Rule 2: MilkManager calls HMIController (sequential processing)
+  [B4] MilkManager -> MessageManager
+      Rule 2: MilkManager calls MessageManager (sequential processing)
+  [B5] HMIController -> CupManager
+      Rule 2: HMIController calls CupManager (sequential processing)
+  [B5] MessageManager -> CupManager
+      Rule 2: MessageManager calls CupManager (sequential processing)
+  [B5] MessageManager -> HMIController
+      Rule 2: MessageManager calls HMIController (sequential processing)
+  [A1.1] A1ConditionManager -> HeaterManager
+      Rule 2: A1ConditionManager calls HeaterManager (sequential processing)
+  [A1.2] HeaterManager -> HMIController
+      Rule 2: HeaterManager calls HMIController (sequential processing)
+  [A1.2] HeaterManager -> MessageManager
+      Rule 2: HeaterManager calls MessageManager (sequential processing)
+  [A2.1] A2ConditionManager -> AdditionManager
+      Rule 2: A2ConditionManager calls AdditionManager (sequential processing)
+  [A2.2] AdditionManager -> HMIController
+      Rule 2: AdditionManager calls HMIController (sequential processing)
+  [A2.2] AdditionManager -> MessageManager
+      Rule 2: AdditionManager calls MessageManager (sequential processing)
+  [A3.1] TimeManager -> ActionsManager
+      Rule 2: TimeManager calls ActionsManager (sequential processing)
+  [A3.2] ActionsManager -> Manager
+      Rule 2: ActionsManager calls Manager (sequential processing)
+  [E1.1] HMIController -> SugarManager
+      Rule 2: HMIController calls SugarManager (sequential processing)
+  [E1.1] UserRequestManager -> SugarManager
+      Rule 2: UserRequestManager calls SugarManager (sequential processing)
+
+Regel 3: Sequentielle Schrittabfolge (24 Flows):
+------------------------------------------------------------
+
+Regel 5: Controller -> Boundary (Externe Ausgaben) (16 Flows):
+------------------------------------------------------------
+  [B4] HMIController -> HMIErrorDisplayBoundary
+      Rule 5: HMIController outputs via HMIErrorDisplayBoundary (external output)
+  [B4] HMIController -> HMIStatusDisplayBoundary
+      Rule 5: HMIController outputs via HMIStatusDisplayBoundary (external output)
+  [B4] MessageManager -> HMIErrorDisplayBoundary
+      Rule 5: MessageManager outputs via HMIErrorDisplayBoundary (external output)
+  [B4] MessageManager -> HMIStatusDisplayBoundary
+      Rule 5: MessageManager outputs via HMIStatusDisplayBoundary (external output)
+  [B5] CupManager -> ProductDeliveryBoundary
+      Rule 5: CupManager outputs via ProductDeliveryBoundary (external output)
+  [B5] CupManager -> ProductDeliveryBoundary
+      Rule 5: CupManager outputs via ProductDeliveryBoundary (external output)
+  [B5] HMIController -> ProductDeliveryBoundary
+      Rule 5: HMIController outputs via ProductDeliveryBoundary (external output)
+  [B5] HMIController -> ProductDeliveryBoundary
+      Rule 5: HMIController outputs via ProductDeliveryBoundary (external output)
+  [A1.2] HMIController -> HMIErrorDisplayBoundary
+      Rule 5: HMIController outputs via HMIErrorDisplayBoundary (external output)
+  [A1.2] HMIController -> HMIErrorDisplayBoundary
+      Rule 5: HMIController outputs via HMIErrorDisplayBoundary (external output)
+  [A1.2] MessageManager -> HMIErrorDisplayBoundary
+      Rule 5: MessageManager outputs via HMIErrorDisplayBoundary (external output)
+  [A1.2] MessageManager -> HMIErrorDisplayBoundary
+      Rule 5: MessageManager outputs via HMIErrorDisplayBoundary (external output)
+  [A2.2] HMIController -> HMIErrorDisplayBoundary
+      Rule 5: HMIController outputs via HMIErrorDisplayBoundary (external output)
+  [A2.2] HMIController -> HMIErrorDisplayBoundary
+      Rule 5: HMIController outputs via HMIErrorDisplayBoundary (external output)
+  [A2.2] MessageManager -> HMIErrorDisplayBoundary
+      Rule 5: MessageManager outputs via HMIErrorDisplayBoundary (external output)
+  [A2.2] MessageManager -> HMIErrorDisplayBoundary
+      Rule 5: MessageManager outputs via HMIErrorDisplayBoundary (external output)
+
+Regel 3: Sequentielle Schrittabfolge (24 Flows):
+------------------------------------------------------------
+  Sequential execution through 24 steps
+  Flow: B1 -> ... -> E1.2
+
+Regel 4: Parallele Verzweigung/Vereinigung (2 Parallel Patterns):
+------------------------------------------------------------
+  Parallel Split: B2a -> B2d
+  Parallel Steps: B2a, B2b, B2c, B2d
+  Description: Rule 4: Parallel execution of B2a, B2b, B2c, B2d
+  Parallel Split: B3a -> B3b
+  Parallel Steps: B3a, B3b
+  Description: Rule 4: Parallel execution of B3a, B3b
+
+KONTROLLFLUSS STATISTIK:
+  Total Control Flows: 68
+  Parallel Patterns: 2
+  Regel 2: 21 flows
+  Regel 3: 24 flows
+  Regel 1: 7 flows
+  Regel 5: 16 flows
+
+UC-Methode Compliance:
+  [OK] Alle 5 Kontrollfluss-Regeln implementiert
+  [OK] Boundary-Controller-Boundary Muster erkannt
+  [OK] Parallele Ausführung identifiziert
+
+DEBUG: Available entity names for data flow: ['Actions', 'Additive', 'Coffee', 'CoffeeBeanAmount', 'CoffeeBeans', 'Cup', 'Error', 'Filter', 'Grinding', 'GrindingDegree', 'GroundCoffee', 'Heater', 'HotWater', 'Message', 'Milk', 'MilkAddition', 'Sugar', 'Water']
+DEBUG: Total entities: 18
+DEBUG: Explicit entities: 15
+DEBUG: Transformation entities: 6
+DEBUG: Processing transaction verb 'reach' with direct_object 'None'
+DEBUG: Processing function verb 'activate' with direct_object 'the water heater'
+DEBUG: Function verb activate -> transformation: -> Water
+DEBUG: Found transformation '-> Water' for verb 'activate'
+DEBUG: Controller for B2a: HeaterManager
+DEBUG: Processing function verb 'prepare' with direct_object 'filter'
+DEBUG: Prepare verb prepare filter -> transformation: -> Filter
+DEBUG: Found transformation '-> Filter' for verb 'prepare'
+DEBUG: Controller for B2b: FilterManager
+DEBUG: Found transformation 'CoffeeBeans -> GroundCoffee' for verb 'grind'
+DEBUG: Controller for B2c: AmountManager
+DEBUG: Step B2c output entities: ['GroundCoffee']
+DEBUG: Preposition 'into' -> use: AmountManager -> Filter
+DEBUG: Processing function verb 'retrieve' with direct_object 'cup'
+DEBUG: Function verb retrieve -> transformation: -> Cup
+DEBUG: Found transformation '-> Cup' for verb 'retrieve'
+DEBUG: Controller for B2d: CupManager
+DEBUG: Found transformation 'GroundCoffee + HotWater + Filter -> Coffee' for verb 'brew'
+DEBUG: Controller for B3a: CoffeeManager
+DEBUG: Step B3a output entities: ['Coffee']
+DEBUG: Preposition 'with' -> use: CoffeeManager -> Water
+DEBUG: Preposition 'into' -> use: CoffeeManager -> Cup
+DEBUG: Override 'add' transformation for direct_object 'milk': Coffee + Milk -> Coffee
+DEBUG: Found transformation 'Coffee + Milk -> Coffee' for verb 'add'
+DEBUG: Controller for B3b: MilkManager
+DEBUG: Step B3b output entities: ['Coffee']
+DEBUG: Preposition 'to' -> use: MilkManager -> Cup
+DEBUG: Processing transaction verb 'output' with direct_object 'a message'
+DEBUG: Transaction verb output -> transformation: -> Message
+DEBUG: Found transformation '-> Message' for verb 'output'
+DEBUG: Controller for B4: HMIController
+DEBUG: Processing transaction verb 'present' with direct_object 'cup'
+DEBUG: Transaction verb present -> transformation: -> Cup
+DEBUG: Found transformation '-> Cup' for verb 'present'
+DEBUG: Controller for B5: CupManager
+DEBUG: Processing transaction verb 'have' with direct_object 'little water'
+DEBUG: Transaction verb have -> transformation: -> Water
+DEBUG: Found transformation '-> Water' for verb 'have'
+DEBUG: Controller for A1: A1ConditionManager
+DEBUG: Processing function verb 'switch' with direct_object 'water heater'
+DEBUG: Function verb switch -> transformation: -> Water
+DEBUG: Found transformation '-> Water' for verb 'switch'
+DEBUG: Controller for A1.1: HeaterManager
+DEBUG: Processing transaction verb 'output' with direct_object 'an error message'
+DEBUG: Transaction verb output -> transformation: -> Message
+DEBUG: Found transformation '-> Message' for verb 'output'
+DEBUG: Controller for A1.2: HMIController
+DEBUG: Processing function verb '' with direct_object 'None'
+DEBUG: Processing function verb 'stop' with direct_object 'milk addition'
+DEBUG: Function verb stop -> transformation: -> Milk
+DEBUG: Found transformation '-> Milk' for verb 'stop'
+DEBUG: Controller for A2.1: AdditionManager
+DEBUG: Processing transaction verb 'output' with direct_object 'an error message'
+DEBUG: Transaction verb output -> transformation: -> Message
+DEBUG: Found transformation '-> Message' for verb 'output'
+DEBUG: Controller for A2.2: HMIController
+DEBUG: Processing transaction verb 'detect' with direct_object 'None'
+DEBUG: Processing function verb 'stop' with direct_object 'all actions'
+DEBUG: Function verb stop -> transformation: -> All
+DEBUG: Found transformation '-> All' for verb 'stop'
+DEBUG: Controller for A3.1: ActionsManager
+DEBUG: Processing function verb '' with direct_object 'None'
+DEBUG: Processing transaction verb 'want' with direct_object 'sugar'
+DEBUG: Transaction verb want -> transformation: -> Sugar
+DEBUG: Found transformation '-> Sugar' for verb 'want'
+DEBUG: Controller for E1: HMIController
+DEBUG: Override 'add' transformation for direct_object 'sugar': Coffee + Sugar -> Coffee
+DEBUG: Found transformation 'Coffee + Sugar -> Coffee' for verb 'add'
+DEBUG: Controller for E1.1: SugarManager
+DEBUG: Step E1.1 output entities: ['Coffee']
+DEBUG: Preposition 'to' -> use: SugarManager -> Cup
+DEBUG: SupplyController CoffeeBeansSupplyController --provide--> CoffeeBeans
+DEBUG: SupplyController MilkSupplyController --provide--> Milk
+DEBUG: SupplyController SugarSupplyController --provide--> Sugar
+DEBUG: SupplyController WaterSupplyController --provide--> Water
+
+================================================================================
+DATA FLOW ANALYSIS
+================================================================================
+
+Found 21 data flow relationships:
+  - 13 'use' relationships
+  - 8 'provide' relationships
+
+USE RELATIONSHIPS - Controllers use input entities (13):
+------------------------------------------------------------
+  [B2c] AmountManager --use--> CoffeeBeans
+      Transformation: CoffeeBeans -> GroundCoffee
+      Description: AmountManager uses CoffeeBeans for grind operation
+  [B2c] AmountManager --use--> Filter
+      Transformation: preposition: into the filter
+      Description: AmountManager uses Filter as container/target (preposition: 'into')
+  [B3a] CoffeeManager --use--> GroundCoffee
+      Transformation: GroundCoffee + HotWater + Filter -> Coffee
+      Description: CoffeeManager uses GroundCoffee for brew operation
+  [B3a] CoffeeManager --use--> HotWater
+      Transformation: GroundCoffee + HotWater + Filter -> Coffee
+      Description: CoffeeManager uses HotWater for brew operation
+  [B3a] CoffeeManager --use--> Filter
+      Transformation: GroundCoffee + HotWater + Filter -> Coffee
+      Description: CoffeeManager uses Filter for brew operation
+  [B3a] CoffeeManager --use--> Water
+      Transformation: preposition: with the set water amount
+      Description: CoffeeManager uses Water as tool/ingredient (preposition: 'with')
+  [B3a] CoffeeManager --use--> Cup
+      Transformation: preposition: into the cup
+      Description: CoffeeManager uses Cup as container/target (preposition: 'into')
+  [B3b] MilkManager --use--> Coffee
+      Transformation: Coffee + Milk -> Coffee
+      Description: MilkManager uses Coffee for add operation
+  [B3b] MilkManager --use--> Milk
+      Transformation: Coffee + Milk -> Coffee
+      Description: MilkManager uses Milk for add operation
+  [B3b] MilkManager --use--> Cup
+      Transformation: preposition: to the cup
+      Description: MilkManager uses Cup as target/container (preposition: 'to')
+  [E1.1] SugarManager --use--> Coffee
+      Transformation: Coffee + Sugar -> Coffee
+      Description: SugarManager uses Coffee for add operation
+  [E1.1] SugarManager --use--> Sugar
+      Transformation: Coffee + Sugar -> Coffee
+      Description: SugarManager uses Sugar for add operation
+  [E1.1] SugarManager --use--> Cup
+      Transformation: preposition: to the cup
+      Description: SugarManager uses Cup as target/container (preposition: 'to')
+
+PROVIDE RELATIONSHIPS - Controllers provide output entities (8):
+------------------------------------------------------------
+  [B2c] AmountManager --provide--> GroundCoffee
+      Transformation: CoffeeBeans -> GroundCoffee
+      Description: AmountManager provides GroundCoffee from grind operation
+  [B3a] CoffeeManager --provide--> Coffee
+      Transformation: GroundCoffee + HotWater + Filter -> Coffee
+      Description: CoffeeManager provides Coffee from brew operation
+  [B3b] MilkManager --provide--> Coffee
+      Transformation: Coffee + Milk -> Coffee
+      Description: MilkManager provides Coffee from add operation
+  [E1.1] SugarManager --provide--> Coffee
+      Transformation: Coffee + Sugar -> Coffee
+      Description: SugarManager provides Coffee from add operation
+  [SUPPLY] CoffeeBeansSupplyController --provide--> CoffeeBeans
+      Transformation: Supply -> CoffeeBeans
+      Description: CoffeeBeansSupplyController provides CoffeeBeans from supply source
+  [SUPPLY] MilkSupplyController --provide--> Milk
+      Transformation: Supply -> Milk
+      Description: MilkSupplyController provides Milk from supply source
+  [SUPPLY] SugarSupplyController --provide--> Sugar
+      Transformation: Supply -> Sugar
+      Description: SugarSupplyController provides Sugar from supply source
+  [SUPPLY] WaterSupplyController --provide--> Water
+      Transformation: Supply -> Water
+      Description: WaterSupplyController provides Water from supply source
+
+DATA FLOW COMPLIANCE:
+  [OK] Rule 1: Output entities have 'provide' relationships
+  [OK] Rule 2: Input entities have 'use' relationships
+  [OK] All transformation verbs analyzed for data flow
+
+================================================================================
+ALL RA CLASSES - DOMAIN-AGNOSTIC ANALYSIS
+================================================================================
+
+Actor: ExternalTrigger
+  Stereotype: «actor»
+  Element Type: control
+  Steps: A1, A2
+  Description: External trigger source
+
+Actor: Timer
+  Stereotype: «actor»
+  Element Type: control
+  Steps: B1, A3
+  Description: Time-based trigger
+
+Actor: User
+  Stereotype: «actor»
+  Element Type: functional
+  Steps: E1
+  Description: Human actor
+
+Boundary: CoffeeBeansSupplyBoundary
+  Stereotype: «boundary»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Boundary for Coffee beans supply monitoring and refill alerts
+
+Boundary: HMIAdditiveInputBoundary
+  Stereotype: «boundary»
+  Element Type: control
+  Steps: E1
+  Description: HMI boundary for user selection of beverage additives
+
+Boundary: HMIErrorDisplayBoundary
+  Stereotype: «boundary»
+  Element Type: control
+  Steps: B4, A1.2, A1.2, A2.2, A2.2
+  Description: HMI boundary for displaying error messages to user
+
+Boundary: HMIStatusDisplayBoundary
+  Stereotype: «boundary»
+  Element Type: control
+  Steps: B4
+  Description: HMI boundary for displaying status messages (e.g., 'coffee ready')
+
+Boundary: MilkSupplyBoundary
+  Stereotype: «boundary»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Boundary for Milk supply monitoring and refill alerts
+
+Boundary: ProductDeliveryBoundary
+  Stereotype: «boundary»
+  Element Type: functional
+  Steps: B5, B5
+  Description: Boundary for delivering finished products to user
+
+Boundary: SugarSupplyBoundary
+  Stereotype: «boundary»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Boundary for Sugar supply monitoring and refill alerts
+
+Boundary: TimeTriggerBoundary
+  Stereotype: «boundary»
+  Element Type: control
+  Steps: B1
+  Description: Boundary for time-based system triggers
+
+Boundary: WaterSupplyBoundary
+  Stereotype: «boundary»
+  Element Type: functional
+  Steps: A1
+  Description: Boundary for water supply monitoring and refill alerts (also required as precondition)
+
+Controller: A1ConditionManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: A1
+  Description: Controls has operation in A1
+
+Controller: A2ConditionManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: A2
+  Description: Controls  operation in A2
+
+Controller: ActionsManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: A3.1
+  Description: Controls stops operation in A3.1
+
+Controller: AdditionManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: A2.1
+  Description: Controls stops operation in A2.1
+
+Controller: AmountManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B2c
+  Description: Controls grinds operation in B2c
+
+Controller: Beverage_PreparationDomainOrchestrator
+  Stereotype: «control»
+  Element Type: functional
+  Steps: IMPLICIT_COORDINATION
+  Description: Implicit domain orchestrator for beverage_preparation - coordinates all controllers in UC1
+
+Controller: CoffeeBeansSupplyController
+  Stereotype: «control»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Manages Coffee beans supply and availability (from precondition)
+
+Controller: CoffeeManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B3a
+  Description: Controls brewing operation in B3a
+
+Controller: CupManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B2d, B5
+  Description: Controls retrieves operation in B2d
+
+Controller: FilterManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B2b
+  Description: Controls prepares operation in B2b
+
+Controller: HMIController
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B4, B5, A1.2, A2.2, E1
+  Description: Human-Machine Interface controller for user interactions
+
+Controller: HeaterManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B2a, A1.1
+  Description: Controls activates operation in B2a
+
+Controller: Manager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: A3.2
+  Description: Controls  operation in A3.2
+
+Controller: MessageManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B4, A1.2, A2.2
+  Description: Controls outputs operation in B4
+
+Controller: MilkManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B3b
+  Description: Controls adds operation in B3b
+
+Controller: MilkSupplyController
+  Stereotype: «control»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Manages Milk supply and availability (from precondition)
+
+Controller: SugarManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: E1.1
+  Description: Controls adds operation in E1.1
+
+Controller: SugarSupplyController
+  Stereotype: «control»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Manages Sugar supply and availability (from precondition)
+
+Controller: TimeManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B1, A3
+  Description: Controls reaches operation in B1
+
+Controller: UserRequestManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: E1
+  Description: Controls wants operation in E1
+
+Controller: WaterSupplyController
+  Stereotype: «control»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Manages Water supply and availability (from precondition)
+
+Entity: Actions
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: A3.1
+  Description: Domain entity: actions
+
+Entity: Coffee
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B3a
+  Description: Domain entity: coffee
+
+Entity: CoffeeBeanAmount
+  Stereotype: «entity»
+  Element Type: control
+  Steps: B2c, B3a
+  Description: Amount specification for coffee beans
+
+Entity: CoffeeBeans
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Resource: Coffee beans (required as precondition)
+
+Entity: Cup
+  Stereotype: «entity»
+  Element Type: container
+  Steps: B2d, B3a, B3b, B5, E1.1
+  Description: Container: cup
+
+Entity: Error
+  Stereotype: «entity»
+  Element Type: control
+  Steps: A1.2, A2.2
+  Description: Control data: error
+
+Entity: Filter
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B2b, B2c
+  Description: Domain entity: filter
+
+Entity: Grinding
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B2c
+  Description: Domain entity: grinding
+
+Entity: GrindingDegree
+  Stereotype: «entity»
+  Element Type: control
+  Steps: B2c
+  Description: Grinding degree parameter for coffee beans
+
+Entity: Heater
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B2a, A1.1
+  Description: Domain entity: heater
+
+Entity: Message
+  Stereotype: «entity»
+  Element Type: control
+  Steps: B4, A1.2, A2.2
+  Description: Control data: message
+
+Entity: Milk
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B3b, A2.1
+  Description: Domain entity: milk (also required as precondition)
+
+Entity: MilkAddition
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: A2.1
+  Description: Milk addition process
+
+Entity: Sugar
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: E1, E1.1
+  Description: Domain entity: sugar (also required as precondition)
+
+Entity: Water
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B2a, B3a, A1, A1.1
+  Description: Domain entity: water (also required as precondition)
+
+================================================================================
+VERB CLASSIFICATION SUMMARY
+================================================================================
+
+TRANSACTION VERBS - Boundary interactions (8):
+  B1: reaches - System clock reaches set time of 7:00h (Radio clock)
+  B4: outputs - The system outputs a message to user
+  B5: presents - The system presents cup to user
+  A1: has - Water heater has too little water
+  A1.2: outputs - The system outputs an error message to user
+  A2.2: outputs - The system outputs an error message to user
+  A3: detected - time Overheat detected
+  E1: wants - B3-B5 User wants sugar in coffee
+
+TRANSFORMATION VERBS - Entity transformations (4):
+  B2c: grinds -> CoffeeBeans -> GroundCoffee
+  B3a: brewing -> GroundCoffee + HotWater + Filter -> Coffee
+  B3b: adds -> Coffee + Additive -> Coffee
+  E1.1: adds -> Coffee + Additive -> Coffee
+
+FUNCTION VERBS - System actions (8):
+  B2a: activates - The system activates the water heater
+  B2b: prepares - The system prepares filter
+  B2d: retrieves - The system retrieves cup from storage container and places it under the filter
+  A1.1: switches - The system switches off water heater
+  A2:  - Too little milk
+  A2.1: stops - The system stops milk addition
+  A3.1: stops - The system stops all actions
+  A3.2:  - The system switch of itself
+
+STATISTICS:
+   Total verbs analyzed: 20
+   Transaction verbs: 8
+   Transformation verbs: 4
+   Function verbs: 8
+
+------------------------------------------------------------
+ANALYZING UC FILE 2/2: UC2.txt
+------------------------------------------------------------
+================================================================================
+GENERIC UC GRAMMAR ANALYSIS - ALL FLOWS
+================================================================================
+Main Flow: 9 steps
+Alternative Flows: 4 steps
+Extension Flows: 3 steps
+Domain: beverage_preparation
+Total steps to analyze: 16
+================================================================================
+
+--- B1: User request a espresso ---
+Main verb: request (lemma: request)
+B1 Override: Trigger -> TRANSACTION VERB
+Verb Type: transaction
+Direct Object: a espresso
+Prepositional Objects: []
+
+--- B2a: The system activates the water heater ---
+Main verb: activates (lemma: activate)
+Verb Type: function
+Direct Object: the water heater
+Prepositional Objects: []
+WARNING: Heater is implementation element - use functional activity
+SUGGESTION: The system heats the water
+
+--- B2b: The system prepares filter ---
+Main verb: prepares (lemma: prepare)
+Verb Type: function
+Direct Object: filter
+Prepositional Objects: []
+WARNING: Filter is implementation element - use functional activity
+SUGGESTION: The system filters the liquid
+
+--- B2c: The system grinds the set amount at the set grinding degree directly into the filter ---
+Main verb: grinds (lemma: grind)
+Verb Type: transformation
+Direct Object: the set amount
+Prepositional Objects: [('at', 'the set grinding degree'), ('into', 'the filter')]
+Adjectives in 'at the set grinding degree': ['set']
+
+--- B2d: The system retrieves cup from storage container and places it under the filter ---
+Main verb: retrieves (lemma: retrieve)
+Verb Type: function
+Direct Object: cup
+Prepositional Objects: []
+
+--- B3: The system starts water compressor to generate appropriate water pressure for espresso ---
+Main verb: starts (lemma: start)
+Verb Type: function
+Direct Object: water compressor
+Prepositional Objects: []
+
+--- B4: The system begins pressing hot water through the coffee grounds ---
+Pattern detected: 'begins pressing' -> using 'pressing' as main verb
+Main verb: pressing (lemma: press)
+Verb Type: function
+Direct Object: hot water
+Adjectives detected: ['hot']
+Prepositional Objects: [('through', 'the coffee grounds')]
+
+--- B5: The system outputs a message to user ---
+Main verb: outputs (lemma: output)
+Verb Type: transaction
+Direct Object: a message
+Prepositional Objects: [('to', 'user')]
+
+--- B6: End UC --- (Flow control - not analyzed)
+
+--- A1: Compressor defective ---
+
+--- A1.1: The system switches off water heater and compressor ---
+Main verb: switches (lemma: switch)
+Verb Type: function
+Direct Object: water heater
+Prepositional Objects: []
+WARNING: Heater is implementation element - use functional activity
+SUGGESTION: The system heats the water
+
+--- A1.2: The system outputs an error message to user ---
+Main verb: outputs (lemma: output)
+Verb Type: transaction
+Direct Object: an error message
+Prepositional Objects: [('to', 'user')]
+
+--- A1.3: End UC --- (Flow control - not analyzed)
+
+--- E1: B4-B5 User wants sugar in coffee ---
+Main verb: wants (lemma: want)
+E1 Override: Trigger -> TRANSACTION VERB
+Verb Type: transaction
+Direct Object: sugar
+Prepositional Objects: []
+
+--- E1.1: The system adds sugar to the cup ---
+Main verb: adds (lemma: add)
+Verb Type: transformation
+Direct Object: sugar
+Prepositional Objects: [('to', 'the cup')]
+
+--- E1.2: Continue in main flow --- (Flow control - not analyzed)
+
+================================================================================
+PRECONDITION ANALYSIS
+================================================================================
+
+Found 2 preconditions:
+  - Coffee beans are available in the system (UC2)
+  - Water is available in the system (UC2)
+
+Generated 6 RA classes from preconditions:
+
+Resource Controllers (2):
+  - CoffeeBeansSupplyController: Manages Coffee beans supply and availability (from precondition)
+  - WaterSupplyController: Manages Water supply and availability (from precondition)
+
+Resource Entities (2):
+  - CoffeeBeans: Resource: Coffee beans (required as precondition)
+  - Water: Resource: Water (required as precondition)
+
+Supply Boundaries (2):
+  - CoffeeBeansSupplyBoundary: Boundary for Coffee beans supply monitoring and refill alerts
+  - WaterSupplyBoundary: Boundary for Water supply monitoring and refill alerts
+
+UC-Methode Rule Compliance:
+  [OK] Each precondition generates Controller + Entity + Boundary
+  [OK] Domain Orchestrator implicitly coordinates all controllers
+  [WARNING] Preconditions should be handled by separate UCs
+  [WARNING] Missing UCs for: Coffee beans, Water
+
+Next Step: Create separate UCs for resource supply management
+
+================================================================================
+KONTROLLFLUSS ANALYSIS (UC-METHODE)
+================================================================================
+
+Regel 1: Boundary -> Controller (Externe Eingaben) (6 Flows):
+------------------------------------------------------------
+  [B1] HMIBeverageSelectionBoundary -> HMIController
+      Rule 1: HMIBeverageSelectionBoundary triggers HMIController (external input)
+  [B5] HMIErrorDisplayBoundary -> HMIController
+      Rule 1: HMIErrorDisplayBoundary triggers HMIController (external input)
+  [B5] HMIStatusDisplayBoundary -> HMIController
+      Rule 1: HMIStatusDisplayBoundary triggers HMIController (external input)
+  [A1.2] HMIErrorDisplayBoundary -> HMIController
+      Rule 1: HMIErrorDisplayBoundary triggers HMIController (external input)
+  [A1.2] HMIErrorDisplayBoundary -> HMIController
+      Rule 1: HMIErrorDisplayBoundary triggers HMIController (external input)
+  [E1] HMIAdditiveInputBoundary -> HMIController
+      Rule 1: HMIAdditiveInputBoundary triggers HMIController (external input)
+
+Regel 2: Controller -> Controller (Interne Verarbeitung) (14 Flows):
+------------------------------------------------------------
+  [B2a] HMIController -> HeaterManager
+      Rule 2: HMIController calls HeaterManager (sequential processing)
+  [B2a] UserRequestManager -> HeaterManager
+      Rule 2: UserRequestManager calls HeaterManager (sequential processing)
+  [B2b] HeaterManager -> FilterManager
+      Rule 2: HeaterManager calls FilterManager (sequential processing)
+  [B2c] FilterManager -> AmountManager
+      Rule 2: FilterManager calls AmountManager (sequential processing)
+  [B2d] AmountManager -> CupManager
+      Rule 2: AmountManager calls CupManager (sequential processing)
+  [B3] CupManager -> CompressorManager
+      Rule 2: CupManager calls CompressorManager (sequential processing)
+  [B4] CompressorManager -> WaterManager
+      Rule 2: CompressorManager calls WaterManager (sequential processing)
+  [B5] WaterManager -> HMIController
+      Rule 2: WaterManager calls HMIController (sequential processing)
+  [B5] WaterManager -> MessageManager
+      Rule 2: WaterManager calls MessageManager (sequential processing)
+  [A1.1] A1ConditionManager -> HeaterManager
+      Rule 2: A1ConditionManager calls HeaterManager (sequential processing)
+  [A1.2] HeaterManager -> HMIController
+      Rule 2: HeaterManager calls HMIController (sequential processing)
+  [A1.2] HeaterManager -> MessageManager
+      Rule 2: HeaterManager calls MessageManager (sequential processing)
+  [E1.1] HMIController -> SugarManager
+      Rule 2: HMIController calls SugarManager (sequential processing)
+  [E1.1] UserRequestManager -> SugarManager
+      Rule 2: UserRequestManager calls SugarManager (sequential processing)
+
+Regel 3: Sequentielle Schrittabfolge (15 Flows):
+------------------------------------------------------------
+
+Regel 5: Controller -> Boundary (Externe Ausgaben) (8 Flows):
+------------------------------------------------------------
+  [B5] HMIController -> HMIErrorDisplayBoundary
+      Rule 5: HMIController outputs via HMIErrorDisplayBoundary (external output)
+  [B5] HMIController -> HMIStatusDisplayBoundary
+      Rule 5: HMIController outputs via HMIStatusDisplayBoundary (external output)
+  [B5] MessageManager -> HMIErrorDisplayBoundary
+      Rule 5: MessageManager outputs via HMIErrorDisplayBoundary (external output)
+  [B5] MessageManager -> HMIStatusDisplayBoundary
+      Rule 5: MessageManager outputs via HMIStatusDisplayBoundary (external output)
+  [A1.2] HMIController -> HMIErrorDisplayBoundary
+      Rule 5: HMIController outputs via HMIErrorDisplayBoundary (external output)
+  [A1.2] HMIController -> HMIErrorDisplayBoundary
+      Rule 5: HMIController outputs via HMIErrorDisplayBoundary (external output)
+  [A1.2] MessageManager -> HMIErrorDisplayBoundary
+      Rule 5: MessageManager outputs via HMIErrorDisplayBoundary (external output)
+  [A1.2] MessageManager -> HMIErrorDisplayBoundary
+      Rule 5: MessageManager outputs via HMIErrorDisplayBoundary (external output)
+
+Regel 3: Sequentielle Schrittabfolge (15 Flows):
+------------------------------------------------------------
+  Sequential execution through 15 steps
+  Flow: B1 -> ... -> E1.2
+
+Regel 4: Parallele Verzweigung/Vereinigung (1 Parallel Patterns):
+------------------------------------------------------------
+  Parallel Split: B2a -> B2d
+  Parallel Steps: B2a, B2b, B2c, B2d
+  Description: Rule 4: Parallel execution of B2a, B2b, B2c, B2d
+
+KONTROLLFLUSS STATISTIK:
+  Total Control Flows: 43
+  Parallel Patterns: 1
+  Regel 1: 6 flows
+  Regel 2: 14 flows
+  Regel 3: 15 flows
+  Regel 5: 8 flows
+
+UC-Methode Compliance:
+  [OK] Alle 5 Kontrollfluss-Regeln implementiert
+  [OK] Boundary-Controller-Boundary Muster erkannt
+  [OK] Parallele Ausführung identifiziert
+
+DEBUG: Available entity names for data flow: ['Additive', 'Coffee', 'CoffeeBeanAmount', 'CoffeeBeans', 'Compressor', 'Cup', 'Error', 'Espresso', 'Filter', 'Grinding', 'GrindingDegree', 'GroundCoffee', 'Grounds', 'Heater', 'Hot', 'Message', 'Sugar', 'Water']
+DEBUG: Total entities: 18
+DEBUG: Explicit entities: 16
+DEBUG: Transformation entities: 4
+DEBUG: Processing transaction verb 'request' with direct_object 'a espresso'
+DEBUG: Transaction verb request -> transformation: -> Espresso
+DEBUG: Found transformation '-> Espresso' for verb 'request'
+DEBUG: Controller for B1: HMIController
+DEBUG: Processing function verb 'activate' with direct_object 'the water heater'
+DEBUG: Function verb activate -> transformation: -> Water
+DEBUG: Found transformation '-> Water' for verb 'activate'
+DEBUG: Controller for B2a: HeaterManager
+DEBUG: Processing function verb 'prepare' with direct_object 'filter'
+DEBUG: Prepare verb prepare filter -> transformation: -> Filter
+DEBUG: Found transformation '-> Filter' for verb 'prepare'
+DEBUG: Controller for B2b: FilterManager
+DEBUG: Found transformation 'CoffeeBeans -> GroundCoffee' for verb 'grind'
+DEBUG: Controller for B2c: AmountManager
+DEBUG: Step B2c output entities: ['GroundCoffee']
+DEBUG: Preposition 'into' -> use: AmountManager -> Filter
+DEBUG: Processing function verb 'retrieve' with direct_object 'cup'
+DEBUG: Function verb retrieve -> transformation: -> Cup
+DEBUG: Found transformation '-> Cup' for verb 'retrieve'
+DEBUG: Controller for B2d: CupManager
+DEBUG: Processing function verb 'start' with direct_object 'water compressor'
+DEBUG: Function verb start -> transformation: -> Water
+DEBUG: Found transformation '-> Water' for verb 'start'
+DEBUG: Controller for B3: CompressorManager
+DEBUG: Processing function verb 'press' with direct_object 'hot water'
+DEBUG: Function verb press -> transformation: -> Hot
+DEBUG: Found transformation '-> Hot' for verb 'press'
+DEBUG: Controller for B4: WaterManager
+DEBUG: Processing transaction verb 'output' with direct_object 'a message'
+DEBUG: Transaction verb output -> transformation: -> Message
+DEBUG: Found transformation '-> Message' for verb 'output'
+DEBUG: Controller for B5: HMIController
+DEBUG: Processing function verb '' with direct_object 'None'
+DEBUG: Processing function verb 'switch' with direct_object 'water heater'
+DEBUG: Function verb switch -> transformation: -> Water
+DEBUG: Found transformation '-> Water' for verb 'switch'
+DEBUG: Controller for A1.1: HeaterManager
+DEBUG: Processing transaction verb 'output' with direct_object 'an error message'
+DEBUG: Transaction verb output -> transformation: -> Message
+DEBUG: Found transformation '-> Message' for verb 'output'
+DEBUG: Controller for A1.2: HMIController
+DEBUG: Processing transaction verb 'want' with direct_object 'sugar'
+DEBUG: Transaction verb want -> transformation: -> Sugar
+DEBUG: Found transformation '-> Sugar' for verb 'want'
+DEBUG: Controller for E1: HMIController
+DEBUG: Override 'add' transformation for direct_object 'sugar': Coffee + Sugar -> Coffee
+DEBUG: Found transformation 'Coffee + Sugar -> Coffee' for verb 'add'
+DEBUG: Controller for E1.1: SugarManager
+DEBUG: Step E1.1 output entities: ['Coffee']
+DEBUG: Preposition 'to' -> use: SugarManager -> Cup
+DEBUG: SupplyController CoffeeBeansSupplyController --provide--> CoffeeBeans
+DEBUG: SupplyController WaterSupplyController --provide--> Water
+
+================================================================================
+DATA FLOW ANALYSIS
+================================================================================
+
+Found 9 data flow relationships:
+  - 5 'use' relationships
+  - 4 'provide' relationships
+
+USE RELATIONSHIPS - Controllers use input entities (5):
+------------------------------------------------------------
+  [B2c] AmountManager --use--> CoffeeBeans
+      Transformation: CoffeeBeans -> GroundCoffee
+      Description: AmountManager uses CoffeeBeans for grind operation
+  [B2c] AmountManager --use--> Filter
+      Transformation: preposition: into the filter
+      Description: AmountManager uses Filter as container/target (preposition: 'into')
+  [E1.1] SugarManager --use--> Coffee
+      Transformation: Coffee + Sugar -> Coffee
+      Description: SugarManager uses Coffee for add operation
+  [E1.1] SugarManager --use--> Sugar
+      Transformation: Coffee + Sugar -> Coffee
+      Description: SugarManager uses Sugar for add operation
+  [E1.1] SugarManager --use--> Cup
+      Transformation: preposition: to the cup
+      Description: SugarManager uses Cup as target/container (preposition: 'to')
+
+PROVIDE RELATIONSHIPS - Controllers provide output entities (4):
+------------------------------------------------------------
+  [B2c] AmountManager --provide--> GroundCoffee
+      Transformation: CoffeeBeans -> GroundCoffee
+      Description: AmountManager provides GroundCoffee from grind operation
+  [E1.1] SugarManager --provide--> Coffee
+      Transformation: Coffee + Sugar -> Coffee
+      Description: SugarManager provides Coffee from add operation
+  [SUPPLY] CoffeeBeansSupplyController --provide--> CoffeeBeans
+      Transformation: Supply -> CoffeeBeans
+      Description: CoffeeBeansSupplyController provides CoffeeBeans from supply source
+  [SUPPLY] WaterSupplyController --provide--> Water
+      Transformation: Supply -> Water
+      Description: WaterSupplyController provides Water from supply source
+
+DATA FLOW COMPLIANCE:
+  [OK] Rule 1: Output entities have 'provide' relationships
+  [OK] Rule 2: Input entities have 'use' relationships
+  [OK] All transformation verbs analyzed for data flow
+
+================================================================================
+ALL RA CLASSES - DOMAIN-AGNOSTIC ANALYSIS
+================================================================================
+
+Actor: ExternalTrigger
+  Stereotype: «actor»
+  Element Type: control
+  Steps: A1
+  Description: External trigger source
+
+Actor: User
+  Stereotype: «actor»
+  Element Type: functional
+  Steps: B1, E1
+  Description: Human actor
+
+Boundary: CoffeeBeansSupplyBoundary
+  Stereotype: «boundary»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Boundary for Coffee beans supply monitoring and refill alerts
+
+Boundary: HMIAdditiveInputBoundary
+  Stereotype: «boundary»
+  Element Type: control
+  Steps: E1
+  Description: HMI boundary for user selection of beverage additives
+
+Boundary: HMIBeverageSelectionBoundary
+  Stereotype: «boundary»
+  Element Type: control
+  Steps: B1
+  Description: HMI boundary for user beverage type selection
+
+Boundary: HMIErrorDisplayBoundary
+  Stereotype: «boundary»
+  Element Type: control
+  Steps: B5, A1.2, A1.2
+  Description: HMI boundary for displaying error messages to user
+
+Boundary: HMIStatusDisplayBoundary
+  Stereotype: «boundary»
+  Element Type: control
+  Steps: B5
+  Description: HMI boundary for displaying status messages (e.g., 'coffee ready')
+
+Boundary: WaterSupplyBoundary
+  Stereotype: «boundary»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Boundary for Water supply monitoring and refill alerts
+
+Controller: A1ConditionManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: A1
+  Description: Controls  operation in A1
+
+Controller: AmountManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B2c
+  Description: Controls grinds operation in B2c
+
+Controller: Beverage_PreparationDomainOrchestrator
+  Stereotype: «control»
+  Element Type: functional
+  Steps: IMPLICIT_COORDINATION
+  Description: Implicit domain orchestrator for beverage_preparation - coordinates all controllers in UC2
+
+Controller: CoffeeBeansSupplyController
+  Stereotype: «control»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Manages Coffee beans supply and availability (from precondition)
+
+Controller: CompressorManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B3
+  Description: Controls starts operation in B3
+
+Controller: CupManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B2d
+  Description: Controls retrieves operation in B2d
+
+Controller: FilterManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B2b
+  Description: Controls prepares operation in B2b
+
+Controller: HMIController
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B1, B5, A1.2, E1
+  Description: Human-Machine Interface controller for user interactions
+
+Controller: HeaterManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B2a, A1.1
+  Description: Controls activates operation in B2a
+
+Controller: MessageManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B5, A1.2
+  Description: Controls outputs operation in B5
+
+Controller: SugarManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: E1.1
+  Description: Controls adds operation in E1.1
+
+Controller: UserRequestManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B1, E1
+  Description: Controls request operation in B1
+
+Controller: WaterManager
+  Stereotype: «control»
+  Element Type: functional
+  Steps: B4
+  Description: Controls pressing operation in B4
+
+Controller: WaterSupplyController
+  Stereotype: «control»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Manages Water supply and availability (from precondition)
+
+Entity: Coffee
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B4
+  Description: Domain entity: coffee
+
+Entity: CoffeeBeanAmount
+  Stereotype: «entity»
+  Element Type: control
+  Steps: B2c
+  Description: Amount specification for coffee beans
+
+Entity: CoffeeBeans
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: PRECONDITION
+  Description: Resource: Coffee beans (required as precondition)
+
+Entity: Compressor
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B3
+  Description: Domain entity: compressor
+
+Entity: Cup
+  Stereotype: «entity»
+  Element Type: container
+  Steps: B2d, E1.1
+  Description: Container: cup
+
+Entity: Error
+  Stereotype: «entity»
+  Element Type: control
+  Steps: A1.2
+  Description: Control data: error
+
+Entity: Espresso
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B1
+  Description: Domain entity: espresso
+
+Entity: Filter
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B2b, B2c
+  Description: Domain entity: filter
+
+Entity: Grinding
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B2c
+  Description: Domain entity: grinding
+
+Entity: GrindingDegree
+  Stereotype: «entity»
+  Element Type: control
+  Steps: B2c
+  Description: Grinding degree parameter for coffee beans
+
+Entity: Grounds
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B4
+  Description: Domain entity: grounds
+
+Entity: Heater
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B2a, A1.1
+  Description: Domain entity: heater
+
+Entity: Hot
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B4
+  Description: Domain entity: hot
+
+Entity: Message
+  Stereotype: «entity»
+  Element Type: control
+  Steps: B5, A1.2
+  Description: Control data: message
+
+Entity: Sugar
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: E1, E1.1
+  Description: Domain entity: sugar
+
+Entity: Water
+  Stereotype: «entity»
+  Element Type: functional
+  Steps: B2a, B3, B4, A1.1
+  Description: Domain entity: water (also required as precondition)
+
+================================================================================
+VERB CLASSIFICATION SUMMARY
+================================================================================
+
+TRANSACTION VERBS - Boundary interactions (4):
+  B1: request - User request a espresso
+  B5: outputs - The system outputs a message to user
+  A1.2: outputs - The system outputs an error message to user
+  E1: wants - B4-B5 User wants sugar in coffee
+
+TRANSFORMATION VERBS - Entity transformations (2):
+  B2c: grinds -> CoffeeBeans -> GroundCoffee
+  E1.1: adds -> Coffee + Additive -> Coffee
+
+FUNCTION VERBS - System actions (7):
+  B2a: activates - The system activates the water heater
+  B2b: prepares - The system prepares filter
+  B2d: retrieves - The system retrieves cup from storage container and places it under the filter
+  B3: starts - The system starts water compressor to generate appropriate water pressure for espresso
+  B4: pressing - The system begins pressing hot water through the coffee grounds
+  A1:  - Compressor defective
+  A1.1: switches - The system switches off water heater and compressor
+
+STATISTICS:
+   Total verbs analyzed: 13
+   Transaction verbs: 4
+   Transformation verbs: 2
+   Function verbs: 7
+
+================================================================================
+MULTI-UC ANALYSIS SUMMARY
+================================================================================
+
+Analyzed 2 UC files:
+  1. UC1: 20 verb analyses
+     - Transaction: 8
+     - Transformation: 4
+     - Function: 8
+  2. UC2: 13 verb analyses
+     - Transaction: 4
+     - Transformation: 2
+     - Function: 7
+
+COMBINED RESULTS:
+  Total verb analyses: 33
+  Unique RA classes: 55
+
+RA CLASS DISTRIBUTION:
+  Actor: 3
+  Boundary: 10
+  Controller: 23
+  Entity: 19
+
+SHARED RA CLASSES (appear in multiple UCs): 35
+  Actor: ExternalTrigger -> UC1, UC2
+  Actor: Timer -> UC1, UC2
+  Actor: User -> UC1, UC2
+  Boundary: HMIAdditiveInputBoundary -> UC1, UC2
+  Boundary: HMIBeverageSelectionBoundary -> UC1, UC2
+  Boundary: HMIErrorDisplayBoundary -> UC1, UC2
+  Boundary: HMIStatusDisplayBoundary -> UC1, UC2
+  Boundary: ProductDeliveryBoundary -> UC1, UC2
+  Boundary: TimeTriggerBoundary -> UC1, UC2
+  Boundary: WaterSupplyBoundary -> UC1, UC2
+  ... and 25 more
+
+================================================================================
+
+================================================================================
+HMI ARCHITECTURE ANALYSIS
+================================================================================
+
+HMI CONTROLLER:
+==================================================
+
+Controller: HMIController
+  Description: Human-Machine Interface controller for user interactions
+  Steps Referenced: B4, A2.2, B5, B1, E1, A1.2
+  Used in UCs: UC1, UC2
+  Related HMI Activities:
+    - B4: The system outputs a message to user
+    - B4: The system begins pressing hot water through the coffee grounds
+    - A2.2: The system outputs an error message to user
+    - B5: The system presents cup to user
+    - B5: The system outputs a message to user
+    - B1: System clock reaches set time of 7:00h (Radio clock)
+    - B1: User request a espresso
+    - E1: B3-B5 User wants sugar in coffee
+    - E1: B4-B5 User wants sugar in coffee
+    - A1.2: The system outputs an error message to user
+    - A1.2: The system outputs an error message to user
+
+HMI INPUT BOUNDARIES (User -> System):
+==================================================
+
+Boundary: HMIAdditiveInputBoundary
+  Description: HMI boundary for user selection of beverage additives
+  Steps Referenced: E1
+  User Input: B3-B5 User wants sugar in coffee
+  User Input: B4-B5 User wants sugar in coffee
+
+Boundary: HMIBeverageSelectionBoundary
+  Description: HMI boundary for user beverage type selection
+  Steps Referenced: B1
+  User Input: System clock reaches set time of 7:00h (Radio clock)
+  User Input: User request a espresso
+
+HMI OUTPUT BOUNDARIES (System -> User):
+==================================================
+
+Boundary: HMIErrorDisplayBoundary
+  Description: HMI boundary for displaying error messages to user
+  Steps Referenced: B4, A2.2, A1.2, B5
+  System Output: The system outputs a message to user
+  System Output: The system begins pressing hot water through the coffee grounds
+  System Output: The system outputs an error message to user
+  System Output: The system outputs an error message to user
+  System Output: The system outputs an error message to user
+  System Output: The system presents cup to user
+  System Output: The system outputs a message to user
+
+Boundary: HMIStatusDisplayBoundary
+  Description: HMI boundary for displaying status messages (e.g., 'coffee ready')
+  Steps Referenced: B4, B5
+  System Output: The system outputs a message to user
+  System Output: The system begins pressing hot water through the coffee grounds
+  System Output: The system presents cup to user
+  System Output: The system outputs a message to user
+
+OTHER SYSTEM BOUNDARIES (Non-HMI):
+==================================================
+
+Boundary: CoffeeBeansSupplyBoundary
+  Description: Boundary for Coffee beans supply monitoring and refill alerts
+  Element Type: functional
+
+Boundary: MilkSupplyBoundary
+  Description: Boundary for Milk supply monitoring and refill alerts
+  Element Type: functional
+
+Boundary: ProductDeliveryBoundary
+  Description: Boundary for delivering finished products to user
+  Element Type: functional
+
+Boundary: SugarSupplyBoundary
+  Description: Boundary for Sugar supply monitoring and refill alerts
+  Element Type: functional
+
+Boundary: TimeTriggerBoundary
+  Description: Boundary for time-based system triggers
+  Element Type: control
+
+Boundary: WaterSupplyBoundary
+  Description: Boundary for water supply monitoring and refill alerts (also required as precondition)
+  Element Type: functional
+
+================================================================================
+HMI ARCHITECTURE SUMMARY
+================================================================================
+
+HMI Components Found:
+  HMI Controllers: 1
+  HMI Input Boundaries: 2
+  HMI Output Boundaries: 2
+  Other System Boundaries: 6
+
+HMI Interaction Patterns:
+
+  User Input Types:
+    - Beverage Type Selection (Espresso)
+    - Additive Selection (Sugar)
+
+  System Output Types:
+    - Error Message: General
+    - Status Message: 'Product Ready'
+    - Status Message: 'Coffee Ready'
+
+Example HMI Interaction Flows:
+  INPUT:  User selects 'Espresso' -> HMIBeverageSelectionBoundary -> HMIController
+  OUTPUT: HMIController -> HMIErrorDisplayBoundary -> Display 'No Milk'
+  INPUT:  User selects 'Add Sugar' -> HMIAdditiveInputBoundary -> HMIController
+  OUTPUT: HMIController -> HMIStatusDisplayBoundary -> Display 'Coffee Ready'
+
+HMI Boundary Categories:
+  Input Boundaries: ['HMIAdditiveInputBoundary', 'HMIBeverageSelectionBoundary']
+  Output Boundaries: ['HMIErrorDisplayBoundary', 'HMIStatusDisplayBoundary']
+  Supply Boundaries: ['CoffeeBeansSupplyBoundary', 'MilkSupplyBoundary', 'SugarSupplyBoundary', 'WaterSupplyBoundary']
+  Trigger Boundaries: ['TimeTriggerBoundary']
+  Delivery Boundaries: ['ProductDeliveryBoundary']
+
+DEBUG: Available entity names for data flow: ['Actions', 'Additive', 'Coffee', 'CoffeeBeanAmount', 'CoffeeBeans', 'Compressor', 'Cup', 'Error', 'Espresso', 'Filter', 'Grinding', 'GrindingDegree', 'GroundCoffee', 'Grounds', 'Heater', 'Hot', 'HotWater', 'Message', 'Milk', 'MilkAddition', 'Sugar', 'Water']
+DEBUG: Total entities: 22
+DEBUG: Explicit entities: 19
+DEBUG: Transformation entities: 6
+DEBUG: Processing transaction verb 'reach' with direct_object 'None'
+DEBUG: Processing function verb 'activate' with direct_object 'the water heater'
+DEBUG: Function verb activate -> transformation: -> Water
+DEBUG: Found transformation '-> Water' for verb 'activate'
+DEBUG: Controller for B2a: HeaterManager
+DEBUG: Processing function verb 'prepare' with direct_object 'filter'
+DEBUG: Prepare verb prepare filter -> transformation: -> Filter
+DEBUG: Found transformation '-> Filter' for verb 'prepare'
+DEBUG: Controller for B2b: FilterManager
+DEBUG: Found transformation 'CoffeeBeans -> GroundCoffee' for verb 'grind'
+DEBUG: Controller for B2c: AmountManager
+DEBUG: Step B2c output entities: ['GroundCoffee']
+DEBUG: Preposition 'into' -> use: AmountManager -> Filter
+DEBUG: Processing function verb 'retrieve' with direct_object 'cup'
+DEBUG: Function verb retrieve -> transformation: -> Cup
+DEBUG: Found transformation '-> Cup' for verb 'retrieve'
+DEBUG: Controller for B2d: CupManager
+DEBUG: Found transformation 'GroundCoffee + HotWater + Filter -> Coffee' for verb 'brew'
+DEBUG: Controller for B3a: CoffeeManager
+DEBUG: Step B3a output entities: ['Coffee']
+DEBUG: Preposition 'with' -> use: CoffeeManager -> Water
+DEBUG: Preposition 'into' -> use: CoffeeManager -> Cup
+DEBUG: Override 'add' transformation for direct_object 'milk': Coffee + Milk -> Coffee
+DEBUG: Found transformation 'Coffee + Milk -> Coffee' for verb 'add'
+DEBUG: Controller for B3b: MilkManager
+DEBUG: Step B3b output entities: ['Coffee']
+DEBUG: Preposition 'to' -> use: MilkManager -> Cup
+DEBUG: Processing transaction verb 'output' with direct_object 'a message'
+DEBUG: Transaction verb output -> transformation: -> Message
+DEBUG: Found transformation '-> Message' for verb 'output'
+DEBUG: Controller for B4: HMIController
+DEBUG: Processing transaction verb 'present' with direct_object 'cup'
+DEBUG: Transaction verb present -> transformation: -> Cup
+DEBUG: Found transformation '-> Cup' for verb 'present'
+DEBUG: Controller for B5: CupManager
+DEBUG: Processing transaction verb 'have' with direct_object 'little water'
+DEBUG: Transaction verb have -> transformation: -> Water
+DEBUG: Found transformation '-> Water' for verb 'have'
+DEBUG: Controller for A1: A1ConditionManager
+DEBUG: Processing function verb 'switch' with direct_object 'water heater'
+DEBUG: Function verb switch -> transformation: -> Water
+DEBUG: Found transformation '-> Water' for verb 'switch'
+DEBUG: Controller for A1.1: HeaterManager
+DEBUG: Processing transaction verb 'output' with direct_object 'an error message'
+DEBUG: Transaction verb output -> transformation: -> Message
+DEBUG: Found transformation '-> Message' for verb 'output'
+DEBUG: Controller for A1.2: HMIController
+DEBUG: Processing function verb '' with direct_object 'None'
+DEBUG: Processing function verb 'stop' with direct_object 'milk addition'
+DEBUG: Function verb stop -> transformation: -> Milk
+DEBUG: Found transformation '-> Milk' for verb 'stop'
+DEBUG: Controller for A2.1: AdditionManager
+DEBUG: Processing transaction verb 'output' with direct_object 'an error message'
+DEBUG: Transaction verb output -> transformation: -> Message
+DEBUG: Found transformation '-> Message' for verb 'output'
+DEBUG: Controller for A2.2: HMIController
+DEBUG: Processing transaction verb 'detect' with direct_object 'None'
+DEBUG: Processing function verb 'stop' with direct_object 'all actions'
+DEBUG: Function verb stop -> transformation: -> All
+DEBUG: Found transformation '-> All' for verb 'stop'
+DEBUG: Controller for A3.1: ActionsManager
+DEBUG: Processing function verb '' with direct_object 'None'
+DEBUG: Processing transaction verb 'want' with direct_object 'sugar'
+DEBUG: Transaction verb want -> transformation: -> Sugar
+DEBUG: Found transformation '-> Sugar' for verb 'want'
+DEBUG: Controller for E1: HMIController
+DEBUG: Override 'add' transformation for direct_object 'sugar': Coffee + Sugar -> Coffee
+DEBUG: Found transformation 'Coffee + Sugar -> Coffee' for verb 'add'
+DEBUG: Controller for E1.1: SugarManager
+DEBUG: Step E1.1 output entities: ['Coffee']
+DEBUG: Preposition 'to' -> use: SugarManager -> Cup
+DEBUG: Processing transaction verb 'request' with direct_object 'a espresso'
+DEBUG: Transaction verb request -> transformation: -> Espresso
+DEBUG: Found transformation '-> Espresso' for verb 'request'
+DEBUG: Controller for B1: HMIController
+DEBUG: Processing function verb 'activate' with direct_object 'the water heater'
+DEBUG: Function verb activate -> transformation: -> Water
+DEBUG: Found transformation '-> Water' for verb 'activate'
+DEBUG: Controller for B2a: HeaterManager
+DEBUG: Processing function verb 'prepare' with direct_object 'filter'
+DEBUG: Prepare verb prepare filter -> transformation: -> Filter
+DEBUG: Found transformation '-> Filter' for verb 'prepare'
+DEBUG: Controller for B2b: FilterManager
+DEBUG: Found transformation 'CoffeeBeans -> GroundCoffee' for verb 'grind'
+DEBUG: Controller for B2c: AmountManager
+DEBUG: Step B2c output entities: ['GroundCoffee']
+DEBUG: Processing function verb 'retrieve' with direct_object 'cup'
+DEBUG: Function verb retrieve -> transformation: -> Cup
+DEBUG: Found transformation '-> Cup' for verb 'retrieve'
+DEBUG: Controller for B2d: CupManager
+DEBUG: Processing function verb 'start' with direct_object 'water compressor'
+DEBUG: Function verb start -> transformation: -> Water
+DEBUG: Found transformation '-> Water' for verb 'start'
+DEBUG: Controller for B3: CompressorManager
+DEBUG: Processing function verb 'press' with direct_object 'hot water'
+DEBUG: Function verb press -> transformation: -> Hot
+DEBUG: Found transformation '-> Hot' for verb 'press'
+DEBUG: Controller for B4: HMIController
+DEBUG: Processing transaction verb 'output' with direct_object 'a message'
+DEBUG: Transaction verb output -> transformation: -> Message
+DEBUG: Found transformation '-> Message' for verb 'output'
+DEBUG: Controller for B5: CupManager
+DEBUG: Processing function verb '' with direct_object 'None'
+DEBUG: Processing function verb 'switch' with direct_object 'water heater'
+DEBUG: Function verb switch -> transformation: -> Water
+DEBUG: Found transformation '-> Water' for verb 'switch'
+DEBUG: Controller for A1.1: HeaterManager
+DEBUG: Processing transaction verb 'output' with direct_object 'an error message'
+DEBUG: Transaction verb output -> transformation: -> Message
+DEBUG: Found transformation '-> Message' for verb 'output'
+DEBUG: Controller for A1.2: HMIController
+DEBUG: Processing transaction verb 'want' with direct_object 'sugar'
+DEBUG: Transaction verb want -> transformation: -> Sugar
+DEBUG: Found transformation '-> Sugar' for verb 'want'
+DEBUG: Controller for E1: HMIController
+DEBUG: Override 'add' transformation for direct_object 'sugar': Coffee + Sugar -> Coffee
+DEBUG: Found transformation 'Coffee + Sugar -> Coffee' for verb 'add'
+DEBUG: Controller for E1.1: SugarManager
+DEBUG: Step E1.1 output entities: ['Coffee']
+DEBUG: SupplyController CoffeeBeansSupplyController --provide--> CoffeeBeans
+DEBUG: SupplyController MilkSupplyController --provide--> Milk
+DEBUG: SupplyController SugarSupplyController --provide--> Sugar
+DEBUG: SupplyController WaterSupplyController --provide--> Water
+
+Multi-UC JSON export completed for UC1_UC2
+   Main analysis: output/UC1_UC2_multi_uc_analysis_20251027_152911.json
+   Integration analysis: output/UC1_UC2_integration_analysis_20251027_152911.json
+   Total UCs: 2
+   Total components: 55 RA classes
+   Shared components: 5
+Multi-UC JSON export completed. Files generated: 2
+
+============================================================
+JSON EXPORT FUNCTIONALITY DEMONSTRATION COMPLETED
+============================================================
+
+Generated JSON files include:
+• Complete analysis JSON (all data for further processing)
+• System engineering JSON (focused on components and interactions)
+• Visualization JSON (optimized for diagram generation)
+• Safety/Hygiene JSON (safety and operational material analysis)
+• Multi-UC integration JSON (for complex system scenarios)
+
+These JSON files can be used as input for:
+• Visualization tools and diagram generators
+• System engineering workflows
+• Safety analysis tools
+• Integration with other UC-Methode tools
+• Further automated analysis and processing

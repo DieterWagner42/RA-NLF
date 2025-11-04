@@ -1,0 +1,46 @@
+Capability: Robotic Manufacturing
+Feature: Precision Assembly
+
+Use Case 5: Assemble Product Components
+Goal: Robot can assemble components with precision
+
+Preconditions:
+- Components are available in work area
+- Robot is calibrated and operational
+- Assembly tools are attached
+- Quality sensors are functional
+
+Actors: Operator, Quality Control System
+
+Main Flow:
+B1 (trigger) Operator initiates assembly sequence
+B2a The system scans component positions
+B2b The system plans assembly path
+B2c The system picks up first component
+B3a The system positions component precisely
+B3b The system applies joining process (screwing/welding)
+B4 The system performs quality check
+B5 The system places completed assembly in output area
+B6 End UC
+
+Postcondition:
+Product is assembled and quality verified.
+
+Alternative Flows:
+A1 at B2a Component missing or mispositioned
+A1.1 The system alerts operator
+A1.2 The system waits for component correction
+A1.3 Continue from B2a when ready
+A1.4 End UC
+
+Postcondition:
+Assembly paused, operator intervention required.
+
+A2 at B4 Quality check fails
+A2.1 The system marks component as defective
+A2.2 The system places component in reject area
+A2.3 The system notifies quality control
+A2.4 End UC
+
+Postcondition:
+Defective assembly identified and removed.

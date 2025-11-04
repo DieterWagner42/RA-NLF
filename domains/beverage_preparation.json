@@ -1,0 +1,432 @@
+{
+  "domain_name": "beverage_preparation",
+  "description": "Automated beverage preparation systems including coffee, tea, and other drinks",
+  "keywords": ["brewing", "coffee", "tea", "drink", "beverage", "liquid"],
+  "non_human_indicators": [
+    "timer", "clock", "brew timer", "automatic timer", "brewing system", 
+    "coffee machine", "espresso machine", "grinder", "water heater", 
+    "milk frother", "automatic dispenser", "sensor", "temperature sensor",
+    "pressure sensor", "flow sensor", "brewing unit", "extraction unit"
+  ],
+  "domain_knowledge": [
+    "Beverages require liquid ingredients",
+    "Temperature control is important for quality",
+    "Timing affects taste and safety",
+    "Equipment cleaning is necessary for hygiene",
+    "Different beverages have different preparation methods",
+    "Hot water extraction is common for coffee and tea",
+    "Milk products require refrigeration",
+    "Grinding affects extraction quality"
+  ],
+  "safety_requirements": {
+    "description": "Safety constraints and requirements for beverage preparation",
+    "thermal_safety": {
+      "max_temperature": "100°C for water heating",
+      "overheat_protection": "System must shut down on overheat detection",
+      "temperature_monitoring": "Continuous temperature sensor monitoring required",
+      "cooling_requirements": "Hot surfaces must have thermal protection"
+    },
+    "pressure_safety": {
+      "max_pressure": "15 bar for espresso systems",
+      "pressure_relief": "Automatic pressure relief valves required",
+      "pressure_monitoring": "Continuous pressure monitoring for espresso preparation"
+    },
+    "electrical_safety": {
+      "water_protection": "Electrical components must be water-protected",
+      "emergency_stop": "Emergency stop functionality required",
+      "grounding": "Proper electrical grounding required"
+    },
+    "mechanical_safety": {
+      "moving_parts": "Moving parts must have safety guards",
+      "pinch_points": "Elimination of pinch points in user interaction areas"
+    }
+  },
+  "hygiene_requirements": {
+    "description": "Hygiene and sanitation requirements for food-safe operation",
+    "cleaning_cycles": {
+      "daily_cleaning": "Daily cleaning cycle for milk systems",
+      "weekly_cleaning": "Weekly deep cleaning for coffee systems",
+      "descaling": "Regular descaling based on water hardness"
+    },
+    "material_requirements": {
+      "food_grade": "All contact surfaces must be food-grade materials",
+      "non_porous": "Non-porous surfaces for easy cleaning",
+      "corrosion_resistant": "Materials must resist cleaning chemicals"
+    },
+    "contamination_prevention": {
+      "cross_contamination": "Prevent cross-contamination between ingredients",
+      "bacterial_growth": "Temperature control to prevent bacterial growth",
+      "residue_removal": "Complete removal of organic residues"
+    },
+    "milk_hygiene": {
+      "temperature_control": "Milk storage below 4°C",
+      "freshness_monitoring": "Milk age and freshness detection",
+      "automatic_purging": "Automatic milk line purging after use"
+    }
+  },
+  "operational_materials_addressing": {
+    "description": "Addressing and identification system for operational materials (Betriebsstoffe)",
+    "material_identification": {
+      "unique_ids": "Each material type has unique identifier",
+      "traceability": "Full traceability from source to consumption",
+      "batch_tracking": "Batch numbers for quality control"
+    },
+    "storage_addressing": {
+      "location_codes": "Unique location codes for storage containers",
+      "capacity_tracking": "Real-time capacity monitoring",
+      "expiration_tracking": "Expiration date monitoring and alerts"
+    },
+    "supply_chain_addressing": {
+      "supplier_codes": "Unique supplier identification codes",
+      "delivery_tracking": "Delivery and receipt confirmation",
+      "quality_certificates": "Quality certificate linking to material batches"
+    },
+    "material_types": {
+      "coffee_beans": {
+        "id_format": "CB-{origin}-{roast_level}-{batch}",
+        "storage_requirements": "Dry, cool, dark environment",
+        "tracking_parameters": ["roast_date", "origin", "grind_size"]
+      },
+      "water": {
+        "id_format": "H2O-{source}-{treatment}-{batch}",
+        "quality_parameters": ["hardness", "pH", "chlorine_content"],
+        "treatment_tracking": "Filtration and treatment history",
+        "function_mappings": {
+          "heating_operations": ["heatWater", "protectOverheating", "monitorTemperature"],
+          "storage_operations": ["monitorWaterQuality", "trackWaterLevel", "maintainPressure"]
+        },
+        "operation_patterns": {
+          "heating_operations": ["heat", "activate heater", "warm", "boil", "brew", "hot water"],
+          "storage_operations": ["store", "container", "reservoir", "tank"]
+        }
+      },
+      "milk": {
+        "id_format": "MILK-{type}-{fat_content}-{batch}",
+        "safety_parameters": ["temperature", "expiration", "pasteurization"],
+        "cold_chain_tracking": "Temperature history throughout supply chain",
+        "function_mappings": {
+          "cooling_operations": ["maintainTemperature", "monitorExpiration", "trackFreshness"],
+          "handling_operations": ["addMilk", "steamMilk", "pourMilk", "hygieneSafetyControl"]
+        },
+        "operation_patterns": {
+          "cooling_operations": ["available", "precondition", "store", "keep", "cool", "refrigerate"],
+          "handling_operations": ["add milk", "pour milk", "steam milk", "heat milk", "froth milk"]
+        }
+      },
+      "sugar": {
+        "id_format": "SUGAR-{type}-{grade}-{batch}",
+        "quality_parameters": ["purity", "crystal_size", "moisture_content"],
+        "storage_conditions": "Dry environment, sealed containers",
+        "function_mappings": {
+          "dispensing_operations": ["dispenseSugar", "measureSugar", "addSugar"],
+          "storage_operations": ["monitorMoisture", "trackInventory", "maintainDryness"]
+        },
+        "operation_patterns": {
+          "dispensing_operations": ["add sugar", "wants sugar", "sugar to", "dispense sugar"],
+          "storage_operations": ["available", "precondition", "store", "container"]
+        }
+      },
+      "cleaning_agents": {
+        "id_format": "CLEAN-{type}-{concentration}-{batch}",
+        "safety_parameters": ["concentration", "compatibility", "rinse_requirements"],
+        "usage_tracking": "Dilution ratios and application records"
+      }
+    }
+  },
+  "term_specific_knowledge": {
+    "coffee": [
+      "Coffee beans need grinding",
+      "Hot water is required for brewing",
+      "Extraction time affects flavor",
+      "Grind size affects extraction rate"
+    ],
+    "espresso": [
+      "Requires high pressure water",
+      "Fine grind needed",
+      "Short extraction time",
+      "Specific water temperature required"
+    ],
+    "milk": [
+      "Milk is perishable and needs cooling",
+      "Can be steamed or frothed",
+      "Temperature affects texture",
+      "Different fat contents available"
+    ],
+    "tea": [
+      "Steeping time varies by tea type",
+      "Water temperature critical",
+      "Some teas require multiple infusions"
+    ]
+  },
+  "semantic_verb_detection": {
+    "activate": ["activates", "activate"],
+    "prepare": ["prepares", "prepare"], 
+    "grind": ["grinds", "grind"],
+    "retrieve": ["retrieves", "retrieve"],
+    "brew": ["begins", "brew", "brewing"],
+    "add": ["adds", "add"],
+    "output": ["outputs", "output"],
+    "present": ["presents", "present"],
+    "reach": ["reaches", "reach"]
+  },
+  "technical_context_mapping": {
+    "time_keywords": ["time", "clock", "timer", "7:00h", "reaches set time", "schedule"],
+    "thermal_keywords": ["heater", "heat", "temperature", "activate", "warm", "hot", "cool"],
+    "mechanical_keywords": ["grind", "motor", "mechanical", "degree", "amount", "grinding"],
+    "liquid_keywords": ["brew", "pour", "flow", "water", "milk", "liquid", "steam"],
+    "filter_keywords": ["filter", "prepare", "clean", "filtration"],
+    "container_keywords": ["cup", "container", "storage", "retrieve", "place", "tank"],
+    "communication_keywords": ["message", "output", "user", "display", "present", "interface"],
+    "error_keywords": ["error", "too little", "overheat", "safety", "stop", "failure"],
+    "power_keywords": ["switch", "power", "electrical", "on", "off", "energy"],
+    "contexts": {
+      "Time Control": ["time_keywords"],
+      "Thermal Control": ["thermal_keywords"],
+      "Mechanical Control": ["mechanical_keywords"],
+      "Liquid Control": ["liquid_keywords"],
+      "Filter Preparation": ["filter_keywords"],
+      "Container Management": ["container_keywords"],
+      "User Interface": ["communication_keywords"],
+      "Error Handling": ["error_keywords"],
+      "Power Supply": ["power_keywords"]
+    }
+  },
+  "contextual_entities": {
+    "amount": [
+      {
+        "context_triggers": ["coffee", "bean", "grind", "set"],
+        "contextual_name": "CoffeeBeanAmount",
+        "element_type": "control",
+        "description": "Amount specification for coffee beans"
+      },
+      {
+        "context_triggers": ["water", "brew", "set"],
+        "contextual_name": "WaterAmount",
+        "element_type": "control", 
+        "description": "Amount specification for water"
+      },
+      {
+        "context_triggers": ["milk", "steam", "froth"],
+        "contextual_name": "MilkAmount",
+        "element_type": "control",
+        "description": "Amount specification for milk"
+      },
+      {
+        "context_triggers": ["sugar"],
+        "contextual_name": "SugarAmount",
+        "element_type": "control",
+        "description": "Amount specification for sugar"
+      },
+      {
+        "context_triggers": ["grinding", "grind", "bean"],
+        "contextual_name": "GrindingAmount",
+        "element_type": "control",
+        "description": "Amount specification for grinding (coffee bean quantity)"
+      }
+    ],
+    "degree": [
+      {
+        "context_triggers": ["grinding", "grind"],
+        "contextual_name": "GrindingDegree",
+        "element_type": "control",
+        "description": "Grinding degree parameter for coffee beans"
+      },
+      {
+        "context_triggers": ["temperature", "heat"],
+        "contextual_name": "TemperatureDegree", 
+        "element_type": "control",
+        "description": "Temperature degree parameter"
+      }
+    ],
+    "grindingdegree": [
+      {
+        "context_triggers": ["coffee", "bean", "grind"],
+        "contextual_name": "GrindingDegree",
+        "element_type": "control",
+        "description": "Grinding degree parameter for coffee beans"
+      }
+    ],
+    "grinding": [
+      {
+        "context_triggers": ["coffee", "bean", "grind", "degree"],
+        "contextual_name": "GrindingProcess",
+        "element_type": "functional",
+        "description": "Coffee bean grinding process"
+      }
+    ],
+    "addition": [
+      {
+        "context_triggers": ["milk"],
+        "contextual_name": "MilkAddition",
+        "element_type": "functional",
+        "description": "Milk addition process"
+      },
+      {
+        "context_triggers": ["sugar"],
+        "contextual_name": "SugarAddition",
+        "element_type": "functional",
+        "description": "Sugar addition process"
+      }
+    ],
+    "level": [
+      {
+        "context_triggers": ["water", "tank"],
+        "contextual_name": "WaterLevel",
+        "element_type": "control",
+        "description": "Water level measurement"
+      },
+      {
+        "context_triggers": ["milk"],
+        "contextual_name": "MilkLevel",
+        "element_type": "control",
+        "description": "Milk level measurement"
+      }
+    ],
+    "pressure": [
+      {
+        "context_triggers": ["espresso", "brew", "water"],
+        "contextual_name": "BrewingPressure",
+        "element_type": "control",
+        "description": "Brewing pressure for espresso preparation"
+      }
+    ],
+    "time": [
+      {
+        "context_triggers": ["brew", "extraction"],
+        "contextual_name": "BrewingTime",
+        "element_type": "control",
+        "description": "Brewing time parameter"
+      },
+      {
+        "context_triggers": ["grind"],
+        "contextual_name": "GrindingTime",
+        "element_type": "control",
+        "description": "Grinding duration parameter"
+      }
+    ]
+  },
+  "excluded_entity_terms": [
+    "heater", "motor", "pump", "sensor", "valve", "compressor", "engine", "actuator",
+    "actions", "activities", "operations", "processes", "functions",
+    "system", "machine", "device", "equipment", "apparatus"
+  ],
+  "exclusion_patterns": {
+    "coffee": [
+      "Manual coffee preparation",
+      "Bean sourcing and purchasing", 
+      "Equipment manufacturing details",
+      "Barista training"
+    ],
+    "tea": [
+      "Tea leaf cultivation",
+      "Manual brewing techniques",
+      "Tea ceremony procedures"
+    ]
+  },
+  "related_capabilities": {
+    "coffee": ["Tea Preparation", "Hot Chocolate Preparation", "Espresso Preparation"],
+    "tea": ["Coffee Preparation", "Herbal Tea Preparation", "Iced Tea Preparation"],
+    "drink": ["Cocktail Preparation", "Smoothie Preparation", "Juice Preparation"]
+  },
+  "verb_classification": {
+    "transaction_verbs": {
+      "description": "Boundary identification: Data flow to/from system boundaries (domain-specific)",
+      "verbs": {
+        "pour": "transfers liquid to Container boundary",
+        "fill": "fills Container boundary",
+        "dispense": "delivers product through Dispenser boundary",
+        "serve": "provides product to User boundary"
+      }
+    },
+    "transformation_verbs": {
+      "description": "Process chain: Entity Input -> Entity Output (domain-specific)",
+      "verbs": {
+        "grind": "CoffeeBeans -> GroundCoffee",
+        "brew": "GroundCoffee + HotWater + Filter -> Coffee",
+        "heat": "Water -> HotWater",
+        "steam": "Milk -> SteamedMilk",
+        "froth": "Milk -> FrothedMilk",
+        "extract": "CoffeeGrounds + Water -> CoffeeExtract",
+        "add": "Coffee + Additive -> Coffee",
+        "add_milk": "Coffee + Milk -> Coffee",
+        "infuse": "Tea + Water -> TeaInfusion"
+      }
+    },
+    "function_verbs": {
+      "description": "General system actions without direct transformation (domain-specific)",
+      "verbs": {
+        "regulate": "maintains system parameters",
+        "measure": "determines quantity/quality",
+        "detect": "senses condition/presence",
+        "clean": "removes contaminants",
+        "flush": "clears system passages",
+        "prime": "prepares system for operation"
+      }
+    }
+  },
+  "coffee_additives": {
+    "description": "Coffee additives for generalized coffee entity modeling",
+    "additives": {
+      "milk": {
+        "type": "functional",
+        "description": "Dairy additive for coffee",
+        "transformation": "Coffee + Milk -> Coffee"
+      },
+      "sugar": {
+        "type": "control",
+        "description": "Sweetener additive for coffee",
+        "transformation": "Coffee + Sugar -> Coffee"
+      },
+      "cream": {
+        "type": "functional", 
+        "description": "Dairy cream additive for coffee",
+        "transformation": "Coffee + Cream -> Coffee"
+      },
+      "syrup": {
+        "type": "functional",
+        "description": "Flavored syrup additive for coffee",
+        "transformation": "Coffee + Syrup -> Coffee"
+      },
+      "honey": {
+        "type": "functional",
+        "description": "Natural sweetener additive for coffee",
+        "transformation": "Coffee + Honey -> Coffee"
+      }
+    }
+  },
+  "implementation_elements": {
+    "description": "Implementation elements that should be replaced with functional activities",
+    "elements": {
+      "heater": {
+        "warning": "Heater is implementation element - use functional activity",
+        "functional_suggestion": "The system heats the water",
+        "transformation": "Water -> HotWater"
+      },
+      "grinder": {
+        "warning": "Grinder is implementation element - use functional activity", 
+        "functional_suggestion": "The system grinds the coffee beans",
+        "transformation": "CoffeeBeans -> GroundCoffee"
+      },
+      "frother": {
+        "warning": "Frother is implementation element - use functional activity",
+        "functional_suggestion": "The system froths the milk",
+        "transformation": "Milk -> FrothedMilk"
+      },
+      "filter": {
+        "warning": "Filter is implementation element - use functional activity",
+        "functional_suggestion": "The system filters the liquid",
+        "transformation": "UnfilteredLiquid -> FilteredLiquid"
+      },
+      "clock": {
+        "warning": "Clock is implementation element - use TimeManager controller",
+        "functional_suggestion": "The system manages time scheduling",
+        "controller_realization": "TimeManager"
+      },
+      "radio clock": {
+        "warning": "Radio clock is implementation element - use TimeManager controller", 
+        "functional_suggestion": "The system manages time scheduling with radio synchronization",
+        "controller_realization": "TimeManager"
+      }
+    }
+  }
+}

@@ -1,0 +1,164 @@
+{
+  "domain_name": "nuclear",
+  "description": "Nuclear reactor operations, safety systems, and radiation control",
+  "keywords": ["nuclear", "reactor", "radiation", "uranium", "fusion", "fission", "containment"],
+  "non_human_indicators": [
+    "control rod system", "reactor protection system", "emergency core cooling system",
+    "radiation monitoring system", "containment system", "safety monitoring system",
+    "reactor control system", "neutron flux monitor", "temperature monitoring system",
+    "pressure monitoring system", "coolant circulation system", "emergency shutdown system",
+    "radiation detector", "dosimeter system", "contamination monitor",
+    "reactor instrumentation", "process control computer", "safety interlock system",
+    "reactor scram system", "emergency response system", "waste management system",
+    "nuclear instrumentation system", "plant data acquisition system", "emergency communication system",
+    "control room automation", "safety parameter display system", "plant process computer",
+    "emergency response facility", "technical support center", "operations support center",
+    "simulator training facility", "maintenance control center", "security command center",
+    "radiation protection system", "environmental monitoring system", "meteorological monitoring",
+    "emergency notification system", "public address system", "plant communication network",
+    "dose assessment system", "emergency planning system", "regulatory reporting system",
+    "plant status monitoring", "critical safety function monitoring", "severe accident management"
+  ],
+  "domain_knowledge": [
+    "Safety is the highest priority",
+    "Radiation monitoring is continuous", 
+    "Containment systems are critical",
+    "Emergency shutdown procedures exist",
+    "Personnel protection is mandatory",
+    "Multiple barriers prevent radiation release",
+    "Redundant safety systems are required",
+    "Regular maintenance is essential",
+    "Strict regulatory compliance required",
+    "Command & control systems ensure safe operation",
+    "Real-time plant monitoring is essential",
+    "Emergency communication systems vital",
+    "Human-Equipment-Unit coordination critical",
+    "Data acquisition enables trend analysis",
+    "Automated safety systems provide rapid response",
+    "Multiple communication paths ensure reliability",
+    "Emergency response requires coordination"
+  ],
+  "term_specific_knowledge": {
+    "reactor": [
+      "Control rods regulate reactions",
+      "Cooling systems prevent overheating", 
+      "Pressure vessels contain reactions",
+      "Monitoring systems track parameters",
+      "Emergency systems provide shutdown",
+      "Containment prevents radiation release"
+    ],
+    "radiation": [
+      "Continuous monitoring required",
+      "ALARA principle applies",
+      "Shielding protects personnel",
+      "Detection systems provide warnings"
+    ],
+    "containment": [
+      "Multiple barriers exist",
+      "Pressure testing required",
+      "Isolation systems prevent release",
+      "Filtration systems clean releases"
+    ],
+    "emergency": [
+      "Automatic systems respond",
+      "Manual overrides available", 
+      "Evacuation procedures exist",
+      "Communication systems essential"
+    ],
+    "monitoring": [
+      "Real-time data collection continuous",
+      "Trend analysis identifies problems",
+      "Alarm systems alert operators",
+      "Data logging supports analysis"
+    ],
+    "communication": [
+      "Emergency networks provide redundancy",
+      "Public notification systems required",
+      "Regulatory reporting automated",
+      "Plant-wide communication essential"
+    ],
+    "control": [
+      "Automated control systems ensure safety",
+      "Human-Equipment-Unit interfaces critical",
+      "Command validation prevents errors",
+      "Manual backup systems available"
+    ]
+  },
+  "exclusion_patterns": {
+    "reactor": [
+      "Reactor design",
+      "Nuclear waste disposal",
+      "Regulatory compliance",
+      "Nuclear fuel fabrication"
+    ],
+    "radiation": [
+      "Medical radiation therapy",
+      "Research applications",
+      "Nuclear weapons"
+    ]
+  },
+  "related_capabilities": {
+    "reactor": ["Waste Management", "Safety Systems", "Maintenance Operations"],
+    "radiation": ["Environmental Monitoring", "Personnel Protection", "Emergency Response"],
+    "containment": ["Isolation Systems", "Filtration Systems", "Leak Detection"],
+    "emergency": ["Evacuation Procedures", "Communication Systems", "Response Coordination"]
+  },
+  "verb_classification": {
+    "transaction_verbs": {
+      "description": "Boundary identification: Data flow to/from system boundaries (domain-specific)",
+      "verbs": {
+        "trigger": "sends signal to Safety boundary",
+        "release": "transfers material to Environment boundary",
+        "vent": "expels gas to Atmosphere boundary",
+        "evacuate": "moves personnel to Safety boundary"
+      }
+    },
+    "transformation_verbs": {
+      "description": "Process chain: Entity Input -> Entity Output (domain-specific)",
+      "verbs": {
+        "insert": "ControlRods -> ReactorCore (absorption)",
+        "absorb": "Neutrons -> Heat (nuclear reaction)",
+        "cool": "HotCoolant -> CooledCoolant",
+        "circulate": "Coolant -> CirculatingCoolant",
+        "contain": "RadioactiveMaterial -> ContainedMaterial",
+        "neutralize": "RadioactiveWaste -> StabilizedWaste"
+      }
+    },
+    "function_verbs": {
+      "description": "General system actions without direct transformation (domain-specific)",
+      "verbs": {
+        "shutdown": "stops system operation",
+        "startup": "begins system operation",
+        "override": "manually controls system",
+        "backup": "provides alternative operation",
+        "secure": "makes system safe",
+        "lock": "prevents unauthorized access"
+      }
+    }
+  },
+  "implementation_elements": {
+    "description": "Implementation elements that should be replaced with functional activities",
+    "elements": {
+      "detector": {
+        "warning": "Detector is implementation element - use functional activity",
+        "functional_suggestion": "The system detects anomalies",
+        "transformation": "PhysicalCondition -> DetectionSignal"
+      },
+      "generator": {
+        "warning": "Generator is implementation element - use functional activity",
+        "functional_suggestion": "The system generates power",
+        "transformation": "MechanicalEnergy -> ElectricalEnergy"
+      },
+      "turbine": {
+        "warning": "Turbine is implementation element - use functional activity",
+        "functional_suggestion": "The system converts steam to motion",
+        "transformation": "Steam -> MechanicalEnergy"
+      },
+      "reactor": {
+        "warning": "Reactor is implementation element - use functional activity",
+        "functional_suggestion": "The system produces nuclear reaction",
+        "transformation": "FissileeMaterial -> Heat + Radiation"
+      }
+    }
+  }
+}

@@ -1,0 +1,187 @@
+{
+  "domain_name": "common_domain",
+  "description": "Common verbs and patterns shared across all domains",
+  "verb_classification": {
+    "transaction_verbs": {
+      "description": "Boundary identification: Data flow to/from system boundaries",
+      "verbs": {
+        "output": "sends data to Output boundary",
+        "present": "delivers result to Output boundary",
+        "display": "shows data on Display boundary",
+        "send": "transmits data to target boundary",
+        "receive": "gets data from Input boundary",
+        "deliver": "transfers item to target boundary",
+        "provide": "supplies data/item to boundary",
+        "transfer": "moves data/item to boundary",
+        "communicate": "exchanges data with boundary",
+        "notify": "sends notification to boundary",
+        "alert": "sends alert/alarm to boundary",
+        "signal": "sends signal to boundary",
+        "report": "sends report to boundary",
+        "broadcast": "sends data to multiple boundaries",
+        "transmit": "sends data via communication boundary"
+      }
+    },
+    "transformation_verbs": {
+      "description": "Process chain: Entity Input -> Entity Output",
+      "verbs": {
+        "process": "Input -> ProcessedOutput",
+        "convert": "InputType -> OutputType",
+        "transform": "InputEntity -> OutputEntity",
+        "generate": "InputData -> GeneratedResult",
+        "produce": "InputMaterial -> Product",
+        "create": "Components -> CreatedItem",
+        "combine": "Item1 + Item2 -> CombinedItem",
+        "mix": "Ingredient1 + Ingredient2 -> Mixture",
+        "merge": "Data1 + Data2 -> MergedData",
+        "compress": "Data -> CompressedData",
+        "decompress": "CompressedData -> Data",
+        "encrypt": "PlainData -> EncryptedData",
+        "decrypt": "EncryptedData -> PlainData",
+        "calculate": "InputParameters -> ComputedResult",
+        "compute": "InputData -> ComputationResult",
+        "analyze": "RawData -> AnalysisResult",
+        "filter": "UnfilteredData -> FilteredData",
+        "sort": "UnsortedData -> SortedData",
+        "validate": "InputData -> ValidatedData",
+        "verify": "InputData -> VerificationResult"
+      }
+    },
+    "function_verbs": {
+      "description": "General system actions without direct transformation",
+      "verbs": {
+        "activate": "starts/enables system component",
+        "deactivate": "stops/disables system component",
+        "start": "begins system operation",
+        "stop": "ends system operation",
+        "pause": "temporarily suspends operation",
+        "resume": "continues suspended operation",
+        "prepare": "makes ready for use",
+        "initialize": "sets up system for operation",
+        "configure": "sets system parameters",
+        "setup": "prepares system configuration",
+        "calibrate": "adjusts system parameters",
+        "adjust": "modifies system settings",
+        "tune": "optimizes system parameters",
+        "reset": "returns system to initial state",
+        "restart": "stops and starts system",
+        "refresh": "updates system state",
+        "check": "verifies system condition",
+        "test": "validates system function",
+        "inspect": "examines system state",
+        "control": "manages system operation",
+        "manage": "oversees system operation",
+        "coordinate": "synchronizes multiple systems",
+        "synchronize": "aligns system timing",
+        "schedule": "plans system operations",
+        "maintain": "keeps system in desired state",
+        "update": "modifies system data/state",
+        "modify": "changes system configuration",
+        "optimize": "improves system efficiency",
+        "backup": "creates system copy/alternative",
+        "restore": "returns system to previous state",
+        "save": "stores system state/data",
+        "retrieve": "obtains data/item from storage",
+        "store": "places data/item in storage",
+        "archive": "moves data to long-term storage",
+        "delete": "removes data/item from system",
+        "remove": "takes away system component",
+        "install": "adds component to system",
+        "uninstall": "removes component from system",
+        "connect": "establishes link between components",
+        "disconnect": "breaks link between components",
+        "link": "creates association between items",
+        "unlink": "removes association between items",
+        "enable": "makes system function available",
+        "disable": "makes system function unavailable",
+        "lock": "prevents unauthorized access/changes",
+        "unlock": "allows access/changes",
+        "secure": "makes system safe/protected",
+        "protect": "guards system from threats",
+        "isolate": "separates system component",
+        "integrate": "combines system components",
+        "synchronize": "coordinates system timing"
+      }
+    }
+  },
+  "implementation_elements": {
+    "description": "Common implementation elements that should be replaced with functional activities",
+    "elements": {
+      "sensor": {
+        "warning": "Sensor is implementation element - use functional activity",
+        "functional_suggestion": "The system measures/detects the parameter",
+        "transformation": "PhysicalParameter -> MeasurementData"
+      },
+      "actuator": {
+        "warning": "Actuator is implementation element - use functional activity",
+        "functional_suggestion": "The system performs the action",
+        "transformation": "ControlSignal -> PhysicalAction"
+      },
+      "motor": {
+        "warning": "Motor is implementation element - use functional activity",
+        "functional_suggestion": "The system provides movement",
+        "transformation": "ElectricalSignal -> MechanicalMovement"
+      },
+      "pump": {
+        "warning": "Pump is implementation element - use functional activity",
+        "functional_suggestion": "The system moves the fluid",
+        "transformation": "Fluid -> MovedFluid"
+      },
+      "valve": {
+        "warning": "Valve is implementation element - use functional activity",
+        "functional_suggestion": "The system controls the flow",
+        "transformation": "Flow -> RegulatedFlow"
+      },
+      "computer": {
+        "warning": "Computer is implementation element - use functional activity",
+        "functional_suggestion": "The system processes the data",
+        "transformation": "InputData -> ProcessedData"
+      },
+      "processor": {
+        "warning": "Processor is implementation element - use functional activity",
+        "functional_suggestion": "The system computes the result",
+        "transformation": "InputData -> ComputedResult"
+      },
+      "controller": {
+        "warning": "Controller is implementation element - use functional activity",
+        "functional_suggestion": "The system manages the operation",
+        "transformation": "ControlInput -> ControlOutput"
+      },
+      "drive": {
+        "warning": "Drive is implementation element - use functional activity",
+        "functional_suggestion": "The system provides motion",
+        "transformation": "PowerInput -> MechanicalOutput"
+      },
+      "interface": {
+        "warning": "Interface is implementation element - use functional activity",
+        "functional_suggestion": "The system connects/communicates",
+        "transformation": "InputSignal -> OutputSignal"
+      },
+      "system": {
+        "warning": "System is too generic - use specific functional activity",
+        "functional_suggestion": "Use specific function instead of 'system'",
+        "transformation": "Input -> ProcessedOutput"
+      },
+      "device": {
+        "warning": "Device is implementation element - use functional activity",
+        "functional_suggestion": "The system performs specific function",
+        "transformation": "Input -> Output"
+      },
+      "unit": {
+        "warning": "Unit is implementation element - use functional activity", 
+        "functional_suggestion": "The system provides specific capability",
+        "transformation": "Input -> Output"
+      },
+      "module": {
+        "warning": "Module is implementation element - use functional activity",
+        "functional_suggestion": "The system provides specific function",
+        "transformation": "Input -> Output"
+      },
+      "component": {
+        "warning": "Component is implementation element - use functional activity",
+        "functional_suggestion": "The system provides specific capability",
+        "transformation": "Input -> Output"
+      }
+    }
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "capability_context": {
+    "capability_name": "Nuclear Reactor Control",
+    "domain": "nuclear",
+    "domain_knowledge": [
+      "Safety is the highest priority",
+      "Radiation monitoring is continuous",
+      "Containment systems are critical",
+      "Emergency shutdown procedures exist",
+      "Personnel protection is mandatory",
+      "Control rods regulate reactions",
+      "Cooling systems prevent overheating",
+      "Pressure vessels contain reactions",
+      "Monitoring systems track parameters"
+    ],
+    "excluded_aspects": [
+      "Reactor design",
+      "Nuclear waste disposal",
+      "Regulatory compliance"
+    ],
+    "related_capabilities": [
+      "Waste Management",
+      "Safety Systems",
+      "Maintenance Operations"
+    ]
+  },
+  "uc_title_analysis": {
+    "uc_title": "Emergency Reactor Shutdown",
+    "solution_constraints": [],
+    "possible_variants": [],
+    "scope_restrictions": []
+  },
+  "goal_analysis": {
+    "goal_text": "Reactor can be safely shut down in emergency",
+    "temporal_requirements": [],
+    "input_requirements": [],
+    "identified_controllers": [],
+    "identified_boundaries": []
+  },
+  "actors": [
+    {
+      "name": "Operator",
+      "type": "human",
+      "description": "Human actor"
+    },
+    {
+      "name": "Safety System",
+      "type": "non_human",
+      "description": "Non-human actor"
+    }
+  ],
+  "context_summary": "Domain: nuclear; Capability: Nuclear Reactor Control; Use Case: Emergency Reactor Shutdown; Actors: Operator (human), Safety System (non_human); Excluded: Reactor design, Nuclear waste disposal, Regulatory compliance"
+}

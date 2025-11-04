@@ -1,0 +1,49 @@
+Capability: UC Syntax Extension Testing
+Feature: Complete Extended Syntax Support
+Use Case: UC_Extended_Syntax_Complete_Test
+Goal: Validate all extended UC syntax elements including Basic Flow, End statements, and Continue variations
+
+Preconditions:
+- System is ready for testing
+- Extended syntax parser is implemented
+- All flow types are supported
+
+Actors: System Admin, Test Controller
+
+Basic Flow:
+B1 (trigger) Test sequence starts at scheduled time
+B2 The system validates syntax elements
+B3 The system processes basic flow statements
+B4 Continue main flow
+B5 The system completes validation
+B6 End UC
+
+Alternative Flows:
+A1 at B2 Syntax validation fails
+A1.1 The system generates error report
+A1.2 The system logs validation failure
+A1.3 End Use Case
+
+A2 at B3 Processing encounters error
+A2.1 The system handles processing error
+A2.2 Continue basic flow
+A2.3 End UC
+
+Extension Flows:
+E1 at B2 Additional validation required
+E1.1 The system performs extended validation
+E1.2 Continue with basic flow
+E1.3 The system performs additional checks
+E1.4 Continue with B5
+
+E2 at any time Admin requests status
+E2.1 The system provides current status
+E2.2 Continue at B3
+
+E3 at B4 Special processing needed
+E3.1 The system performs special processing
+E3.2 Continue with main flow
+
+E4 at B5 Final check required
+E4.1 The system performs final validation
+E4.2 Continue at step B6

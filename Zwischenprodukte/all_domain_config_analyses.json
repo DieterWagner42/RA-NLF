@@ -1,0 +1,497 @@
+{
+  "UC1_Coffee": {
+    "capability_context": {
+      "capability_name": "Coffee Preparation",
+      "domain": "beverage_preparation",
+      "domain_knowledge": [
+        "Beverages require liquid ingredients",
+        "Temperature control is important for quality",
+        "Timing affects taste and safety",
+        "Equipment cleaning is necessary for hygiene",
+        "Different beverages have different preparation methods",
+        "Hot water extraction is common for coffee and tea",
+        "Milk products require refrigeration",
+        "Grinding affects extraction quality",
+        "Coffee beans need grinding",
+        "Hot water is required for brewing",
+        "Extraction time affects flavor",
+        "Grind size affects extraction rate"
+      ],
+      "excluded_aspects": [
+        "Manual coffee preparation",
+        "Bean sourcing and purchasing",
+        "Equipment manufacturing details",
+        "Barista training"
+      ],
+      "related_capabilities": [
+        "Tea Preparation",
+        "Hot Chocolate Preparation",
+        "Espresso Preparation"
+      ]
+    },
+    "uc_title_analysis": {
+      "uc_title": "Prepare Milk Coffee",
+      "solution_constraints": [
+        "Domain-specific constraint: coffee"
+      ],
+      "possible_variants": [],
+      "scope_restrictions": []
+    },
+    "goal_analysis": {
+      "goal_text": "User can drink their milk coffee every morning at 7am",
+      "temporal_requirements": [
+        "7am",
+        "at 7",
+        "every morning"
+      ],
+      "input_requirements": [],
+      "identified_controllers": [
+        "TimeManager"
+      ],
+      "identified_boundaries": [
+        "Time Input"
+      ]
+    },
+    "actors": [
+      {
+        "name": "User",
+        "type": "human",
+        "description": "Human actor in beverage_preparation domain"
+      },
+      {
+        "name": "Timer",
+        "type": "non_human",
+        "description": "Non-human actor in beverage_preparation domain"
+      }
+    ],
+    "context_summary": "Domain: beverage_preparation; Capability: Coffee Preparation; Use Case: Prepare Milk Coffee; Actors: User (human), Timer (non_human); Temporal Requirements: 7am, at 7, every morning; Excluded: Manual coffee preparation, Bean sourcing and purchasing..."
+  },
+  "UC2_Espresso": {
+    "capability_context": {
+      "capability_name": "Coffee Preparation",
+      "domain": "beverage_preparation",
+      "domain_knowledge": [
+        "Beverages require liquid ingredients",
+        "Temperature control is important for quality",
+        "Timing affects taste and safety",
+        "Equipment cleaning is necessary for hygiene",
+        "Different beverages have different preparation methods",
+        "Hot water extraction is common for coffee and tea",
+        "Milk products require refrigeration",
+        "Grinding affects extraction quality",
+        "Coffee beans need grinding",
+        "Hot water is required for brewing",
+        "Extraction time affects flavor",
+        "Grind size affects extraction rate"
+      ],
+      "excluded_aspects": [
+        "Manual coffee preparation",
+        "Bean sourcing and purchasing",
+        "Equipment manufacturing details",
+        "Barista training"
+      ],
+      "related_capabilities": [
+        "Tea Preparation",
+        "Hot Chocolate Preparation",
+        "Espresso Preparation"
+      ]
+    },
+    "uc_title_analysis": {
+      "uc_title": "Prepare Espresso",
+      "solution_constraints": [],
+      "possible_variants": [],
+      "scope_restrictions": []
+    },
+    "goal_analysis": {
+      "goal_text": "User wants to drink an espresso",
+      "temporal_requirements": [],
+      "input_requirements": [],
+      "identified_controllers": [],
+      "identified_boundaries": []
+    },
+    "actors": [
+      {
+        "name": "User",
+        "type": "human",
+        "description": "Human actor in beverage_preparation domain"
+      },
+      {
+        "name": "Brew Timer",
+        "type": "non_human",
+        "description": "Non-human actor in beverage_preparation domain"
+      }
+    ],
+    "context_summary": "Domain: beverage_preparation; Capability: Coffee Preparation; Use Case: Prepare Espresso; Actors: User (human), Brew Timer (non_human); Excluded: Manual coffee preparation, Bean sourcing and purchasing..."
+  },
+  "UC3_Rocket_Launch": {
+    "capability_context": {
+      "capability_name": "Rocket Launch",
+      "domain": "rocket_science",
+      "domain_knowledge": [
+        "Safety is paramount in rocket operations",
+        "Precise timing is critical for launches",
+        "Multiple redundant systems are required",
+        "Environmental conditions affect operations",
+        "Fuel handling requires extreme caution",
+        "Trajectory calculations must be precise",
+        "Abort procedures are essential for safety",
+        "Communication with spacecraft is vital",
+        "Orbital mechanics govern spacecraft movement",
+        "Telemetry provides real-time vehicle status",
+        "Command & control systems manage missions",
+        "Ground networks enable global communication",
+        "Human-Equipment-Unit coordination is critical",
+        "Mission operations require 24/7 monitoring",
+        "Data downlink enables mission analysis",
+        "Redundant communication paths prevent loss",
+        "Command validation prevents erroneous operations",
+        "Fuel systems require precise control",
+        "Launch windows are time-critical",
+        "Telemetry monitors all systems",
+        "Range safety ensures public protection",
+        "Multi-stage separation sequences",
+        "Thrust vector control for steering",
+        "Weather conditions must be acceptable",
+        "All systems must be go for launch",
+        "Abort capabilities must be ready",
+        "Range must be clear of traffic"
+      ],
+      "excluded_aspects": [
+        "Rocket manufacturing",
+        "Component procurement",
+        "Historical mission analysis",
+        "Theoretical physics research",
+        "Rocket engine design"
+      ],
+      "related_capabilities": [
+        "Satellite Deployment",
+        "Space Station Operations",
+        "Planetary Missions",
+        "Mission Planning",
+        "Range Operations",
+        "Recovery Operations"
+      ]
+    },
+    "uc_title_analysis": {
+      "uc_title": "Execute Satellite Launch",
+      "solution_constraints": [
+        "Domain-specific constraint: launch"
+      ],
+      "possible_variants": [],
+      "scope_restrictions": []
+    },
+    "goal_analysis": {
+      "goal_text": "Mission control can launch satellite into orbit at scheduled time",
+      "temporal_requirements": [
+        "scheduled"
+      ],
+      "input_requirements": [],
+      "identified_controllers": [
+        "TimeManager"
+      ],
+      "identified_boundaries": [
+        "Time Input"
+      ]
+    },
+    "actors": [
+      {
+        "name": "Mission Control",
+        "type": "human",
+        "description": "Human actor in rocket_science domain"
+      },
+      {
+        "name": "Launch Sequencer",
+        "type": "non_human",
+        "description": "Non-human actor in rocket_science domain"
+      },
+      {
+        "name": "Range Safety System",
+        "type": "non_human",
+        "description": "Non-human actor in rocket_science domain"
+      }
+    ],
+    "context_summary": "Domain: rocket_science; Capability: Rocket Launch; Use Case: Execute Satellite Launch; Actors: Mission Control (human), Launch Sequencer (non_human), Range Safety System (non_human); Temporal Requirements: scheduled; Excluded: Rocket manufacturing, Component procurement..."
+  },
+  "UC4_Nuclear_Shutdown": {
+    "capability_context": {
+      "capability_name": "Nuclear Reactor Control",
+      "domain": "nuclear",
+      "domain_knowledge": [
+        "Safety is the highest priority",
+        "Radiation monitoring is continuous",
+        "Containment systems are critical",
+        "Emergency shutdown procedures exist",
+        "Personnel protection is mandatory",
+        "Multiple barriers prevent radiation release",
+        "Redundant safety systems are required",
+        "Regular maintenance is essential",
+        "Strict regulatory compliance required",
+        "Command & control systems ensure safe operation",
+        "Real-time plant monitoring is essential",
+        "Emergency communication systems vital",
+        "Human-Equipment-Unit coordination critical",
+        "Data acquisition enables trend analysis",
+        "Automated safety systems provide rapid response",
+        "Multiple communication paths ensure reliability",
+        "Emergency response requires coordination",
+        "Control rods regulate reactions",
+        "Cooling systems prevent overheating",
+        "Pressure vessels contain reactions",
+        "Monitoring systems track parameters",
+        "Emergency systems provide shutdown",
+        "Containment prevents radiation release",
+        "Automated control systems ensure safety",
+        "Human-Equipment-Unit interfaces critical",
+        "Command validation prevents errors",
+        "Manual backup systems available"
+      ],
+      "excluded_aspects": [
+        "Reactor design",
+        "Nuclear waste disposal",
+        "Regulatory compliance",
+        "Nuclear fuel fabrication"
+      ],
+      "related_capabilities": [
+        "Waste Management",
+        "Safety Systems",
+        "Maintenance Operations"
+      ]
+    },
+    "uc_title_analysis": {
+      "uc_title": "Emergency Reactor Shutdown",
+      "solution_constraints": [
+        "Domain-specific constraint: reactor"
+      ],
+      "possible_variants": [
+        "Evacuation Procedures",
+        "Communication Systems",
+        "Response Coordination"
+      ],
+      "scope_restrictions": []
+    },
+    "goal_analysis": {
+      "goal_text": "Reactor can be safely shut down in emergency",
+      "temporal_requirements": [],
+      "input_requirements": [],
+      "identified_controllers": [],
+      "identified_boundaries": []
+    },
+    "actors": [
+      {
+        "name": "Operator",
+        "type": "human",
+        "description": "Human actor in nuclear domain"
+      },
+      {
+        "name": "Reactor Protection System",
+        "type": "non_human",
+        "description": "Non-human actor in nuclear domain"
+      },
+      {
+        "name": "Emergency Core Cooling System",
+        "type": "non_human",
+        "description": "Non-human actor in nuclear domain"
+      }
+    ],
+    "context_summary": "Domain: nuclear; Capability: Nuclear Reactor Control; Use Case: Emergency Reactor Shutdown; Actors: Operator (human), Reactor Protection System (non_human), Emergency Core Cooling System (non_human); Excluded: Reactor design, Nuclear waste disposal..."
+  },
+  "UC5_Robot_Assembly": {
+    "capability_context": {
+      "capability_name": "Robotic Manufacturing",
+      "domain": "robotics",
+      "domain_knowledge": [
+        "Safety interlocks prevent accidents",
+        "Sensor feedback enables autonomous operation",
+        "Calibration ensures precision",
+        "Error handling prevents damage",
+        "Real-time control is often required",
+        "Path planning prevents collisions",
+        "Force control enables safe interaction",
+        "Redundancy improves reliability"
+      ],
+      "excluded_aspects": [],
+      "related_capabilities": [
+        "Assembly Operations",
+        "Material Handling",
+        "Quality Control"
+      ]
+    },
+    "uc_title_analysis": {
+      "uc_title": "Assemble Product Components",
+      "solution_constraints": [],
+      "possible_variants": [],
+      "scope_restrictions": []
+    },
+    "goal_analysis": {
+      "goal_text": "Robot can assemble components with precision",
+      "temporal_requirements": [],
+      "input_requirements": [],
+      "identified_controllers": [],
+      "identified_boundaries": []
+    },
+    "actors": [
+      {
+        "name": "Operator",
+        "type": "human",
+        "description": "Human actor in robotics domain"
+      },
+      {
+        "name": "Quality Control System",
+        "type": "non_human",
+        "description": "Non-human actor in robotics domain"
+      },
+      {
+        "name": "Vision System",
+        "type": "non_human",
+        "description": "Non-human actor in robotics domain"
+      }
+    ],
+    "context_summary": "Domain: robotics; Capability: Robotic Manufacturing; Use Case: Assemble Product Components; Actors: Operator (human), Quality Control System (non_human), Vision System (non_human)"
+  },
+  "UC6_Aircraft_Navigation": {
+    "capability_context": {
+      "capability_name": "Aircraft Operations",
+      "domain": "aerospace",
+      "domain_knowledge": [
+        "Flight safety protocols are mandatory",
+        "Weather conditions affect operations",
+        "Navigation systems require calibration",
+        "Maintenance schedules are critical",
+        "Altitude affects system performance",
+        "Emergency procedures must be available",
+        "Communication is essential for safety",
+        "Multiple backup systems are required",
+        "Air traffic control coordinates aircraft movements",
+        "Flight data monitoring enables safety analysis",
+        "Communication systems provide global coverage",
+        "Human-Equipment-Unit coordination critical in cockpit",
+        "Real-time weather data essential for safety",
+        "Command & control systems manage air traffic",
+        "Datalink reduces communication workload",
+        "Surveillance systems track aircraft positions",
+        "Multiple redundant systems ensure safety",
+        "Regular inspections are mandatory",
+        "Weight and balance affect performance",
+        "Fuel planning is critical"
+      ],
+      "excluded_aspects": [
+        "Aircraft manufacturing",
+        "Airline operations",
+        "Airport management",
+        "Regulatory compliance"
+      ],
+      "related_capabilities": [
+        "Air Traffic Control",
+        "Weather Systems",
+        "Maintenance Operations"
+      ]
+    },
+    "uc_title_analysis": {
+      "uc_title": "Navigate to Destination",
+      "solution_constraints": [],
+      "possible_variants": [],
+      "scope_restrictions": []
+    },
+    "goal_analysis": {
+      "goal_text": "Aircraft can navigate safely to destination",
+      "temporal_requirements": [],
+      "input_requirements": [],
+      "identified_controllers": [],
+      "identified_boundaries": []
+    },
+    "actors": [
+      {
+        "name": "Pilot",
+        "type": "human",
+        "description": "Human actor in aerospace domain"
+      },
+      {
+        "name": "Autopilot System",
+        "type": "non_human",
+        "description": "Non-human actor in aerospace domain"
+      },
+      {
+        "name": "Flight Management System",
+        "type": "non_human",
+        "description": "Non-human actor in aerospace domain"
+      }
+    ],
+    "context_summary": "Domain: aerospace; Capability: Aircraft Operations; Use Case: Navigate to Destination; Actors: Pilot (human), Autopilot System (non_human), Flight Management System (non_human); Excluded: Aircraft manufacturing, Airline operations..."
+  },
+  "UC7_Network_Management": {
+    "capability_context": {
+      "capability_name": "Network Operations",
+      "domain": "telecommunications",
+      "domain_knowledge": [
+        "Network reliability requires redundancy",
+        "Quality of service affects user experience",
+        "Security protocols protect data transmission",
+        "Network management enables proactive maintenance",
+        "Command & control systems coordinate operations",
+        "Real-time monitoring prevents service degradation",
+        "Human-Equipment-Unit interfaces enable management",
+        "Automation reduces operational complexity",
+        "Fault management ensures service continuity",
+        "Performance monitoring optimizes resources",
+        "Configuration management maintains consistency",
+        "Security management protects network integrity",
+        "Multiple routing paths provide redundancy",
+        "Load balancing optimizes performance",
+        "Traffic engineering manages congestion",
+        "Network slicing enables service differentiation"
+      ],
+      "excluded_aspects": [
+        "Network equipment manufacturing",
+        "Standards development",
+        "Regulatory compliance procedures"
+      ],
+      "related_capabilities": [
+        "Network Security",
+        "Network Optimization",
+        "Fault Management"
+      ]
+    },
+    "uc_title_analysis": {
+      "uc_title": "Monitor Network Performance",
+      "solution_constraints": [
+        "Domain-specific constraint: network"
+      ],
+      "possible_variants": [
+        "Network Security",
+        "Network Optimization",
+        "Fault Management"
+      ],
+      "scope_restrictions": []
+    },
+    "goal_analysis": {
+      "goal_text": "Network operations center can monitor network performance in real-time",
+      "temporal_requirements": [],
+      "input_requirements": [],
+      "identified_controllers": [],
+      "identified_boundaries": []
+    },
+    "actors": [
+      {
+        "name": "Network Operator",
+        "type": "human",
+        "description": "Human actor in telecommunications domain"
+      },
+      {
+        "name": "Network Management System",
+        "type": "non_human",
+        "description": "Non-human actor in telecommunications domain"
+      },
+      {
+        "name": "Telemetry Processor",
+        "type": "human",
+        "description": "Human actor in telecommunications domain"
+      },
+      {
+        "name": "Command and Control System",
+        "type": "non_human",
+        "description": "Non-human actor in telecommunications domain"
+      }
+    ],
+    "context_summary": "Domain: telecommunications; Capability: Network Operations; Use Case: Monitor Network Performance; Actors: Network Operator (human), Network Management System (non_human), Telemetry Processor (human), Command and Control System (non_human); Excluded: Network equipment manufacturing, Standards development..."
+  }
+}

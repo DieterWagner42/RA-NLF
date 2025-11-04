@@ -1,0 +1,45 @@
+Capability: Rocket Launch
+Feature: Satellite Deployment
+
+Use Case 3: Execute Satellite Launch
+Goal: Mission control can launch satellite into orbit at scheduled time
+
+Preconditions:
+- Rocket is fueled and ready
+- Satellite payload is installed
+- Weather conditions are acceptable
+- Launch window is available
+
+Actors: Mission Control, Launch Sequencer
+
+Main Flow:
+B1 (trigger) Launch window opens at scheduled time
+B2a The system performs final systems check
+B2b The system activates launch sequencer
+B2c The system initiates engine ignition sequence
+B3 The system monitors trajectory and guidance
+B4 The system deploys satellite at orbital altitude
+B5 The system confirms successful deployment
+B6 End UC
+
+Postcondition:
+Satellite is successfully deployed in orbit.
+
+Alternative Flows:
+A1 at B2a Critical system failure detected
+A1.1 The system aborts launch sequence
+A1.2 The system activates safety protocols
+A1.3 The system notifies mission control
+A1.4 End UC
+
+Postcondition:
+Launch is aborted, satellite remains on ground.
+
+A2 at B3 Trajectory deviation detected
+A2.1 The system attempts guidance correction
+A2.2 If correction fails, system initiates abort sequence
+A2.3 The system activates recovery procedures
+A2.4 End UC
+
+Postcondition:
+Mission is aborted, safety procedures activated.

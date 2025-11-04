@@ -1,0 +1,45 @@
+Capability: Nuclear Reactor Control
+Feature: Emergency Safety Systems
+
+Use Case 4: Emergency Reactor Shutdown
+Goal: Reactor can be safely shut down in emergency
+
+Preconditions:
+- Reactor is in operational state
+- Safety systems are functional
+- Control rods are positioned correctly
+- Cooling systems are operational
+
+Actors: Operator, Safety System
+
+Main Flow:
+B1 (trigger) Lightning strikes the main power line of the nuclear plant
+B2a The system immediately inserts control rods
+B2b The system activates emergency cooling
+B2c The system isolates reactor containment
+B3 The system monitors radiation levels
+B4 The system confirms shutdown completion
+B5 The system notifies operators of status
+B6 End UC
+
+Postcondition:
+Reactor is safely shut down and contained.
+
+Alternative Flows:
+A1 at B2a Control rod insertion fails
+A1.1 The system activates backup control systems
+A1.2 The system increases cooling flow rate
+A1.3 The system triggers facility evacuation
+A1.4 End UC
+
+Postcondition:
+Emergency protocols activated, facility secured.
+
+A2 at B2b Cooling system failure
+A2.1 The system activates backup cooling
+A2.2 The system vents steam safely
+A2.3 The system maintains containment integrity
+A2.4 End UC
+
+Postcondition:
+Reactor contained with backup systems active.

@@ -1,0 +1,35 @@
+{
+  "analysis_config": {
+    "version": "1.0",
+    "description": "Multi UC Analysis - UC1 and UC2",
+    "domain": "beverage_preparation",
+    "output_format": [
+      "json",
+      "csv",
+      "diagram"
+    ]
+  },
+  "use_cases": [
+    {
+      "id": "UC1",
+      "name": "Prepare Milk Coffee",
+      "file": "Use Case/UC1.txt",
+      "enabled": true,
+      "priority": 1
+    },
+    {
+      "id": "UC2",
+      "name": "Prepare Espresso",
+      "file": "Use Case/UC2.txt",
+      "enabled": true,
+      "priority": 2
+    }
+  ],
+  "analysis_options": {
+    "generate_diagrams": true,
+    "generate_csv": true,
+    "auto_organize_files": true,
+    "backup_previous": true,
+    "verbose_output": true
+  }
+}

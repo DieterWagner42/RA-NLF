@@ -1,0 +1,53 @@
+{
+  "analysis_config": {
+    "version": "1.0",
+    "description": "UC Analysis Configuration - Specify which UCs to analyze",
+    "domain": "beverage_preparation",
+    "output_format": ["json", "csv", "diagram"]
+  },
+  "use_cases": [
+    {
+      "id": "UC1",
+      "name": "Prepare Milk Coffee",
+      "file": "Use Case/UC1.txt",
+      "enabled": true,
+      "priority": 1
+    },
+    {
+      "id": "UC2", 
+      "name": "Prepare Espresso",
+      "file": "Use Case/UC2.txt",
+      "enabled": false,
+      "priority": 2
+    },
+    {
+      "id": "UC3",
+      "name": "Rocket Launch",
+      "file": "Use Case/UC3_Rocket_Launch_Improved.txt",
+      "enabled": false,
+      "priority": 3
+    },
+    {
+      "id": "UC4",
+      "name": "Nuclear Shutdown", 
+      "file": "Use Case/UC4_Nuclear_Shutdown.txt",
+      "enabled": false,
+      "priority": 4
+    },
+    {
+      "id": "UC5",
+      "name": "Robot Assembly",
+      "file": "Use Case/UC5_Robot_Assembly.txt", 
+      "enabled": false,
+      "priority": 5
+    }
+  ],
+  "analysis_options": {
+    "generate_diagrams": true,
+    "generate_csv": true,
+    "auto_organize_files": true,
+    "backup_previous": true,
+    "parallel_analysis": false,
+    "verbose_output": true
+  }
+}

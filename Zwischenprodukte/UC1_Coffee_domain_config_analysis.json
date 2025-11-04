@@ -1,0 +1,67 @@
+{
+  "capability_context": {
+    "capability_name": "Coffee Preparation",
+    "domain": "beverage_preparation",
+    "domain_knowledge": [
+      "Beverages require liquid ingredients",
+      "Temperature control is important for quality",
+      "Timing affects taste and safety",
+      "Equipment cleaning is necessary for hygiene",
+      "Different beverages have different preparation methods",
+      "Hot water extraction is common for coffee and tea",
+      "Milk products require refrigeration",
+      "Grinding affects extraction quality",
+      "Coffee beans need grinding",
+      "Hot water is required for brewing",
+      "Extraction time affects flavor",
+      "Grind size affects extraction rate"
+    ],
+    "excluded_aspects": [
+      "Manual coffee preparation",
+      "Bean sourcing and purchasing",
+      "Equipment manufacturing details",
+      "Barista training"
+    ],
+    "related_capabilities": [
+      "Tea Preparation",
+      "Hot Chocolate Preparation",
+      "Espresso Preparation"
+    ]
+  },
+  "uc_title_analysis": {
+    "uc_title": "Prepare Milk Coffee",
+    "solution_constraints": [
+      "Domain-specific constraint: coffee"
+    ],
+    "possible_variants": [],
+    "scope_restrictions": []
+  },
+  "goal_analysis": {
+    "goal_text": "User can drink their milk coffee every morning at 7am",
+    "temporal_requirements": [
+      "7am",
+      "at 7",
+      "every morning"
+    ],
+    "input_requirements": [],
+    "identified_controllers": [
+      "TimeManager"
+    ],
+    "identified_boundaries": [
+      "Time Input"
+    ]
+  },
+  "actors": [
+    {
+      "name": "User",
+      "type": "human",
+      "description": "Human actor in beverage_preparation domain"
+    },
+    {
+      "name": "Timer",
+      "type": "non_human",
+      "description": "Non-human actor in beverage_preparation domain"
+    }
+  ],
+  "context_summary": "Domain: beverage_preparation; Capability: Coffee Preparation; Use Case: Prepare Milk Coffee; Actors: User (human), Timer (non_human); Temporal Requirements: 7am, at 7, every morning; Excluded: Manual coffee preparation, Bean sourcing and purchasing..."
+}

@@ -1,0 +1,70 @@
+{
+  "capability_context": {
+    "capability_name": "Aircraft Operations",
+    "domain": "aerospace",
+    "domain_knowledge": [
+      "Flight safety protocols are mandatory",
+      "Weather conditions affect operations",
+      "Navigation systems require calibration",
+      "Maintenance schedules are critical",
+      "Altitude affects system performance",
+      "Emergency procedures must be available",
+      "Communication is essential for safety",
+      "Multiple backup systems are required",
+      "Air traffic control coordinates aircraft movements",
+      "Flight data monitoring enables safety analysis",
+      "Communication systems provide global coverage",
+      "Human-Equipment-Unit coordination critical in cockpit",
+      "Real-time weather data essential for safety",
+      "Command & control systems manage air traffic",
+      "Datalink reduces communication workload",
+      "Surveillance systems track aircraft positions",
+      "Multiple redundant systems ensure safety",
+      "Regular inspections are mandatory",
+      "Weight and balance affect performance",
+      "Fuel planning is critical"
+    ],
+    "excluded_aspects": [
+      "Aircraft manufacturing",
+      "Airline operations",
+      "Airport management",
+      "Regulatory compliance"
+    ],
+    "related_capabilities": [
+      "Air Traffic Control",
+      "Weather Systems",
+      "Maintenance Operations"
+    ]
+  },
+  "uc_title_analysis": {
+    "uc_title": "Navigate to Destination",
+    "solution_constraints": [],
+    "possible_variants": [],
+    "scope_restrictions": []
+  },
+  "goal_analysis": {
+    "goal_text": "Aircraft can navigate safely to destination",
+    "temporal_requirements": [],
+    "input_requirements": [],
+    "identified_controllers": [],
+    "identified_boundaries": []
+  },
+  "actors": [
+    {
+      "name": "Pilot",
+      "type": "human",
+      "description": "Human actor in aerospace domain"
+    },
+    {
+      "name": "Autopilot System",
+      "type": "non_human",
+      "description": "Non-human actor in aerospace domain"
+    },
+    {
+      "name": "Flight Management System",
+      "type": "non_human",
+      "description": "Non-human actor in aerospace domain"
+    }
+  ],
+  "context_summary": "Domain: aerospace; Capability: Aircraft Operations; Use Case: Navigate to Destination; Actors: Pilot (human), Autopilot System (non_human), Flight Management System (non_human); Excluded: Aircraft manufacturing, Airline operations..."
+}

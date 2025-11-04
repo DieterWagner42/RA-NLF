@@ -1,0 +1,296 @@
+{
+  "UC1_Coffee": {
+    "capability_context": {
+      "capability_name": "Coffee Preparation",
+      "domain": "food_preparation",
+      "domain_knowledge": [
+        "Food safety and hygiene are critical",
+        "Temperature control prevents spoilage",
+        "Timing affects quality and safety",
+        "Ingredients have storage requirements",
+        "Coffee beans need grinding",
+        "Hot water is required for brewing",
+        "Milk is perishable and needs cooling",
+        "Filters are used for brewing process"
+      ],
+      "excluded_aspects": [],
+      "related_capabilities": []
+    },
+    "uc_title_analysis": {
+      "uc_title": "Prepare Milk Coffee",
+      "solution_constraints": [],
+      "possible_variants": [],
+      "scope_restrictions": []
+    },
+    "goal_analysis": {
+      "goal_text": "User can drink their milk coffee every morning at 7am",
+      "temporal_requirements": [
+        "7am",
+        "at 7",
+        "every morning"
+      ],
+      "input_requirements": [],
+      "identified_controllers": [
+        "TimeManager"
+      ],
+      "identified_boundaries": [
+        "Time Input"
+      ]
+    },
+    "actors": [
+      {
+        "name": "User",
+        "type": "human",
+        "description": "Human actor"
+      }
+    ],
+    "context_summary": "Domain: food_preparation; Capability: Coffee Preparation; Use Case: Prepare Milk Coffee; Actors: User (human); Temporal Requirements: 7am, at 7, every morning"
+  },
+  "UC2_Espresso": {
+    "capability_context": {
+      "capability_name": "Coffee Preparation",
+      "domain": "food_preparation",
+      "domain_knowledge": [
+        "Food safety and hygiene are critical",
+        "Temperature control prevents spoilage",
+        "Timing affects quality and safety",
+        "Ingredients have storage requirements",
+        "Coffee beans need grinding",
+        "Hot water is required for brewing",
+        "Milk is perishable and needs cooling",
+        "Filters are used for brewing process"
+      ],
+      "excluded_aspects": [],
+      "related_capabilities": []
+    },
+    "uc_title_analysis": {
+      "uc_title": "Prepare Espresso",
+      "solution_constraints": [],
+      "possible_variants": [],
+      "scope_restrictions": []
+    },
+    "goal_analysis": {
+      "goal_text": "User wants to drink an espresso",
+      "temporal_requirements": [],
+      "input_requirements": [],
+      "identified_controllers": [],
+      "identified_boundaries": []
+    },
+    "actors": [
+      {
+        "name": "User",
+        "type": "human",
+        "description": "Human actor"
+      }
+    ],
+    "context_summary": "Domain: food_preparation; Capability: Coffee Preparation; Use Case: Prepare Espresso; Actors: User (human)"
+  },
+  "UC3_Rocket_Launch": {
+    "capability_context": {
+      "capability_name": "Rocket Launch",
+      "domain": "rocket_science",
+      "domain_knowledge": [
+        "Safety is paramount in rocket operations",
+        "Precise timing is critical for launches",
+        "Multiple redundant systems are required",
+        "Environmental conditions affect operations",
+        "Fuel handling requires extreme caution",
+        "Trajectory calculations must be precise",
+        "Abort procedures are essential for safety",
+        "Fuel systems require precise control",
+        "Launch windows are time-critical",
+        "Telemetry monitors all systems",
+        "Range safety ensures public protection"
+      ],
+      "excluded_aspects": [
+        "Rocket manufacturing",
+        "Component procurement",
+        "Historical mission analysis",
+        "Theoretical physics research"
+      ],
+      "related_capabilities": [
+        "Satellite Deployment",
+        "Space Station Operations",
+        "Planetary Missions",
+        "Mission Planning",
+        "Range Operations",
+        "Recovery Operations"
+      ]
+    },
+    "uc_title_analysis": {
+      "uc_title": "Execute Satellite Launch",
+      "solution_constraints": [],
+      "possible_variants": [],
+      "scope_restrictions": []
+    },
+    "goal_analysis": {
+      "goal_text": "Mission control can launch satellite into orbit at scheduled time",
+      "temporal_requirements": [
+        "scheduled"
+      ],
+      "input_requirements": [],
+      "identified_controllers": [
+        "TimeManager"
+      ],
+      "identified_boundaries": [
+        "Time Input"
+      ]
+    },
+    "actors": [
+      {
+        "name": "Mission Control",
+        "type": "human",
+        "description": "Human actor"
+      },
+      {
+        "name": "Launch Sequencer",
+        "type": "human",
+        "description": "Human actor"
+      }
+    ],
+    "context_summary": "Domain: rocket_science; Capability: Rocket Launch; Use Case: Execute Satellite Launch; Actors: Mission Control (human), Launch Sequencer (human); Temporal Requirements: scheduled; Excluded: Rocket manufacturing, Component procurement, Historical mission analysis, Theoretical physics research"
+  },
+  "UC4_Spacecraft_Docking": {
+    "capability_context": {
+      "capability_name": "Spacecraft Operations",
+      "domain": "rocket_science",
+      "domain_knowledge": [
+        "Safety is paramount in rocket operations",
+        "Precise timing is critical for launches",
+        "Multiple redundant systems are required",
+        "Environmental conditions affect operations",
+        "Fuel handling requires extreme caution",
+        "Trajectory calculations must be precise",
+        "Abort procedures are essential for safety",
+        "Life support systems are critical",
+        "Communication with ground is essential",
+        "Orbital mechanics determine trajectories",
+        "Thermal control maintains temperatures"
+      ],
+      "excluded_aspects": [
+        "Spacecraft design process",
+        "Material science research",
+        "Vendor negotiations"
+      ],
+      "related_capabilities": [
+        "Orbital Maneuvers",
+        "Re-entry Operations",
+        "Deep Space Navigation"
+      ]
+    },
+    "uc_title_analysis": {
+      "uc_title": "Dock with Space Station",
+      "solution_constraints": [],
+      "possible_variants": [],
+      "scope_restrictions": []
+    },
+    "goal_analysis": {
+      "goal_text": "Spacecraft can autonomously dock with ISS",
+      "temporal_requirements": [],
+      "input_requirements": [],
+      "identified_controllers": [],
+      "identified_boundaries": []
+    },
+    "actors": [
+      {
+        "name": "Flight Controller",
+        "type": "non_human",
+        "description": "Non-human actor"
+      },
+      {
+        "name": "Automated Docking System",
+        "type": "non_human",
+        "description": "Non-human actor"
+      }
+    ],
+    "context_summary": "Domain: rocket_science; Capability: Spacecraft Operations; Use Case: Dock with Space Station; Actors: Flight Controller (non_human), Automated Docking System (non_human); Excluded: Spacecraft design process, Material science research, Vendor negotiations"
+  },
+  "UC5_Nuclear_Shutdown": {
+    "capability_context": {
+      "capability_name": "Nuclear Reactor Control",
+      "domain": "nuclear",
+      "domain_knowledge": [
+        "Safety is the highest priority",
+        "Radiation monitoring is continuous",
+        "Containment systems are critical",
+        "Emergency shutdown procedures exist",
+        "Personnel protection is mandatory",
+        "Control rods regulate reactions",
+        "Cooling systems prevent overheating",
+        "Pressure vessels contain reactions",
+        "Monitoring systems track parameters"
+      ],
+      "excluded_aspects": [
+        "Reactor design",
+        "Nuclear waste disposal",
+        "Regulatory compliance"
+      ],
+      "related_capabilities": [
+        "Waste Management",
+        "Safety Systems",
+        "Maintenance Operations"
+      ]
+    },
+    "uc_title_analysis": {
+      "uc_title": "Emergency Reactor Shutdown",
+      "solution_constraints": [],
+      "possible_variants": [],
+      "scope_restrictions": []
+    },
+    "goal_analysis": {
+      "goal_text": "Reactor can be safely shut down in emergency",
+      "temporal_requirements": [],
+      "input_requirements": [],
+      "identified_controllers": [],
+      "identified_boundaries": []
+    },
+    "actors": [
+      {
+        "name": "Operator",
+        "type": "human",
+        "description": "Human actor"
+      },
+      {
+        "name": "Safety System",
+        "type": "non_human",
+        "description": "Non-human actor"
+      }
+    ],
+    "context_summary": "Domain: nuclear; Capability: Nuclear Reactor Control; Use Case: Emergency Reactor Shutdown; Actors: Operator (human), Safety System (non_human); Excluded: Reactor design, Nuclear waste disposal, Regulatory compliance"
+  },
+  "UC6_Robot_Assembly": {
+    "capability_context": {
+      "capability_name": "Robotic Manufacturing",
+      "domain": "manufacturing",
+      "domain_knowledge": [],
+      "excluded_aspects": [],
+      "related_capabilities": []
+    },
+    "uc_title_analysis": {
+      "uc_title": "Assemble Product Components",
+      "solution_constraints": [],
+      "possible_variants": [],
+      "scope_restrictions": []
+    },
+    "goal_analysis": {
+      "goal_text": "Robot can assemble components with precision",
+      "temporal_requirements": [],
+      "input_requirements": [],
+      "identified_controllers": [],
+      "identified_boundaries": []
+    },
+    "actors": [
+      {
+        "name": "Operator",
+        "type": "human",
+        "description": "Human actor"
+      },
+      {
+        "name": "Quality Control System",
+        "type": "non_human",
+        "description": "Non-human actor"
+      }
+    ],
+    "context_summary": "Domain: manufacturing; Capability: Robotic Manufacturing; Use Case: Assemble Product Components; Actors: Operator (human), Quality Control System (non_human)"
+  }
+}

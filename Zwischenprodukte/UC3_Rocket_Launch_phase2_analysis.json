@@ -1,0 +1,346 @@
+{
+  "phase1_summary": "Domain: rocket_science; Capability: Rocket Launch; Use Case: Execute Satellite Launch; Actors: Mission Control (human), Launch Sequencer (non_human), Range Safety System (non_human); Temporal Requirements: scheduled; Excluded: Rocket manufacturing, Component procurement...",
+  "phase2_summary": "Analyzed 6 resources from preconditions; Created 6 Manager Controllers; Identified 6 Boundary Objects; Found 4 context-based transformations; Domain: rocket_science",
+  "resource_analyses": [
+    {
+      "resource_name": "rocket fuel",
+      "input_boundary": {
+        "name": "RocketFuel Input",
+        "functions": [
+          {
+            "name": "accept_input",
+            "source": "implicit",
+            "description": "Accept rocket fuel from external source"
+          },
+          {
+            "name": "validate_input",
+            "source": "implicit",
+            "description": "Validate rocket fuel quality and quantity"
+          },
+          {
+            "name": "provide_user_feedback",
+            "source": "phase1_integration",
+            "description": "Provide feedback to human actors about rocket fuel status"
+          }
+        ]
+      },
+      "manager_controller": {
+        "name": "RocketFuelManager",
+        "functions": [
+          {
+            "name": "store_rocketfuel",
+            "source": "implicit",
+            "description": "Store and manage rocket fuel"
+          },
+          {
+            "name": "monitor_rocketfuel_level",
+            "source": "implicit",
+            "description": "Monitor available quantity of rocket fuel"
+          },
+          {
+            "name": "provide_rocketfuel",
+            "source": "implicit",
+            "description": "Provide rocket fuel when requested"
+          },
+          {
+            "name": "schedule_rocketfuel_usage",
+            "source": "phase1_integration",
+            "description": "Schedule rocket fuel usage based on temporal requirements: scheduled"
+          },
+          {
+            "name": "maintain_fuel_pressure",
+            "source": "context",
+            "description": "Maintain fuel at correct pressure"
+          },
+          {
+            "name": "control_fuel_flow",
+            "source": "context",
+            "description": "Control fuel flow rate to engines"
+          }
+        ],
+        "domain_specific": true
+      },
+      "output_boundary": null,
+      "entities": [],
+      "transformations": [
+        "validated fuel -> combustion -> thrust"
+      ]
+    },
+    {
+      "resource_name": "rocket fuel is",
+      "input_boundary": {
+        "name": "RocketFuelIs Input",
+        "functions": [
+          {
+            "name": "accept_input",
+            "source": "implicit",
+            "description": "Accept rocket fuel is from external source"
+          },
+          {
+            "name": "validate_input",
+            "source": "implicit",
+            "description": "Validate rocket fuel is quality and quantity"
+          },
+          {
+            "name": "provide_user_feedback",
+            "source": "phase1_integration",
+            "description": "Provide feedback to human actors about rocket fuel is status"
+          }
+        ]
+      },
+      "manager_controller": {
+        "name": "RocketFuelIsManager",
+        "functions": [
+          {
+            "name": "store_rocketfuelis",
+            "source": "implicit",
+            "description": "Store and manage rocket fuel is"
+          },
+          {
+            "name": "monitor_rocketfuelis_level",
+            "source": "implicit",
+            "description": "Monitor available quantity of rocket fuel is"
+          },
+          {
+            "name": "provide_rocketfuelis",
+            "source": "implicit",
+            "description": "Provide rocket fuel is when requested"
+          },
+          {
+            "name": "schedule_rocketfuelis_usage",
+            "source": "phase1_integration",
+            "description": "Schedule rocket fuel is usage based on temporal requirements: scheduled"
+          },
+          {
+            "name": "maintain_fuel_pressure",
+            "source": "context",
+            "description": "Maintain fuel at correct pressure"
+          },
+          {
+            "name": "control_fuel_flow",
+            "source": "context",
+            "description": "Control fuel flow rate to engines"
+          }
+        ],
+        "domain_specific": true
+      },
+      "output_boundary": null,
+      "entities": [],
+      "transformations": [
+        "validated fuel -> combustion -> thrust"
+      ]
+    },
+    {
+      "resource_name": "oxidizer",
+      "input_boundary": {
+        "name": "Oxidizer Interface",
+        "functions": [
+          {
+            "name": "receive_data",
+            "source": "implicit",
+            "description": "Receive oxidizer from system"
+          }
+        ]
+      },
+      "manager_controller": {
+        "name": "OxidizerManager",
+        "functions": [
+          {
+            "name": "store_oxidizer",
+            "source": "implicit",
+            "description": "Store and manage oxidizer"
+          },
+          {
+            "name": "monitor_oxidizer_level",
+            "source": "implicit",
+            "description": "Monitor available quantity of oxidizer"
+          },
+          {
+            "name": "provide_oxidizer",
+            "source": "implicit",
+            "description": "Provide oxidizer when requested"
+          },
+          {
+            "name": "schedule_oxidizer_usage",
+            "source": "phase1_integration",
+            "description": "Schedule oxidizer usage based on temporal requirements: scheduled"
+          }
+        ],
+        "domain_specific": false
+      },
+      "output_boundary": null,
+      "entities": [],
+      "transformations": [
+        "validated oxidizer -> combustion -> exhaust"
+      ]
+    },
+    {
+      "resource_name": "oxidizer is",
+      "input_boundary": {
+        "name": "OxidizerIs Interface",
+        "functions": [
+          {
+            "name": "receive_data",
+            "source": "implicit",
+            "description": "Receive oxidizer is from system"
+          }
+        ]
+      },
+      "manager_controller": {
+        "name": "OxidizerIsManager",
+        "functions": [
+          {
+            "name": "store_oxidizeris",
+            "source": "implicit",
+            "description": "Store and manage oxidizer is"
+          },
+          {
+            "name": "monitor_oxidizeris_level",
+            "source": "implicit",
+            "description": "Monitor available quantity of oxidizer is"
+          },
+          {
+            "name": "provide_oxidizeris",
+            "source": "implicit",
+            "description": "Provide oxidizer is when requested"
+          },
+          {
+            "name": "schedule_oxidizeris_usage",
+            "source": "phase1_integration",
+            "description": "Schedule oxidizer is usage based on temporal requirements: scheduled"
+          }
+        ],
+        "domain_specific": false
+      },
+      "output_boundary": null,
+      "entities": [],
+      "transformations": [
+        "validated oxidizer -> combustion -> exhaust"
+      ]
+    },
+    {
+      "resource_name": "telemetry data",
+      "input_boundary": {
+        "name": "TelemetryData Interface",
+        "functions": [
+          {
+            "name": "receive_data",
+            "source": "implicit",
+            "description": "Receive telemetry data from system"
+          }
+        ]
+      },
+      "manager_controller": {
+        "name": "TelemetryDataManager",
+        "functions": [
+          {
+            "name": "store_telemetrydata",
+            "source": "implicit",
+            "description": "Store and manage telemetry data"
+          },
+          {
+            "name": "monitor_telemetrydata_level",
+            "source": "implicit",
+            "description": "Monitor available quantity of telemetry data"
+          },
+          {
+            "name": "provide_telemetrydata",
+            "source": "implicit",
+            "description": "Provide telemetry data when requested"
+          },
+          {
+            "name": "schedule_telemetrydata_usage",
+            "source": "phase1_integration",
+            "description": "Schedule telemetry data usage based on temporal requirements: scheduled"
+          },
+          {
+            "name": "process_telemetry",
+            "source": "context",
+            "description": "Process real-time telemetry data"
+          },
+          {
+            "name": "validate_data",
+            "source": "context",
+            "description": "Validate data integrity and accuracy"
+          }
+        ],
+        "domain_specific": true
+      },
+      "output_boundary": null,
+      "entities": [],
+      "transformations": []
+    },
+    {
+      "resource_name": "telemetry data is",
+      "input_boundary": {
+        "name": "TelemetryDataIs Interface",
+        "functions": [
+          {
+            "name": "receive_data",
+            "source": "implicit",
+            "description": "Receive telemetry data is from system"
+          }
+        ]
+      },
+      "manager_controller": {
+        "name": "TelemetryDataIsManager",
+        "functions": [
+          {
+            "name": "store_telemetrydatais",
+            "source": "implicit",
+            "description": "Store and manage telemetry data is"
+          },
+          {
+            "name": "monitor_telemetrydatais_level",
+            "source": "implicit",
+            "description": "Monitor available quantity of telemetry data is"
+          },
+          {
+            "name": "provide_telemetrydatais",
+            "source": "implicit",
+            "description": "Provide telemetry data is when requested"
+          },
+          {
+            "name": "schedule_telemetrydatais_usage",
+            "source": "phase1_integration",
+            "description": "Schedule telemetry data is usage based on temporal requirements: scheduled"
+          },
+          {
+            "name": "process_telemetry",
+            "source": "context",
+            "description": "Process real-time telemetry data"
+          },
+          {
+            "name": "validate_data",
+            "source": "context",
+            "description": "Validate data integrity and accuracy"
+          }
+        ],
+        "domain_specific": true
+      },
+      "output_boundary": null,
+      "entities": [],
+      "transformations": []
+    }
+  ],
+  "all_objects": {
+    "input_boundaries": [
+      "RocketFuel Input",
+      "RocketFuelIs Input",
+      "Oxidizer Interface",
+      "OxidizerIs Interface",
+      "TelemetryData Interface",
+      "TelemetryDataIs Interface"
+    ],
+    "manager_controllers": [
+      "RocketFuelManager",
+      "RocketFuelIsManager",
+      "OxidizerManager",
+      "OxidizerIsManager",
+      "TelemetryDataManager",
+      "TelemetryDataIsManager"
+    ],
+    "output_boundaries": [],
+    "entities": []
+  }
+}

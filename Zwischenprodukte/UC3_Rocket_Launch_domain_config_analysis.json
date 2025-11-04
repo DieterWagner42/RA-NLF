@@ -1,0 +1,89 @@
+{
+  "capability_context": {
+    "capability_name": "Rocket Launch",
+    "domain": "rocket_science",
+    "domain_knowledge": [
+      "Safety is paramount in rocket operations",
+      "Precise timing is critical for launches",
+      "Multiple redundant systems are required",
+      "Environmental conditions affect operations",
+      "Fuel handling requires extreme caution",
+      "Trajectory calculations must be precise",
+      "Abort procedures are essential for safety",
+      "Communication with spacecraft is vital",
+      "Orbital mechanics govern spacecraft movement",
+      "Telemetry provides real-time vehicle status",
+      "Command & control systems manage missions",
+      "Ground networks enable global communication",
+      "Human-Equipment-Unit coordination is critical",
+      "Mission operations require 24/7 monitoring",
+      "Data downlink enables mission analysis",
+      "Redundant communication paths prevent loss",
+      "Command validation prevents erroneous operations",
+      "Fuel systems require precise control",
+      "Launch windows are time-critical",
+      "Telemetry monitors all systems",
+      "Range safety ensures public protection",
+      "Multi-stage separation sequences",
+      "Thrust vector control for steering",
+      "Weather conditions must be acceptable",
+      "All systems must be go for launch",
+      "Abort capabilities must be ready",
+      "Range must be clear of traffic"
+    ],
+    "excluded_aspects": [
+      "Rocket manufacturing",
+      "Component procurement",
+      "Historical mission analysis",
+      "Theoretical physics research",
+      "Rocket engine design"
+    ],
+    "related_capabilities": [
+      "Satellite Deployment",
+      "Space Station Operations",
+      "Planetary Missions",
+      "Mission Planning",
+      "Range Operations",
+      "Recovery Operations"
+    ]
+  },
+  "uc_title_analysis": {
+    "uc_title": "Execute Satellite Launch",
+    "solution_constraints": [
+      "Domain-specific constraint: launch"
+    ],
+    "possible_variants": [],
+    "scope_restrictions": []
+  },
+  "goal_analysis": {
+    "goal_text": "Mission control can launch satellite into orbit at scheduled time",
+    "temporal_requirements": [
+      "scheduled"
+    ],
+    "input_requirements": [],
+    "identified_controllers": [
+      "TimeManager"
+    ],
+    "identified_boundaries": [
+      "Time Input"
+    ]
+  },
+  "actors": [
+    {
+      "name": "Mission Control",
+      "type": "human",
+      "description": "Human actor in rocket_science domain"
+    },
+    {
+      "name": "Launch Sequencer",
+      "type": "non_human",
+      "description": "Non-human actor in rocket_science domain"
+    },
+    {
+      "name": "Range Safety System",
+      "type": "non_human",
+      "description": "Non-human actor in rocket_science domain"
+    }
+  ],
+  "context_summary": "Domain: rocket_science; Capability: Rocket Launch; Use Case: Execute Satellite Launch; Actors: Mission Control (human), Launch Sequencer (non_human), Range Safety System (non_human); Temporal Requirements: scheduled; Excluded: Rocket manufacturing, Component procurement..."
+}

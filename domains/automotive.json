@@ -1,0 +1,76 @@
+{
+  "domain_name": "automotive",
+  "description": "Vehicle systems, automotive control, and transportation",
+  "keywords": ["vehicle", "engine", "driving", "car", "automotive", "brake", "acceleration"],
+  "non_human_indicators": [
+    "engine control unit", "anti-lock braking system", "electronic stability control",
+    "cruise control system", "parking assist system", "collision avoidance system",
+    "adaptive cruise control", "lane keeping assist", "automatic transmission",
+    "fuel injection system", "ignition system", "emission control system",
+    "battery management system", "charging control system", "motor controller",
+    "navigation system", "infotainment system", "climate control system",
+    "tire pressure monitoring system", "airbag system", "vehicle dynamics control",
+    "telematics control unit", "vehicle communication system", "cellular communication module",
+    "wifi communication system", "bluetooth communication", "vehicle area network",
+    "controller area network", "on-board diagnostics", "remote diagnostics system",
+    "fleet management system", "traffic management center", "intelligent transportation system",
+    "vehicle-to-vehicle communication", "vehicle-to-infrastructure communication", "emergency call system",
+    "stolen vehicle tracking", "usage-based insurance system", "predictive maintenance system",
+    "over-the-air update system", "cybersecurity monitoring", "intrusion detection system"
+  ],
+  "domain_knowledge": [
+    "Vehicle safety systems are essential",
+    "Engine performance depends on maintenance",
+    "Driver input affects vehicle behavior", 
+    "Environmental conditions impact performance",
+    "Braking systems require regular inspection",
+    "Electronic systems control modern vehicles",
+    "Fuel efficiency affects emissions",
+    "Safety regulations must be met"
+  ],
+  "term_specific_knowledge": {
+    "vehicle": [
+      "Multiple safety systems protect occupants",
+      "Sensors monitor vehicle status",
+      "Control systems optimize performance",
+      "Maintenance ensures reliability"
+    ],
+    "engine": [
+      "Fuel injection controls power",
+      "Timing affects efficiency",
+      "Temperature monitoring prevents damage",
+      "Emission controls reduce pollution"
+    ],
+    "brake": [
+      "Anti-lock systems prevent skidding",
+      "Brake assist improves stopping",
+      "Electronic distribution optimizes force",
+      "Regular maintenance ensures safety"
+    ],
+    "electric": [
+      "Battery management ensures longevity",
+      "Motor control provides smooth operation",
+      "Charging systems manage power",
+      "Regenerative braking recovers energy"
+    ]
+  },
+  "exclusion_patterns": {
+    "vehicle": [
+      "Vehicle manufacturing",
+      "Parts procurement",
+      "Marketing and sales",
+      "Dealership operations"
+    ],
+    "engine": [
+      "Engine design",
+      "Fuel refining",
+      "Emissions regulations"
+    ]
+  },
+  "related_capabilities": {
+    "vehicle": ["Traffic Management", "Parking Systems", "Vehicle Maintenance"],
+    "engine": ["Fuel Systems", "Emission Control", "Performance Tuning"],
+    "driving": ["Navigation Systems", "Safety Systems", "Driver Assistance"],
+    "electric": ["Charging Infrastructure", "Battery Management", "Energy Optimization"]
+  }
+}

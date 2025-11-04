@@ -1,0 +1,39 @@
+{
+  "capability_context": {
+    "capability_name": "Coffee Preparation",
+    "domain": "food_preparation",
+    "domain_knowledge": [
+      "Food safety and hygiene are critical",
+      "Temperature control prevents spoilage",
+      "Timing affects quality and safety",
+      "Ingredients have storage requirements",
+      "Coffee beans need grinding",
+      "Hot water is required for brewing",
+      "Milk is perishable and needs cooling",
+      "Filters are used for brewing process"
+    ],
+    "excluded_aspects": [],
+    "related_capabilities": []
+  },
+  "uc_title_analysis": {
+    "uc_title": "Prepare Espresso",
+    "solution_constraints": [],
+    "possible_variants": [],
+    "scope_restrictions": []
+  },
+  "goal_analysis": {
+    "goal_text": "User wants to drink an espresso",
+    "temporal_requirements": [],
+    "input_requirements": [],
+    "identified_controllers": [],
+    "identified_boundaries": []
+  },
+  "actors": [
+    {
+      "name": "User",
+      "type": "human",
+      "description": "Human actor"
+    }
+  ],
+  "context_summary": "Domain: food_preparation; Capability: Coffee Preparation; Use Case: Prepare Espresso; Actors: User (human)"
+}

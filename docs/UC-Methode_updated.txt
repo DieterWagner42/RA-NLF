@@ -1,0 +1,239 @@
+UC-Methode.txt - Phase 3 Rule Update
+
+ALLGEMEINE KOORDINATOR-REGEL für Phase 3:
+
+**Externe Ereignis-Controller sind KEINE Koordinatoren!**
+
+**Muster:** Actor → Boundary → Empfangender Controller → Coordinator Controller
+
+**Beispiele für externe Ereignisse:**
+- Timer/Zeit-Events
+- Sensoren (Temperatur, Druck, Bewegung)
+- Benutzer-Input (Buttons, Touch, Voice)
+- Netzwerk-Events (HTTP-Requests, Messages)
+- Hardware-Signale (Interrupts, GPIO)
+- System-Events (File-Changes, Database-Triggers)
+
+**Regel-Anwendung:**
+1. Der **empfangende Controller** behandelt NUR das spezifische Ereignis
+   - Beispiel: ZeitManager behandelt nur Zeit-Trigger
+   - Beispiel: SensorManager behandelt nur Sensor-Werte
+   - Beispiel: InputManager behandelt nur User-Input
+
+2. Der **Coordinator Controller** koordiniert alle nachgelagerten Aktivitäten
+   - Beispiel: GetränkeOrchestrator koordiniert alle Manager
+   - Beispiel: SystemOrchestrator koordiniert verschiedene Subsysteme
+   - Beispiel: WorkflowManager koordiniert Geschäftsprozesse
+
+**Warum diese Regel?**
+- **Separation of Concerns:** Ereignis-Behandlung ≠ Koordination
+- **Single Responsibility:** Jeder Controller hat genau eine Aufgabe
+- **Testbarkeit:** Ereignis-Controller und Coordinator getrennt testbar
+- **Wiederverwendbarkeit:** ZeitManager kann in verschiedenen UCs verwendet werden
+- **Klarheit:** Klare Trennung zwischen "was triggert" und "was koordiniert"
+
+**Anwendung in UC1 Coffee:**
+Timer → Zeit-Boundary → ZeitManager → GetränkeOrchestrator → Alle Manager
+
+**Anwendung in anderen Domänen:**
+- Sensor → Sensor-Boundary → SensorManager → AutopilotOrchestrator → Navigation/Control
+- User → Input-Boundary → InputManager → ApplicationOrchestrator → UI/Business Logic
+- Network → API-Boundary → RequestManager → ServiceOrchestrator → Business Services
+
+Diese Regel ist fundamental für saubere RUP Analysis Class Diagrams!
+
+================================================================================
+
+ALLGEMEINE DOMAIN-CONTEXT-REGEL für Phase 2:
+
+**Implizite Ressourcen durch Domain-Wissen ableiten!**
+
+**Grundprinzip:** Phase 2 analysiert NICHT nur explizite Preconditions, sondern leitet auch implizite Ressourcen aus Domain-Kontext ab.
+
+**Muster:** Explizite Ressourcen + Domain-Regeln → Implizite Ressourcen
+
+**Domain-spezifische Ableitungsregeln:**
+
+**BEVERAGE_PREPARATION:**
+- Regel: "Getränke benötigen immer einen Behälter"
+- Trigger: Coffee/Tea/Milk/Water vorhanden + KEIN Behälter in Preconditions
+- Ableitung: → "cup" / "tasse" / "mug"
+
+**AUTOMOTIVE:**
+- Regel: "Fahrzeuge benötigen Energie"
+- Trigger: Engine/Motor vorhanden + KEINE Energiequelle in Preconditions  
+- Ableitung: → "fuel" / "battery" / "electricity"
+
+**ROCKET_SCIENCE:**
+- Regel: "Raketen benötigen Oxidizer für Verbrennung"
+- Trigger: Fuel vorhanden + KEIN Oxidizer in Preconditions
+- Ableitung: → "oxygen" / "oxidizer"
+
+**TELECOMMUNICATIONS:**
+- Regel: "Kommunikation benötigt Übertragungsmedium"
+- Trigger: Data/Signal vorhanden + KEIN Medium in Preconditions
+- Ableitung: → "network" / "cable" / "antenna"
+
+**Implementierung in Phase 2:**
+```
+1. Extrahiere explizite Ressourcen aus Preconditions
+2. Prüfe Domain-Context-Regeln für diese Ressourcen
+3. Leite implizite Ressourcen ab (wenn nicht bereits vorhanden)
+4. Analysiere ALLE Ressourcen (explizit + implizit) mit 3-Step-Schema
+```
+
+**Warum diese Regel?**
+- **Vollständigkeit:** Verhindert fehlende essenzielle Ressourcen
+- **Domain-Expertise:** Nutzt Fachwissen der jeweiligen Domäne
+- **Realitätsnähe:** Spiegelt echte Anforderungen wider
+- **Konsistenz:** Systematische Anwendung über alle UCs
+- **Qualität:** Bessere RUP Analysis Class Diagrams
+
+**Anwendung Beispiel UC1 Coffee:**
+Preconditions: Coffee beans, Water, Milk
+Domain-Rule triggered: "Beverages need containers"
+→ Derived: Cup
+Final Resources: Coffee beans, Water, Milk, Cup
+
+**Anwendung andere Domänen:**
+- **Automotive UC:** Engine + Domain-Rule → Battery/Fuel
+- **Rocket UC:** Fuel + Domain-Rule → Oxidizer/Oxygen  
+- **Telecom UC:** Data + Domain-Rule → Network/Antenna
+
+Diese Regel ist fundamental für vollständige Phase 2 Betriebsmittel-Analyse!
+
+================================================================================
+
+ALLGEMEINE KONTROLLFLUSS-REGELN für Phase 4:
+
+**Kontrollfluss-Integrität durch systematische Koordination!**
+
+**Grundprinzip:** Phase 4 analysiert UC-Steps und stellt sicher, dass Kontrollfluss-Regeln eingehalten werden.
+
+**Kontrollfluss-Typen:**
+- **SEQUENTIAL:** Schritte mit Abhängigkeiten müssen nacheinander ausgeführt werden
+- **PARALLEL:** Unabhängige Schritte können gleichzeitig ausgeführt werden  
+- **CONDITIONAL:** Entscheidungspunkte führen zu alternativen Pfaden
+- **EXCEPTION:** Fehlerbehandlung und alternative Flows
+
+**Phase 4 Kontrollfluss-Regeln:**
+
+**1. KOORDINATOR-ORCHESTRIERUNG:**
+- Regel: "Coordinator Controller orchestriert ALLE parallelen Aktivitäten"
+- Beispiel: GeträenkeOrchestrator koordiniert B2a (Water), B2b (Filter), B2c (Grinding)
+- Grund: Verhindert Race Conditions und stellt Synchronisation sicher
+
+**2. EVENT-HANDLER-LIMITATION:**
+- Regel: "Event Handler (Timer, Sensor) koordinieren KEINE Business Logic"
+- Beispiel: ZeitManager triggert nur → GeträenkeOrchestrator koordiniert
+- Grund: Separation of Concerns zwischen Ereignis und Koordination
+
+**3. ABHÄNGIGKEITS-SEQUENZIERUNG:**
+- Regel: "Ressourcen-abhängige Schritte müssen sequenziell ausgeführt werden"
+- Beispiel: B2c (Grinding) → B3a (Brewing) - Ground Coffee ist Dependency
+- Grund: Datenintegrität und korrekte Reihenfolge
+
+**4. PARALLELISIERUNGS-OPTIMIERUNG:**
+- Regel: "Unabhängige Ressourcen-Operationen können parallel ausgeführt werden"
+- Beispiel: B2a (Water Heating) || B2b (Filter Prep) || B2c (Grinding)
+- Grund: Performance-Optimierung bei Unabhängigkeit
+
+**5. ENTSCHEIDUNGS-VERANTWORTUNG:**
+- Regel: "Entscheidungspunkte werden vom zuständigen Manager behandelt"
+- Beispiel: "Too little water" → WaterManager entscheidet → Coordinator reagiert
+- Grund: Domain-Expertise bei der richtigen Komponente
+
+**6. FEHLER-PROPAGATION:**
+- Regel: "Fehler propagieren durch Koordinations-Hierarchie"
+- Beispiel: WaterManager Error → GeträenkeOrchestrator → User Interface
+- Grund: Zentrale Fehlerbehandlung und User Information
+
+**Implementierung in Phase 4:**
+```
+1. Analysiere UC-Steps auf Kontrollfluss-Patterns
+2. Identifiziere Entscheidungspunkte und Alternative Flows
+3. Bestimme Parallelisierungs-Möglichkeiten
+4. Weise Koordinations-Verantwortungen zu
+5. Validiere Kontrollfluss-Regeln
+```
+
+**UC1 Coffee Kontrollfluss-Beispiel:**
+```
+B1: Timer → ZeitManager → GeträenkeOrchestrator (Event → Coordination)
+B2a||B2b||B2c: Parallel execution (Independent resources)
+B2c → B3a: Sequential dependency (Ground coffee needed)
+A1 at B2a: WaterManager decision → GeträenkeOrchestrator error handling
+```
+
+================================================================================
+
+ALLGEMEINE DATENFLUSS-REGELN für Phase 5:
+
+**Datenfluss-Integrität durch systematische Transformation!**
+
+**Grundprinzip:** Phase 5 analysiert Daten-Entitäten und stellt sicher, dass Datenfluss-Regeln eingehalten werden.
+
+**Datenfluss-Typen:**
+- **INPUT:** Rohdaten-Eingabe in das System
+- **TRANSFORMATION:** Datenverarbeitung und -umwandlung
+- **VALIDATION:** Datenvalidierung und Qualitätsprüfung
+- **OUTPUT:** Ergebnis-Ausgabe an Benutzer/System
+- **STORAGE:** Zwischenspeicherung von Daten
+- **AGGREGATION:** Zusammenführung mehrerer Datenquellen
+
+**Phase 5 Datenfluss-Regeln:**
+
+**1. INPUT-VALIDIERUNG:**
+- Regel: "Alle Input-Daten müssen vor Verarbeitung validiert werden"
+- Beispiel: Coffee Beans → Quality Check → CoffeeBeansManager
+- Grund: Datenqualität und System-Stabilität
+
+**2. TRANSFORMATIONS-INTEGRITÄT:**
+- Regel: "Daten-Transformationen müssen Integrität bewahren"
+- Beispiel: Coffee Beans → Grinding → Ground Coffee (Qualität erhalten)
+- Grund: Nachvollziehbarkeit und Qualitätssicherung
+
+**3. ZUSTANDSKONSISTENZ:**
+- Regel: "Entitäts-Zustände müssen konsistent sein"
+- Beispiel: RAW → VALIDATED → PROCESSED → READY → CONSUMED
+- Grund: Eindeutige Datenlebenszyklus-Verfolgung
+
+**4. ABHÄNGIGKEITS-REIHENFOLGE:**
+- Regel: "Daten-Abhängigkeiten bestimmen Verarbeitungs-Reihenfolge"
+- Beispiel: Ground Coffee + Hot Water + Cup → Brewed Coffee
+- Grund: Korrekte Datenverarbeitung und -zusammenführung
+
+**5. OUTPUT-VOLLSTÄNDIGKEIT:**
+- Regel: "Alle erforderlichen Output-Daten müssen produziert werden"
+- Beispiel: Milk Coffee → User (Complete product delivery)
+- Grund: Benutzerzufriedenheit und UC-Ziel-Erfüllung
+
+**6. WASTE-MANAGEMENT:**
+- Regel: "Abfall-Daten müssen ordnungsgemäß behandelt werden"
+- Beispiel: Used Coffee Grounds → Waste Output → Disposal
+- Grund: Systemhygiene und Ressourcen-Effizienz
+
+**Implementierung in Phase 5:**
+```
+1. Extrahiere Daten-Entitäten aus Phase 2 Ressourcen
+2. Identifiziere Daten-Transformationen
+3. Erstelle Datenfluss-Ketten
+4. Definiere Validierungs-Punkte  
+5. Validiere Datenfluss-Regeln
+```
+
+**UC1 Coffee Datenfluss-Beispiel:**
+```
+Input: Coffee Beans (RAW) → Validation → CoffeeBeansManager
+Transform: Beans → Grinding → Ground Coffee (PROCESSED)
+Aggregate: Ground Coffee + Hot Water + Steamed Milk → Milk Coffee (READY)
+Output: Milk Coffee → User (CONSUMED)
+Waste: Used Grounds → Waste Output (DISPOSED)
+```
+
+**Integration Phase 4 + 5:**
+- **Kontrollfluss** bestimmt WANN und WIE Operationen ausgeführt werden
+- **Datenfluss** bestimmt WAS verarbeitet wird und WOHIN es fließt
+- **Koordination:** GeträenkeOrchestrator steuert beide Aspekte gemeinsam
+
+Diese Regeln sind fundamental für vollständige UC-Methode Phase 4+5 Analyse!

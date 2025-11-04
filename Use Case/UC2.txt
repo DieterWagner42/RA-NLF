@@ -1,0 +1,39 @@
+Capability: Coffee Preparation
+Feature: Espresso Feature
+
+Use Case 2: Prepare Espresso
+Goal: User wants to drink an espresso
+
+Preconditions:
+- Coffee beans are available in the system
+- Water is available in the system
+
+Actors: User
+
+Main Flow:
+B1 (trigger) User request a espresso
+B2a The system activates the water heater
+B2b The system prepares filter
+B2c The system grinds the set amount at the set grinding degree directly into the filter
+B2d The system retrieves cup from storage container and places it under the filter
+B3 The system starts water compressor to generate appropriate water pressure for espresso
+B4 The system begins pressing hot water through the coffee grounds
+B5 The system outputs a message to user
+B6 End UC
+
+Postcondition:
+User has received an espresso.
+
+Alternative Flows:
+A1 at B3 Compressor defective
+A1.1 The system switches off water heater and compressor
+A1.2 The system outputs an error message to user
+A1.3 End UC
+
+Postcondition:
+User has not received any coffee.
+
+Extension Flows:
+E1 B4-B5 (trigger) User wants sugar in coffee
+E1.1 The system adds sugar to the cup
+E1.2 Continue in main flow

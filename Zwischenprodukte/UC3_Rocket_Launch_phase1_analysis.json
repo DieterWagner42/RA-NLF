@@ -1,0 +1,65 @@
+{
+  "capability_context": {
+    "capability_name": "Rocket Launch",
+    "domain": "rocket_science",
+    "domain_knowledge": [
+      "Safety is paramount in rocket operations",
+      "Precise timing is critical for launches",
+      "Multiple redundant systems are required",
+      "Environmental conditions affect operations",
+      "Fuel handling requires extreme caution",
+      "Trajectory calculations must be precise",
+      "Abort procedures are essential for safety",
+      "Fuel systems require precise control",
+      "Launch windows are time-critical",
+      "Telemetry monitors all systems",
+      "Range safety ensures public protection"
+    ],
+    "excluded_aspects": [
+      "Rocket manufacturing",
+      "Component procurement",
+      "Historical mission analysis",
+      "Theoretical physics research"
+    ],
+    "related_capabilities": [
+      "Satellite Deployment",
+      "Space Station Operations",
+      "Planetary Missions",
+      "Mission Planning",
+      "Range Operations",
+      "Recovery Operations"
+    ]
+  },
+  "uc_title_analysis": {
+    "uc_title": "Execute Satellite Launch",
+    "solution_constraints": [],
+    "possible_variants": [],
+    "scope_restrictions": []
+  },
+  "goal_analysis": {
+    "goal_text": "Mission control can launch satellite into orbit at scheduled time",
+    "temporal_requirements": [
+      "scheduled"
+    ],
+    "input_requirements": [],
+    "identified_controllers": [
+      "TimeManager"
+    ],
+    "identified_boundaries": [
+      "Time Input"
+    ]
+  },
+  "actors": [
+    {
+      "name": "Mission Control",
+      "type": "human",
+      "description": "Human actor"
+    },
+    {
+      "name": "Launch Sequencer",
+      "type": "human",
+      "description": "Human actor"
+    }
+  ],
+  "context_summary": "Domain: rocket_science; Capability: Rocket Launch; Use Case: Execute Satellite Launch; Actors: Mission Control (human), Launch Sequencer (human); Temporal Requirements: scheduled; Excluded: Rocket manufacturing, Component procurement, Historical mission analysis, Theoretical physics research"
+}

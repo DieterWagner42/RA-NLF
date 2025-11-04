@@ -1,0 +1,55 @@
+{
+  "capability_context": {
+    "capability_name": "Spacecraft Operations",
+    "domain": "rocket_science",
+    "domain_knowledge": [
+      "Safety is paramount in rocket operations",
+      "Precise timing is critical for launches",
+      "Multiple redundant systems are required",
+      "Environmental conditions affect operations",
+      "Fuel handling requires extreme caution",
+      "Trajectory calculations must be precise",
+      "Abort procedures are essential for safety",
+      "Life support systems are critical",
+      "Communication with ground is essential",
+      "Orbital mechanics determine trajectories",
+      "Thermal control maintains temperatures"
+    ],
+    "excluded_aspects": [
+      "Spacecraft design process",
+      "Material science research",
+      "Vendor negotiations"
+    ],
+    "related_capabilities": [
+      "Orbital Maneuvers",
+      "Re-entry Operations",
+      "Deep Space Navigation"
+    ]
+  },
+  "uc_title_analysis": {
+    "uc_title": "Dock with Space Station",
+    "solution_constraints": [],
+    "possible_variants": [],
+    "scope_restrictions": []
+  },
+  "goal_analysis": {
+    "goal_text": "Spacecraft can autonomously dock with ISS",
+    "temporal_requirements": [],
+    "input_requirements": [],
+    "identified_controllers": [],
+    "identified_boundaries": []
+  },
+  "actors": [
+    {
+      "name": "Flight Controller",
+      "type": "non_human",
+      "description": "Non-human actor"
+    },
+    {
+      "name": "Automated Docking System",
+      "type": "non_human",
+      "description": "Non-human actor"
+    }
+  ],
+  "context_summary": "Domain: rocket_science; Capability: Spacecraft Operations; Use Case: Dock with Space Station; Actors: Flight Controller (non_human), Automated Docking System (non_human); Excluded: Spacecraft design process, Material science research, Vendor negotiations"
+}

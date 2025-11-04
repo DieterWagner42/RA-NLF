@@ -1,0 +1,116 @@
+{
+  "phase1_summary": "Domain: nuclear; Capability: Nuclear Reactor Control; Use Case: Emergency Reactor Shutdown; Actors: Operator (human), Reactor Protection System (non_human); Excluded: Reactor design, Nuclear waste disposal...",
+  "phase2_summary": "Analyzed 2 resources from preconditions; Created 2 Manager Controllers; Identified 2 Boundary Objects; Found 2 context-based transformations; Domain: nuclear",
+  "resource_analyses": [
+    {
+      "resource_name": "coolant",
+      "input_boundary": {
+        "name": "Coolant Interface",
+        "functions": [
+          {
+            "name": "receive_data",
+            "source": "implicit",
+            "description": "Receive coolant from system"
+          }
+        ]
+      },
+      "manager_controller": {
+        "name": "CoolantManager",
+        "functions": [
+          {
+            "name": "store_coolant",
+            "source": "implicit",
+            "description": "Store and manage coolant"
+          },
+          {
+            "name": "monitor_coolant_level",
+            "source": "implicit",
+            "description": "Monitor available quantity of coolant"
+          },
+          {
+            "name": "provide_coolant",
+            "source": "implicit",
+            "description": "Provide coolant when requested"
+          },
+          {
+            "name": "circulate_coolant",
+            "source": "context",
+            "description": "Circulate coolant through reactor"
+          },
+          {
+            "name": "monitor_temperature",
+            "source": "context",
+            "description": "Monitor coolant temperature"
+          }
+        ],
+        "domain_specific": true
+      },
+      "output_boundary": null,
+      "entities": [],
+      "transformations": [
+        "validated coolant -> circulation -> heat transfer"
+      ]
+    },
+    {
+      "resource_name": "coolant is",
+      "input_boundary": {
+        "name": "CoolantIs Interface",
+        "functions": [
+          {
+            "name": "receive_data",
+            "source": "implicit",
+            "description": "Receive coolant is from system"
+          }
+        ]
+      },
+      "manager_controller": {
+        "name": "CoolantIsManager",
+        "functions": [
+          {
+            "name": "store_coolantis",
+            "source": "implicit",
+            "description": "Store and manage coolant is"
+          },
+          {
+            "name": "monitor_coolantis_level",
+            "source": "implicit",
+            "description": "Monitor available quantity of coolant is"
+          },
+          {
+            "name": "provide_coolantis",
+            "source": "implicit",
+            "description": "Provide coolant is when requested"
+          },
+          {
+            "name": "circulate_coolant",
+            "source": "context",
+            "description": "Circulate coolant through reactor"
+          },
+          {
+            "name": "monitor_temperature",
+            "source": "context",
+            "description": "Monitor coolant temperature"
+          }
+        ],
+        "domain_specific": true
+      },
+      "output_boundary": null,
+      "entities": [],
+      "transformations": [
+        "validated coolant -> circulation -> heat transfer"
+      ]
+    }
+  ],
+  "all_objects": {
+    "input_boundaries": [
+      "Coolant Interface",
+      "CoolantIs Interface"
+    ],
+    "manager_controllers": [
+      "CoolantManager",
+      "CoolantIsManager"
+    ],
+    "output_boundaries": [],
+    "entities": []
+  }
+}

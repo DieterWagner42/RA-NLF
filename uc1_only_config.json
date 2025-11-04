@@ -1,0 +1,28 @@
+{
+  "analysis_config": {
+    "version": "1.0",
+    "description": "Single UC Analysis - UC1 only",
+    "domain": "beverage_preparation",
+    "output_format": [
+      "json",
+      "csv",
+      "diagram"
+    ]
+  },
+  "use_cases": [
+    {
+      "id": "UC1",
+      "name": "Prepare Milk Coffee",
+      "file": "Use Case/UC1.txt",
+      "enabled": true,
+      "priority": 1
+    }
+  ],
+  "analysis_options": {
+    "generate_diagrams": true,
+    "generate_csv": true,
+    "auto_organize_files": true,
+    "backup_previous": true,
+    "verbose_output": true
+  }
+}

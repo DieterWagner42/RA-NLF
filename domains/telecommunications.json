@@ -1,0 +1,85 @@
+{
+  "domain_name": "telecommunications",
+  "description": "Communication networks, command & control systems, and information management",
+  "keywords": ["network", "wireless", "cellular", "satellite", "antenna", "frequency", "communication", "data"],
+  "non_human_indicators": [
+    "network management system", "base station controller", "mobile switching center",
+    "network operations center", "command and control system", "communication hub",
+    "satellite ground station", "network control center", "traffic management system",
+    "service control point", "home location register", "visitor location register",
+    "authentication center", "equipment identity register", "gateway mobile switching center",
+    "radio network controller", "node b", "evolved node b", "mobility management entity",
+    "serving gateway", "packet data network gateway", "home subscriber server",
+    "policy and charging rules function", "diameter routing agent", "charging trigger function",
+    "telecommunications management network", "element management system", "network management system",
+    "operational support system", "business support system", "service delivery platform",
+    "intelligent network", "service switching point", "service control point",
+    "signal transfer point", "signaling system 7", "common channel signaling",
+    "integrated services digital network", "asynchronous transfer mode", "multiprotocol label switching",
+    "software defined network", "network function virtualization", "cloud radio access network"
+  ],
+  "domain_knowledge": [
+    "Network reliability requires redundancy",
+    "Quality of service affects user experience",
+    "Security protocols protect data transmission",
+    "Network management enables proactive maintenance",
+    "Command & control systems coordinate operations",
+    "Real-time monitoring prevents service degradation",
+    "Human-Equipment-Unit interfaces enable management",
+    "Automation reduces operational complexity",
+    "Fault management ensures service continuity",
+    "Performance monitoring optimizes resources",
+    "Configuration management maintains consistency",
+    "Security management protects network integrity"
+  ],
+  "term_specific_knowledge": {
+    "network": [
+      "Multiple routing paths provide redundancy",
+      "Load balancing optimizes performance",
+      "Traffic engineering manages congestion",
+      "Network slicing enables service differentiation"
+    ],
+    "communication": [
+      "Protocol stacks enable interoperability",
+      "Encryption protects data in transit",
+      "Error correction ensures data integrity",
+      "Flow control prevents network congestion"
+    ],
+    "control": [
+      "Command & control systems coordinate operations",
+      "Centralized management enables optimization",
+      "Distributed control improves resilience",
+      "Policy enforcement ensures compliance"
+    ],
+    "monitoring": [
+      "Real-time telemetry enables proactive management",
+      "Performance metrics guide optimization",
+      "Fault detection enables rapid response",
+      "Trend analysis predicts problems"
+    ],
+    "management": [
+      "Configuration management maintains consistency",
+      "Change management controls modifications",
+      "Capacity planning ensures adequate resources",
+      "Service level management monitors quality"
+    ]
+  },
+  "exclusion_patterns": {
+    "network": [
+      "Network equipment manufacturing",
+      "Standards development",
+      "Regulatory compliance procedures"
+    ],
+    "communication": [
+      "Protocol design",
+      "Antenna design",
+      "RF engineering"
+    ]
+  },
+  "related_capabilities": {
+    "network": ["Network Security", "Network Optimization", "Fault Management"],
+    "communication": ["Data Security", "Protocol Management", "Signal Processing"],
+    "control": ["Operations Management", "Service Management", "Resource Management"],
+    "monitoring": ["Performance Analysis", "Fault Detection", "Capacity Planning"]
+  }
+}

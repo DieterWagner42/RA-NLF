@@ -1,0 +1,147 @@
+#!/usr/bin/env python3
+"""
+Generate overview diagram highlighting the key improvements to the Generic UC Analyzer
+"""
+
+def generate_improvements_overview():
+    svg_content = '''<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1000" height="600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .header { fill: #1e3a8a; stroke: none; }
+      .improvement { fill: #10b981; stroke: #065f46; stroke-width: 2; }
+      .feature { fill: #3b82f6; stroke: #1e40af; stroke-width: 2; }
+      .result { fill: #f59e0b; stroke: #92400e; stroke-width: 2; }
+      .text { font-family: Arial, sans-serif; font-size: 12px; fill: white; text-anchor: middle; }
+      .title { font-family: Arial, sans-serif; font-size: 18px; font-weight: bold; fill: white; text-anchor: middle; }
+      .subtitle { font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; fill: white; text-anchor: middle; }
+      .small-text { font-family: Arial, sans-serif; font-size: 10px; fill: white; text-anchor: middle; }
+    </style>
+  </defs>
+  
+  <!-- Header -->
+  <rect x="0" y="0" width="1000" height="60" class="header" />
+  <text x="500" y="35" class="title">Generic UC Analyzer - Key Improvements & Enhancements</text>
+  
+  <!-- Improvement 1: Enhanced UC-Methode Rules -->
+  <rect x="20" y="80" width="300" height="120" class="improvement" />
+  <text x="170" y="105" class="subtitle">1. Enhanced UC-Methode Rules</text>
+  <text x="170" y="125" class="text">Rule 1: Actor + Transaction Verb → Boundary</text>
+  <text x="170" y="140" class="text">Rule 2: Sequential + Parallel Flow Handling</text>
+  <text x="170" y="155" class="text">Rules 3-5: Complete UC-Methode Compliance</text>
+  <text x="170" y="175" class="text">✓ Correct parallel step linking</text>
+  <text x="170" y="190" class="text">✓ Enhanced boundary generation</text>
+  
+  <!-- Improvement 2: Multiple Data Flows -->
+  <rect x="350" y="80" width="300" height="120" class="improvement" />
+  <text x="500" y="105" class="subtitle">2. Multiple Data Flows per Step</text>
+  <text x="500" y="125" class="text">Enhanced preposition semantics:</text>
+  <text x="500" y="140" class="text">Before preposition → USE relationship</text>
+  <text x="500" y="155" class="text">After preposition → PROVIDE relationship</text>
+  <text x="500" y="175" class="text">✓ Multiple USE entities per controller</text>
+  <text x="500" y="190" class="text">✓ Multiple PROVIDE entities per controller</text>
+  
+  <!-- Improvement 3: Enhanced CSV Export -->
+  <rect x="680" y="80" width="300" height="120" class="improvement" />
+  <text x="830" y="105" class="subtitle">3. Enhanced CSV Export</text>
+  <text x="830" y="125" class="text">12 columns (was 6):</text>
+  <text x="830" y="140" class="text">+ Control Flow Source/Type/Rule</text>
+  <text x="830" y="155" class="text">+ Data Flow Entity/Type/Description</text>
+  <text x="830" y="175" class="text">✓ One row per data flow relationship</text>
+  <text x="830" y="190" class="text">✓ Complete traceability</text>
+  
+  <!-- Feature 1: Domain-Agnostic -->
+  <rect x="20" y="220" width="200" height="100" class="feature" />
+  <text x="120" y="245" class="subtitle">Domain-Agnostic</text>
+  <text x="120" y="265" class="text">Works with any domain:</text>
+  <text x="120" y="280" class="text">• rocket_science</text>
+  <text x="120" y="295" class="text">• beverage_preparation</text>
+  <text x="120" y="310" class="text">• automotive, nuclear, etc.</text>
+  
+  <!-- Feature 2: Advanced NLP -->
+  <rect x="240" y="220" width="200" height="100" class="feature" />
+  <text x="340" y="245" class="subtitle">Advanced NLP</text>
+  <text x="340" y="265" class="text">• Compound noun preprocessing</text>
+  <text x="340" y="280" class="text">• spaCy integration</text>
+  <text x="340" y="295" class="text">• Domain-specific patterns</text>
+  <text x="340" y="310" class="text">• Context-aware analysis</text>
+  
+  <!-- Feature 3: Multi-UC Support -->
+  <rect x="460" y="220" width="200" height="100" class="feature" />
+  <text x="560" y="245" class="subtitle">Multi-UC Support</text>
+  <text x="560" y="265" class="text">• Combined RA diagrams</text>
+  <text x="560" y="280" class="text">• Shared component detection</text>
+  <text x="560" y="295" class="text">• Domain orchestrators</text>
+  <text x="560" y="310" class="text">• Integration views</text>
+  
+  <!-- Feature 4: Comprehensive Validation -->
+  <rect x="680" y="220" width="200" height="100" class="feature" />
+  <text x="780" y="245" class="subtitle">Validation & Warnings</text>
+  <text x="780" y="265" class="text">• UC-Methode compliance</text>
+  <text x="780" y="280" class="text">• Actor usage validation</text>
+  <text x="780" y="295" class="text">• Implementation warnings</text>
+  <text x="780" y="310" class="text">• Best practice suggestions</text>
+  
+  <!-- Results Section -->
+  <rect x="20" y="340" width="960" height="80" class="result" />
+  <text x="500" y="365" class="subtitle">Example Results: UC3 Rocket Launch Analysis</text>
+  <text x="150" y="385" class="text">99 RA Classes</text>
+  <text x="300" y="385" class="text">65 Control Flows</text>
+  <text x="450" y="385" class="text">15 Data Flows</text>
+  <text x="600" y="385" class="text">5 Parallel Patterns</text>
+  <text x="750" y="385" class="text">35 UC Steps</text>
+  <text x="850" y="385" class="text">4 Domains</text>
+  
+  <text x="150" y="405" class="text">Generated</text>
+  <text x="300" y="405" class="text">Rule-compliant</text>
+  <text x="450" y="405" class="text">Semantic analysis</text>
+  <text x="600" y="405" class="text">Detected</text>
+  <text x="750" y="405" class="text">Processed</text>
+  <text x="850" y="405" class="text">Supported</text>
+  
+  <!-- Output Formats -->
+  <rect x="20" y="440" width="150" height="60" class="feature" />
+  <text x="95" y="465" class="subtitle">JSON Export</text>
+  <text x="95" y="485" class="text">Complete metadata</text>
+  
+  <rect x="190" y="440" width="150" height="60" class="feature" />
+  <text x="265" y="465" class="subtitle">Enhanced CSV</text>
+  <text x="265" y="485" class="text">Multi-flow analysis</text>
+  
+  <rect x="360" y="440" width="150" height="60" class="feature" />
+  <text x="435" y="465" class="subtitle">RA Diagrams</text>
+  <text x="435" y="485" class="text">RUP-compliant SVG</text>
+  
+  <rect x="530" y="440" width="150" height="60" class="feature" />
+  <text x="605" y="465" class="subtitle">Multi-UC Views</text>
+  <text x="605" y="485" class="text">Integration analysis</text>
+  
+  <rect x="700" y="440" width="150" height="60" class="feature" />
+  <text x="775" y="465" class="subtitle">Safety Analysis</text>
+  <text x="775" y="485" class="text">Operational materials</text>
+  
+  <!-- Usage Examples -->
+  <rect x="20" y="520" width="960" height="60" style="fill: #374151; stroke: #1f2937; stroke-width: 2;" />
+  <text x="500" y="540" class="subtitle">Usage Examples</text>
+  <text x="200" y="555" class="text">python src/generic_uc_analyzer.py</text>
+  <text x="500" y="555" class="text">Analyze UC3 rocket launch</text>
+  <text x="750" y="555" class="text">Generate enhanced CSV</text>
+  <text x="200" y="570" class="text">Single UC analysis</text>
+  <text x="500" y="570" class="text">Multi-domain support</text>
+  <text x="750" y="570" class="text">Complete flow traceability</text>
+  
+</svg>'''
+    
+    return svg_content
+
+def main():
+    svg_content = generate_improvements_overview()
+    
+    # Save SVG file
+    with open("Generic_UC_Analyzer_Improvements.svg", 'w', encoding='utf-8') as f:
+        f.write(svg_content)
+    
+    print("Improvements overview generated: Generic_UC_Analyzer_Improvements.svg")
+
+if __name__ == "__main__":
+    main()

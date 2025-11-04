@@ -1,0 +1,324 @@
+{
+  "summary": "Enhanced analysis of 7 resources with validation; Created 7 validation controllers; Generated 7 validation boundaries; Established 7 manager controllers; Identified 7 boundary objects; Domain: beverage_preparation; Applied validation state transitions: RAW->VALIDATED->PROCESSED",
+  "validation_controllers": [
+    {
+      "name": "coffeebeansValidator",
+      "resource_name": "coffee beans",
+      "quality_checks": [
+        "basic_quality_check"
+      ],
+      "quantity_checks": [
+        "basic_quantity_check"
+      ],
+      "safety_checks": [],
+      "validation_functions": [
+        {
+          "name": "perform_basic_quality_check",
+          "description": "Perform basic quality check on coffee beans",
+          "input_state": "raw",
+          "output_state": "validated"
+        },
+        {
+          "name": "perform_basic_quantity_check",
+          "description": "Perform basic quantity check on coffee beans",
+          "input_state": "raw",
+          "output_state": "validated"
+        },
+        {
+          "name": "confirm_validation",
+          "description": "Confirm coffee beans passes all validation checks",
+          "input_state": "validated",
+          "output_state": "validated"
+        }
+      ]
+    },
+    {
+      "name": "coffeebeansareValidator",
+      "resource_name": "coffee beans are",
+      "quality_checks": [
+        "basic_quality_check"
+      ],
+      "quantity_checks": [
+        "basic_quantity_check"
+      ],
+      "safety_checks": [],
+      "validation_functions": [
+        {
+          "name": "perform_basic_quality_check",
+          "description": "Perform basic quality check on coffee beans are",
+          "input_state": "raw",
+          "output_state": "validated"
+        },
+        {
+          "name": "perform_basic_quantity_check",
+          "description": "Perform basic quantity check on coffee beans are",
+          "input_state": "raw",
+          "output_state": "validated"
+        },
+        {
+          "name": "confirm_validation",
+          "description": "Confirm coffee beans are passes all validation checks",
+          "input_state": "validated",
+          "output_state": "validated"
+        }
+      ]
+    },
+    {
+      "name": "waterValidator",
+      "resource_name": "water",
+      "quality_checks": [
+        "basic_quality_check"
+      ],
+      "quantity_checks": [
+        "basic_quantity_check"
+      ],
+      "safety_checks": [],
+      "validation_functions": [
+        {
+          "name": "perform_basic_quality_check",
+          "description": "Perform basic quality check on water",
+          "input_state": "raw",
+          "output_state": "validated"
+        },
+        {
+          "name": "perform_basic_quantity_check",
+          "description": "Perform basic quantity check on water",
+          "input_state": "raw",
+          "output_state": "validated"
+        },
+        {
+          "name": "confirm_validation",
+          "description": "Confirm water passes all validation checks",
+          "input_state": "validated",
+          "output_state": "validated"
+        }
+      ]
+    },
+    {
+      "name": "waterisValidator",
+      "resource_name": "water is",
+      "quality_checks": [
+        "basic_quality_check"
+      ],
+      "quantity_checks": [
+        "basic_quantity_check"
+      ],
+      "safety_checks": [],
+      "validation_functions": [
+        {
+          "name": "perform_basic_quality_check",
+          "description": "Perform basic quality check on water is",
+          "input_state": "raw",
+          "output_state": "validated"
+        },
+        {
+          "name": "perform_basic_quantity_check",
+          "description": "Perform basic quantity check on water is",
+          "input_state": "raw",
+          "output_state": "validated"
+        },
+        {
+          "name": "confirm_validation",
+          "description": "Confirm water is passes all validation checks",
+          "input_state": "validated",
+          "output_state": "validated"
+        }
+      ]
+    },
+    {
+      "name": "milkValidator",
+      "resource_name": "milk",
+      "quality_checks": [
+        "basic_quality_check"
+      ],
+      "quantity_checks": [
+        "basic_quantity_check"
+      ],
+      "safety_checks": [],
+      "validation_functions": [
+        {
+          "name": "perform_basic_quality_check",
+          "description": "Perform basic quality check on milk",
+          "input_state": "raw",
+          "output_state": "validated"
+        },
+        {
+          "name": "perform_basic_quantity_check",
+          "description": "Perform basic quantity check on milk",
+          "input_state": "raw",
+          "output_state": "validated"
+        },
+        {
+          "name": "confirm_validation",
+          "description": "Confirm milk passes all validation checks",
+          "input_state": "validated",
+          "output_state": "validated"
+        }
+      ]
+    },
+    {
+      "name": "milkisValidator",
+      "resource_name": "milk is",
+      "quality_checks": [
+        "basic_quality_check"
+      ],
+      "quantity_checks": [
+        "basic_quantity_check"
+      ],
+      "safety_checks": [],
+      "validation_functions": [
+        {
+          "name": "perform_basic_quality_check",
+          "description": "Perform basic quality check on milk is",
+          "input_state": "raw",
+          "output_state": "validated"
+        },
+        {
+          "name": "perform_basic_quantity_check",
+          "description": "Perform basic quantity check on milk is",
+          "input_state": "raw",
+          "output_state": "validated"
+        },
+        {
+          "name": "confirm_validation",
+          "description": "Confirm milk is passes all validation checks",
+          "input_state": "validated",
+          "output_state": "validated"
+        }
+      ]
+    },
+    {
+      "name": "cupValidator",
+      "resource_name": "cup",
+      "quality_checks": [
+        "basic_quality_check"
+      ],
+      "quantity_checks": [
+        "basic_quantity_check"
+      ],
+      "safety_checks": [],
+      "validation_functions": [
+        {
+          "name": "perform_basic_quality_check",
+          "description": "Perform basic quality check on cup",
+          "input_state": "raw",
+          "output_state": "validated"
+        },
+        {
+          "name": "perform_basic_quantity_check",
+          "description": "Perform basic quantity check on cup",
+          "input_state": "raw",
+          "output_state": "validated"
+        },
+        {
+          "name": "confirm_validation",
+          "description": "Confirm cup passes all validation checks",
+          "input_state": "validated",
+          "output_state": "validated"
+        }
+      ]
+    }
+  ],
+  "resource_analyses": [
+    {
+      "resource_name": "coffee beans",
+      "has_validation_boundary": true,
+      "validation_flow": [
+        "coffee beans: RAW -> VALIDATED (validation)",
+        "coffee beans: VALIDATED -> PROCESSED (processing)"
+      ],
+      "transformations": []
+    },
+    {
+      "resource_name": "coffee beans are",
+      "has_validation_boundary": true,
+      "validation_flow": [
+        "coffee beans are: RAW -> VALIDATED (validation)",
+        "coffee beans are: VALIDATED -> PROCESSED (processing)"
+      ],
+      "transformations": []
+    },
+    {
+      "resource_name": "water",
+      "has_validation_boundary": true,
+      "validation_flow": [
+        "water: RAW -> VALIDATED (validation)",
+        "water: VALIDATED -> PROCESSED (processing)"
+      ],
+      "transformations": []
+    },
+    {
+      "resource_name": "water is",
+      "has_validation_boundary": true,
+      "validation_flow": [
+        "water is: RAW -> VALIDATED (validation)",
+        "water is: VALIDATED -> PROCESSED (processing)"
+      ],
+      "transformations": []
+    },
+    {
+      "resource_name": "milk",
+      "has_validation_boundary": true,
+      "validation_flow": [
+        "milk: RAW -> VALIDATED (validation)",
+        "milk: VALIDATED -> PROCESSED (processing)"
+      ],
+      "transformations": []
+    },
+    {
+      "resource_name": "milk is",
+      "has_validation_boundary": true,
+      "validation_flow": [
+        "milk is: RAW -> VALIDATED (validation)",
+        "milk is: VALIDATED -> PROCESSED (processing)"
+      ],
+      "transformations": []
+    },
+    {
+      "resource_name": "cup",
+      "has_validation_boundary": true,
+      "validation_flow": [
+        "cup: RAW -> VALIDATED (validation)",
+        "cup: VALIDATED -> PROCESSED (processing)"
+      ],
+      "transformations": []
+    }
+  ],
+  "validation_flow_map": {
+    "coffee beans": [
+      "raw",
+      "validated",
+      "processed"
+    ],
+    "coffee beans are": [
+      "raw",
+      "validated",
+      "processed"
+    ],
+    "water": [
+      "raw",
+      "validated",
+      "processed"
+    ],
+    "water is": [
+      "raw",
+      "validated",
+      "processed"
+    ],
+    "milk": [
+      "raw",
+      "validated",
+      "processed"
+    ],
+    "milk is": [
+      "raw",
+      "validated",
+      "processed"
+    ],
+    "cup": [
+      "raw",
+      "validated",
+      "processed"
+    ]
+  }
+}

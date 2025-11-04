@@ -1,0 +1,1001 @@
+{
+  "UC1_Coffee": {
+    "phase1_summary": "Domain: beverage_preparation; Capability: Coffee Preparation; Use Case: Prepare Milk Coffee; Actors: User (human), Timer (non_human); Temporal Requirements: 7am, at 7, every morning; Excluded: Manual coffee preparation, Bean sourcing and purchasing...",
+    "phase2_summary": "Analyzed 7 resources from preconditions; Created 7 Manager Controllers; Identified 7 Boundary Objects; Found 8 context-based transformations; Domain: beverage_preparation",
+    "resource_analyses": [
+      {
+        "resource_name": "coffee beans",
+        "input_boundary": {
+          "name": "CoffeeBeans Input",
+          "functions": [
+            {
+              "name": "accept_input",
+              "source": "implicit",
+              "description": "Accept coffee beans from external source"
+            },
+            {
+              "name": "validate_input",
+              "source": "implicit",
+              "description": "Validate coffee beans quality and quantity"
+            },
+            {
+              "name": "provide_user_feedback",
+              "source": "phase1_integration",
+              "description": "Provide feedback to human actors about coffee beans status"
+            }
+          ]
+        },
+        "manager_controller": {
+          "name": "CoffeeBeansManager",
+          "functions": [
+            {
+              "name": "store_coffeebeans",
+              "source": "implicit",
+              "description": "Store and manage coffee beans"
+            },
+            {
+              "name": "monitor_coffeebeans_level",
+              "source": "implicit",
+              "description": "Monitor available quantity of coffee beans"
+            },
+            {
+              "name": "provide_coffeebeans",
+              "source": "implicit",
+              "description": "Provide coffee beans when requested"
+            },
+            {
+              "name": "schedule_coffeebeans_usage",
+              "source": "phase1_integration",
+              "description": "Schedule coffee beans usage based on temporal requirements: 7am, at 7, every morning"
+            },
+            {
+              "name": "grind_coffee",
+              "source": "context",
+              "description": "Grind coffee beans to required consistency"
+            },
+            {
+              "name": "clean_equipment",
+              "source": "context",
+              "description": "Clean equipment used with coffee beans"
+            },
+            {
+              "name": "sanitize_surfaces",
+              "source": "context",
+              "description": "Sanitize surfaces in contact with resource"
+            }
+          ],
+          "domain_specific": true
+        },
+        "output_boundary": {
+          "name": "CoffeeBeans Waste Output",
+          "functions": [
+            {
+              "name": "dispose_waste",
+              "source": "implicit",
+              "description": "Dispose of waste products from coffee beans"
+            },
+            {
+              "name": "manage_waste",
+              "source": "implicit",
+              "description": "Manage waste disposal processes"
+            },
+            {
+              "name": "apply_constraints",
+              "source": "phase1_integration",
+              "description": "Apply solution constraints to output: Domain-specific constraint: coffee"
+            }
+          ]
+        },
+        "entities": [],
+        "transformations": [
+          "validated beans -> grinding -> ground coffee"
+        ]
+      },
+      {
+        "resource_name": "coffee beans are",
+        "input_boundary": {
+          "name": "CoffeeBeansAre Input",
+          "functions": [
+            {
+              "name": "accept_input",
+              "source": "implicit",
+              "description": "Accept coffee beans are from external source"
+            },
+            {
+              "name": "validate_input",
+              "source": "implicit",
+              "description": "Validate coffee beans are quality and quantity"
+            },
+            {
+              "name": "provide_user_feedback",
+              "source": "phase1_integration",
+              "description": "Provide feedback to human actors about coffee beans are status"
+            }
+          ]
+        },
+        "manager_controller": {
+          "name": "CoffeeBeansAreManager",
+          "functions": [
+            {
+              "name": "store_coffeebeansare",
+              "source": "implicit",
+              "description": "Store and manage coffee beans are"
+            },
+            {
+              "name": "monitor_coffeebeansare_level",
+              "source": "implicit",
+              "description": "Monitor available quantity of coffee beans are"
+            },
+            {
+              "name": "provide_coffeebeansare",
+              "source": "implicit",
+              "description": "Provide coffee beans are when requested"
+            },
+            {
+              "name": "schedule_coffeebeansare_usage",
+              "source": "phase1_integration",
+              "description": "Schedule coffee beans are usage based on temporal requirements: 7am, at 7, every morning"
+            },
+            {
+              "name": "grind_coffee",
+              "source": "context",
+              "description": "Grind coffee beans to required consistency"
+            },
+            {
+              "name": "clean_equipment",
+              "source": "context",
+              "description": "Clean equipment used with coffee beans are"
+            },
+            {
+              "name": "sanitize_surfaces",
+              "source": "context",
+              "description": "Sanitize surfaces in contact with resource"
+            }
+          ],
+          "domain_specific": true
+        },
+        "output_boundary": {
+          "name": "CoffeeBeansAre Waste Output",
+          "functions": [
+            {
+              "name": "dispose_waste",
+              "source": "implicit",
+              "description": "Dispose of waste products from coffee beans are"
+            },
+            {
+              "name": "manage_waste",
+              "source": "implicit",
+              "description": "Manage waste disposal processes"
+            },
+            {
+              "name": "apply_constraints",
+              "source": "phase1_integration",
+              "description": "Apply solution constraints to output: Domain-specific constraint: coffee"
+            }
+          ]
+        },
+        "entities": [],
+        "transformations": [
+          "validated beans -> grinding -> ground coffee"
+        ]
+      },
+      {
+        "resource_name": "water",
+        "input_boundary": {
+          "name": "Water Input",
+          "functions": [
+            {
+              "name": "accept_input",
+              "source": "implicit",
+              "description": "Accept water from external source"
+            },
+            {
+              "name": "validate_input",
+              "source": "implicit",
+              "description": "Validate water quality and quantity"
+            },
+            {
+              "name": "provide_user_feedback",
+              "source": "phase1_integration",
+              "description": "Provide feedback to human actors about water status"
+            }
+          ]
+        },
+        "manager_controller": {
+          "name": "WaterManager",
+          "functions": [
+            {
+              "name": "store_water",
+              "source": "implicit",
+              "description": "Store and manage water"
+            },
+            {
+              "name": "monitor_water_level",
+              "source": "implicit",
+              "description": "Monitor available quantity of water"
+            },
+            {
+              "name": "provide_water",
+              "source": "implicit",
+              "description": "Provide water when requested"
+            },
+            {
+              "name": "schedule_water_usage",
+              "source": "phase1_integration",
+              "description": "Schedule water usage based on temporal requirements: 7am, at 7, every morning"
+            },
+            {
+              "name": "heat_water",
+              "source": "context",
+              "description": "Heat water to brewing temperature"
+            },
+            {
+              "name": "clean_equipment",
+              "source": "context",
+              "description": "Clean equipment used with water"
+            },
+            {
+              "name": "sanitize_surfaces",
+              "source": "context",
+              "description": "Sanitize surfaces in contact with resource"
+            }
+          ],
+          "domain_specific": true
+        },
+        "output_boundary": null,
+        "entities": [],
+        "transformations": [
+          "validated water -> heating -> hot water",
+          "validated water -> heating -> hot water"
+        ]
+      },
+      {
+        "resource_name": "water is",
+        "input_boundary": {
+          "name": "WaterIs Input",
+          "functions": [
+            {
+              "name": "accept_input",
+              "source": "implicit",
+              "description": "Accept water is from external source"
+            },
+            {
+              "name": "validate_input",
+              "source": "implicit",
+              "description": "Validate water is quality and quantity"
+            },
+            {
+              "name": "provide_user_feedback",
+              "source": "phase1_integration",
+              "description": "Provide feedback to human actors about water is status"
+            }
+          ]
+        },
+        "manager_controller": {
+          "name": "WaterIsManager",
+          "functions": [
+            {
+              "name": "store_wateris",
+              "source": "implicit",
+              "description": "Store and manage water is"
+            },
+            {
+              "name": "monitor_wateris_level",
+              "source": "implicit",
+              "description": "Monitor available quantity of water is"
+            },
+            {
+              "name": "provide_wateris",
+              "source": "implicit",
+              "description": "Provide water is when requested"
+            },
+            {
+              "name": "schedule_wateris_usage",
+              "source": "phase1_integration",
+              "description": "Schedule water is usage based on temporal requirements: 7am, at 7, every morning"
+            },
+            {
+              "name": "heat_water",
+              "source": "context",
+              "description": "Heat water to brewing temperature"
+            },
+            {
+              "name": "clean_equipment",
+              "source": "context",
+              "description": "Clean equipment used with water is"
+            },
+            {
+              "name": "sanitize_surfaces",
+              "source": "context",
+              "description": "Sanitize surfaces in contact with resource"
+            }
+          ],
+          "domain_specific": true
+        },
+        "output_boundary": null,
+        "entities": [],
+        "transformations": [
+          "validated water -> heating -> hot water",
+          "validated water -> heating -> hot water"
+        ]
+      },
+      {
+        "resource_name": "milk",
+        "input_boundary": {
+          "name": "Milk Input",
+          "functions": [
+            {
+              "name": "accept_input",
+              "source": "implicit",
+              "description": "Accept milk from external source"
+            },
+            {
+              "name": "validate_input",
+              "source": "implicit",
+              "description": "Validate milk quality and quantity"
+            },
+            {
+              "name": "provide_user_feedback",
+              "source": "phase1_integration",
+              "description": "Provide feedback to human actors about milk status"
+            }
+          ]
+        },
+        "manager_controller": {
+          "name": "MilkManager",
+          "functions": [
+            {
+              "name": "store_milk",
+              "source": "implicit",
+              "description": "Store and manage milk"
+            },
+            {
+              "name": "monitor_milk_level",
+              "source": "implicit",
+              "description": "Monitor available quantity of milk"
+            },
+            {
+              "name": "provide_milk",
+              "source": "implicit",
+              "description": "Provide milk when requested"
+            },
+            {
+              "name": "schedule_milk_usage",
+              "source": "phase1_integration",
+              "description": "Schedule milk usage based on temporal requirements: 7am, at 7, every morning"
+            },
+            {
+              "name": "cool_milk",
+              "source": "context",
+              "description": "Keep milk at safe temperature"
+            },
+            {
+              "name": "steam_milk",
+              "source": "context",
+              "description": "Steam milk for coffee drinks"
+            },
+            {
+              "name": "clean_equipment",
+              "source": "context",
+              "description": "Clean equipment used with milk"
+            },
+            {
+              "name": "sanitize_surfaces",
+              "source": "context",
+              "description": "Sanitize surfaces in contact with resource"
+            }
+          ],
+          "domain_specific": true
+        },
+        "output_boundary": null,
+        "entities": [],
+        "transformations": [
+          "validated milk -> steaming -> steamed milk"
+        ]
+      },
+      {
+        "resource_name": "milk is",
+        "input_boundary": {
+          "name": "MilkIs Input",
+          "functions": [
+            {
+              "name": "accept_input",
+              "source": "implicit",
+              "description": "Accept milk is from external source"
+            },
+            {
+              "name": "validate_input",
+              "source": "implicit",
+              "description": "Validate milk is quality and quantity"
+            },
+            {
+              "name": "provide_user_feedback",
+              "source": "phase1_integration",
+              "description": "Provide feedback to human actors about milk is status"
+            }
+          ]
+        },
+        "manager_controller": {
+          "name": "MilkIsManager",
+          "functions": [
+            {
+              "name": "store_milkis",
+              "source": "implicit",
+              "description": "Store and manage milk is"
+            },
+            {
+              "name": "monitor_milkis_level",
+              "source": "implicit",
+              "description": "Monitor available quantity of milk is"
+            },
+            {
+              "name": "provide_milkis",
+              "source": "implicit",
+              "description": "Provide milk is when requested"
+            },
+            {
+              "name": "schedule_milkis_usage",
+              "source": "phase1_integration",
+              "description": "Schedule milk is usage based on temporal requirements: 7am, at 7, every morning"
+            },
+            {
+              "name": "cool_milk",
+              "source": "context",
+              "description": "Keep milk at safe temperature"
+            },
+            {
+              "name": "steam_milk",
+              "source": "context",
+              "description": "Steam milk for coffee drinks"
+            },
+            {
+              "name": "clean_equipment",
+              "source": "context",
+              "description": "Clean equipment used with milk is"
+            },
+            {
+              "name": "sanitize_surfaces",
+              "source": "context",
+              "description": "Sanitize surfaces in contact with resource"
+            }
+          ],
+          "domain_specific": true
+        },
+        "output_boundary": null,
+        "entities": [],
+        "transformations": [
+          "validated milk -> steaming -> steamed milk"
+        ]
+      },
+      {
+        "resource_name": "cup",
+        "input_boundary": {
+          "name": "Cup Interface",
+          "functions": [
+            {
+              "name": "receive_data",
+              "source": "implicit",
+              "description": "Receive cup from system"
+            }
+          ]
+        },
+        "manager_controller": {
+          "name": "CupManager",
+          "functions": [
+            {
+              "name": "store_cup",
+              "source": "implicit",
+              "description": "Store and manage cup"
+            },
+            {
+              "name": "monitor_cup_level",
+              "source": "implicit",
+              "description": "Monitor available quantity of cup"
+            },
+            {
+              "name": "provide_cup",
+              "source": "implicit",
+              "description": "Provide cup when requested"
+            },
+            {
+              "name": "schedule_cup_usage",
+              "source": "phase1_integration",
+              "description": "Schedule cup usage based on temporal requirements: 7am, at 7, every morning"
+            }
+          ],
+          "domain_specific": false
+        },
+        "output_boundary": null,
+        "entities": [],
+        "transformations": []
+      }
+    ],
+    "all_objects": {
+      "input_boundaries": [
+        "CoffeeBeans Input",
+        "CoffeeBeansAre Input",
+        "Water Input",
+        "WaterIs Input",
+        "Milk Input",
+        "MilkIs Input",
+        "Cup Interface"
+      ],
+      "manager_controllers": [
+        "CoffeeBeansManager",
+        "CoffeeBeansAreManager",
+        "WaterManager",
+        "WaterIsManager",
+        "MilkManager",
+        "MilkIsManager",
+        "CupManager"
+      ],
+      "output_boundaries": [
+        "CoffeeBeans Waste Output",
+        "CoffeeBeansAre Waste Output"
+      ],
+      "entities": []
+    }
+  },
+  "UC3_Rocket_Launch": {
+    "phase1_summary": "Domain: rocket_science; Capability: Rocket Launch; Use Case: Execute Satellite Launch; Actors: Mission Control (human), Launch Sequencer (non_human), Range Safety System (non_human); Temporal Requirements: scheduled; Excluded: Rocket manufacturing, Component procurement...",
+    "phase2_summary": "Analyzed 6 resources from preconditions; Created 6 Manager Controllers; Identified 6 Boundary Objects; Found 4 context-based transformations; Domain: rocket_science",
+    "resource_analyses": [
+      {
+        "resource_name": "rocket fuel",
+        "input_boundary": {
+          "name": "RocketFuel Input",
+          "functions": [
+            {
+              "name": "accept_input",
+              "source": "implicit",
+              "description": "Accept rocket fuel from external source"
+            },
+            {
+              "name": "validate_input",
+              "source": "implicit",
+              "description": "Validate rocket fuel quality and quantity"
+            },
+            {
+              "name": "provide_user_feedback",
+              "source": "phase1_integration",
+              "description": "Provide feedback to human actors about rocket fuel status"
+            }
+          ]
+        },
+        "manager_controller": {
+          "name": "RocketFuelManager",
+          "functions": [
+            {
+              "name": "store_rocketfuel",
+              "source": "implicit",
+              "description": "Store and manage rocket fuel"
+            },
+            {
+              "name": "monitor_rocketfuel_level",
+              "source": "implicit",
+              "description": "Monitor available quantity of rocket fuel"
+            },
+            {
+              "name": "provide_rocketfuel",
+              "source": "implicit",
+              "description": "Provide rocket fuel when requested"
+            },
+            {
+              "name": "schedule_rocketfuel_usage",
+              "source": "phase1_integration",
+              "description": "Schedule rocket fuel usage based on temporal requirements: scheduled"
+            },
+            {
+              "name": "maintain_fuel_pressure",
+              "source": "context",
+              "description": "Maintain fuel at correct pressure"
+            },
+            {
+              "name": "control_fuel_flow",
+              "source": "context",
+              "description": "Control fuel flow rate to engines"
+            }
+          ],
+          "domain_specific": true
+        },
+        "output_boundary": null,
+        "entities": [],
+        "transformations": [
+          "validated fuel -> combustion -> thrust"
+        ]
+      },
+      {
+        "resource_name": "rocket fuel is",
+        "input_boundary": {
+          "name": "RocketFuelIs Input",
+          "functions": [
+            {
+              "name": "accept_input",
+              "source": "implicit",
+              "description": "Accept rocket fuel is from external source"
+            },
+            {
+              "name": "validate_input",
+              "source": "implicit",
+              "description": "Validate rocket fuel is quality and quantity"
+            },
+            {
+              "name": "provide_user_feedback",
+              "source": "phase1_integration",
+              "description": "Provide feedback to human actors about rocket fuel is status"
+            }
+          ]
+        },
+        "manager_controller": {
+          "name": "RocketFuelIsManager",
+          "functions": [
+            {
+              "name": "store_rocketfuelis",
+              "source": "implicit",
+              "description": "Store and manage rocket fuel is"
+            },
+            {
+              "name": "monitor_rocketfuelis_level",
+              "source": "implicit",
+              "description": "Monitor available quantity of rocket fuel is"
+            },
+            {
+              "name": "provide_rocketfuelis",
+              "source": "implicit",
+              "description": "Provide rocket fuel is when requested"
+            },
+            {
+              "name": "schedule_rocketfuelis_usage",
+              "source": "phase1_integration",
+              "description": "Schedule rocket fuel is usage based on temporal requirements: scheduled"
+            },
+            {
+              "name": "maintain_fuel_pressure",
+              "source": "context",
+              "description": "Maintain fuel at correct pressure"
+            },
+            {
+              "name": "control_fuel_flow",
+              "source": "context",
+              "description": "Control fuel flow rate to engines"
+            }
+          ],
+          "domain_specific": true
+        },
+        "output_boundary": null,
+        "entities": [],
+        "transformations": [
+          "validated fuel -> combustion -> thrust"
+        ]
+      },
+      {
+        "resource_name": "oxidizer",
+        "input_boundary": {
+          "name": "Oxidizer Interface",
+          "functions": [
+            {
+              "name": "receive_data",
+              "source": "implicit",
+              "description": "Receive oxidizer from system"
+            }
+          ]
+        },
+        "manager_controller": {
+          "name": "OxidizerManager",
+          "functions": [
+            {
+              "name": "store_oxidizer",
+              "source": "implicit",
+              "description": "Store and manage oxidizer"
+            },
+            {
+              "name": "monitor_oxidizer_level",
+              "source": "implicit",
+              "description": "Monitor available quantity of oxidizer"
+            },
+            {
+              "name": "provide_oxidizer",
+              "source": "implicit",
+              "description": "Provide oxidizer when requested"
+            },
+            {
+              "name": "schedule_oxidizer_usage",
+              "source": "phase1_integration",
+              "description": "Schedule oxidizer usage based on temporal requirements: scheduled"
+            }
+          ],
+          "domain_specific": false
+        },
+        "output_boundary": null,
+        "entities": [],
+        "transformations": [
+          "validated oxidizer -> combustion -> exhaust"
+        ]
+      },
+      {
+        "resource_name": "oxidizer is",
+        "input_boundary": {
+          "name": "OxidizerIs Interface",
+          "functions": [
+            {
+              "name": "receive_data",
+              "source": "implicit",
+              "description": "Receive oxidizer is from system"
+            }
+          ]
+        },
+        "manager_controller": {
+          "name": "OxidizerIsManager",
+          "functions": [
+            {
+              "name": "store_oxidizeris",
+              "source": "implicit",
+              "description": "Store and manage oxidizer is"
+            },
+            {
+              "name": "monitor_oxidizeris_level",
+              "source": "implicit",
+              "description": "Monitor available quantity of oxidizer is"
+            },
+            {
+              "name": "provide_oxidizeris",
+              "source": "implicit",
+              "description": "Provide oxidizer is when requested"
+            },
+            {
+              "name": "schedule_oxidizeris_usage",
+              "source": "phase1_integration",
+              "description": "Schedule oxidizer is usage based on temporal requirements: scheduled"
+            }
+          ],
+          "domain_specific": false
+        },
+        "output_boundary": null,
+        "entities": [],
+        "transformations": [
+          "validated oxidizer -> combustion -> exhaust"
+        ]
+      },
+      {
+        "resource_name": "telemetry data",
+        "input_boundary": {
+          "name": "TelemetryData Interface",
+          "functions": [
+            {
+              "name": "receive_data",
+              "source": "implicit",
+              "description": "Receive telemetry data from system"
+            }
+          ]
+        },
+        "manager_controller": {
+          "name": "TelemetryDataManager",
+          "functions": [
+            {
+              "name": "store_telemetrydata",
+              "source": "implicit",
+              "description": "Store and manage telemetry data"
+            },
+            {
+              "name": "monitor_telemetrydata_level",
+              "source": "implicit",
+              "description": "Monitor available quantity of telemetry data"
+            },
+            {
+              "name": "provide_telemetrydata",
+              "source": "implicit",
+              "description": "Provide telemetry data when requested"
+            },
+            {
+              "name": "schedule_telemetrydata_usage",
+              "source": "phase1_integration",
+              "description": "Schedule telemetry data usage based on temporal requirements: scheduled"
+            },
+            {
+              "name": "process_telemetry",
+              "source": "context",
+              "description": "Process real-time telemetry data"
+            },
+            {
+              "name": "validate_data",
+              "source": "context",
+              "description": "Validate data integrity and accuracy"
+            }
+          ],
+          "domain_specific": true
+        },
+        "output_boundary": null,
+        "entities": [],
+        "transformations": []
+      },
+      {
+        "resource_name": "telemetry data is",
+        "input_boundary": {
+          "name": "TelemetryDataIs Interface",
+          "functions": [
+            {
+              "name": "receive_data",
+              "source": "implicit",
+              "description": "Receive telemetry data is from system"
+            }
+          ]
+        },
+        "manager_controller": {
+          "name": "TelemetryDataIsManager",
+          "functions": [
+            {
+              "name": "store_telemetrydatais",
+              "source": "implicit",
+              "description": "Store and manage telemetry data is"
+            },
+            {
+              "name": "monitor_telemetrydatais_level",
+              "source": "implicit",
+              "description": "Monitor available quantity of telemetry data is"
+            },
+            {
+              "name": "provide_telemetrydatais",
+              "source": "implicit",
+              "description": "Provide telemetry data is when requested"
+            },
+            {
+              "name": "schedule_telemetrydatais_usage",
+              "source": "phase1_integration",
+              "description": "Schedule telemetry data is usage based on temporal requirements: scheduled"
+            },
+            {
+              "name": "process_telemetry",
+              "source": "context",
+              "description": "Process real-time telemetry data"
+            },
+            {
+              "name": "validate_data",
+              "source": "context",
+              "description": "Validate data integrity and accuracy"
+            }
+          ],
+          "domain_specific": true
+        },
+        "output_boundary": null,
+        "entities": [],
+        "transformations": []
+      }
+    ],
+    "all_objects": {
+      "input_boundaries": [
+        "RocketFuel Input",
+        "RocketFuelIs Input",
+        "Oxidizer Interface",
+        "OxidizerIs Interface",
+        "TelemetryData Interface",
+        "TelemetryDataIs Interface"
+      ],
+      "manager_controllers": [
+        "RocketFuelManager",
+        "RocketFuelIsManager",
+        "OxidizerManager",
+        "OxidizerIsManager",
+        "TelemetryDataManager",
+        "TelemetryDataIsManager"
+      ],
+      "output_boundaries": [],
+      "entities": []
+    }
+  },
+  "UC4_Nuclear_Shutdown": {
+    "phase1_summary": "Domain: nuclear; Capability: Nuclear Reactor Control; Use Case: Emergency Reactor Shutdown; Actors: Operator (human), Reactor Protection System (non_human); Excluded: Reactor design, Nuclear waste disposal...",
+    "phase2_summary": "Analyzed 2 resources from preconditions; Created 2 Manager Controllers; Identified 2 Boundary Objects; Found 2 context-based transformations; Domain: nuclear",
+    "resource_analyses": [
+      {
+        "resource_name": "coolant",
+        "input_boundary": {
+          "name": "Coolant Interface",
+          "functions": [
+            {
+              "name": "receive_data",
+              "source": "implicit",
+              "description": "Receive coolant from system"
+            }
+          ]
+        },
+        "manager_controller": {
+          "name": "CoolantManager",
+          "functions": [
+            {
+              "name": "store_coolant",
+              "source": "implicit",
+              "description": "Store and manage coolant"
+            },
+            {
+              "name": "monitor_coolant_level",
+              "source": "implicit",
+              "description": "Monitor available quantity of coolant"
+            },
+            {
+              "name": "provide_coolant",
+              "source": "implicit",
+              "description": "Provide coolant when requested"
+            },
+            {
+              "name": "circulate_coolant",
+              "source": "context",
+              "description": "Circulate coolant through reactor"
+            },
+            {
+              "name": "monitor_temperature",
+              "source": "context",
+              "description": "Monitor coolant temperature"
+            }
+          ],
+          "domain_specific": true
+        },
+        "output_boundary": null,
+        "entities": [],
+        "transformations": [
+          "validated coolant -> circulation -> heat transfer"
+        ]
+      },
+      {
+        "resource_name": "coolant is",
+        "input_boundary": {
+          "name": "CoolantIs Interface",
+          "functions": [
+            {
+              "name": "receive_data",
+              "source": "implicit",
+              "description": "Receive coolant is from system"
+            }
+          ]
+        },
+        "manager_controller": {
+          "name": "CoolantIsManager",
+          "functions": [
+            {
+              "name": "store_coolantis",
+              "source": "implicit",
+              "description": "Store and manage coolant is"
+            },
+            {
+              "name": "monitor_coolantis_level",
+              "source": "implicit",
+              "description": "Monitor available quantity of coolant is"
+            },
+            {
+              "name": "provide_coolantis",
+              "source": "implicit",
+              "description": "Provide coolant is when requested"
+            },
+            {
+              "name": "circulate_coolant",
+              "source": "context",
+              "description": "Circulate coolant through reactor"
+            },
+            {
+              "name": "monitor_temperature",
+              "source": "context",
+              "description": "Monitor coolant temperature"
+            }
+          ],
+          "domain_specific": true
+        },
+        "output_boundary": null,
+        "entities": [],
+        "transformations": [
+          "validated coolant -> circulation -> heat transfer"
+        ]
+      }
+    ],
+    "all_objects": {
+      "input_boundaries": [
+        "Coolant Interface",
+        "CoolantIs Interface"
+      ],
+      "manager_controllers": [
+        "CoolantManager",
+        "CoolantIsManager"
+      ],
+      "output_boundaries": [],
+      "entities": []
+    }
+  }
+}

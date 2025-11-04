@@ -1,0 +1,165 @@
+{
+  "summary": "Analyzed 1 control flow patterns; Identified 2 decision points; Found 2 parallel and 11 sequential steps; Detected 0 control flow violations; Applied UC-Methode control flow rules",
+  "control_flow_patterns": [
+    {
+      "pattern_id": "main_flow",
+      "pattern_type": "main_flow",
+      "steps": [
+        {
+          "step_id": "B1",
+          "description": "(trigger) System clock reaches set time of 7:00h (Radio clock)",
+          "flow_type": "sequential",
+          "responsible_controller": "GeträenkeOrchestrator",
+          "parallel_with": []
+        },
+        {
+          "step_id": "B2a",
+          "description": "The system activates the water heater",
+          "flow_type": "parallel",
+          "responsible_controller": "WaterManager",
+          "parallel_with": [
+            "B2b",
+            "B2c"
+          ]
+        },
+        {
+          "step_id": "B2b",
+          "description": "The system prepares filter",
+          "flow_type": "parallel",
+          "responsible_controller": "FilterManager",
+          "parallel_with": [
+            "B2a",
+            "B2c"
+          ]
+        },
+        {
+          "step_id": "B2c",
+          "description": "The system grinds the set amount at the set grinding degree directly into the filter",
+          "flow_type": "sequential",
+          "responsible_controller": "FilterManager",
+          "parallel_with": [
+            "B2a",
+            "B2b"
+          ]
+        },
+        {
+          "step_id": "B2d",
+          "description": "The system retrieves cup from storage container and places it under the filter",
+          "flow_type": "sequential",
+          "responsible_controller": "FilterManager",
+          "parallel_with": []
+        },
+        {
+          "step_id": "B3a",
+          "description": "The system begins brewing coffee with the set water amount into the cup",
+          "flow_type": "sequential",
+          "responsible_controller": "WaterManager",
+          "parallel_with": []
+        },
+        {
+          "step_id": "B3b",
+          "description": "The system adds milk to the cup",
+          "flow_type": "sequential",
+          "responsible_controller": "CupManager",
+          "parallel_with": []
+        },
+        {
+          "step_id": "B4",
+          "description": "The system outputs a message to user",
+          "flow_type": "sequential",
+          "responsible_controller": "UserInterfaceManager",
+          "parallel_with": []
+        },
+        {
+          "step_id": "B5",
+          "description": "The system presents cup to user",
+          "flow_type": "sequential",
+          "responsible_controller": "CupManager",
+          "parallel_with": []
+        },
+        {
+          "step_id": "B6",
+          "description": "End UC",
+          "flow_type": "sequential",
+          "responsible_controller": "GeträenkeOrchestrator",
+          "parallel_with": []
+        },
+        {
+          "step_id": "B2a",
+          "description": "Water heater has too little water",
+          "flow_type": "sequential",
+          "responsible_controller": "WaterManager",
+          "parallel_with": [
+            "B2b",
+            "B2c"
+          ]
+        },
+        {
+          "step_id": "B3b",
+          "description": "Too little milk",
+          "flow_type": "sequential",
+          "responsible_controller": "MilkManager",
+          "parallel_with": []
+        },
+        {
+          "step_id": "B5",
+          "description": "(trigger) User wants sugar in coffee",
+          "flow_type": "sequential",
+          "responsible_controller": "CoffeeBeansManager",
+          "parallel_with": []
+        }
+      ],
+      "coordination_sequence": [
+        "Execute sequential: B1",
+        "Coordinate parallel: B2a with B2b, B2c",
+        "Coordinate parallel: B2b with B2a, B2c",
+        "Execute sequential: B2c",
+        "Execute sequential: B2d",
+        "Execute sequential: B3a",
+        "Execute sequential: B3b",
+        "Execute sequential: B4",
+        "Execute sequential: B5",
+        "Execute sequential: B6",
+        "Execute sequential: B2a",
+        "Execute sequential: B3b",
+        "Execute sequential: B5"
+      ]
+    }
+  ],
+  "decision_points": [
+    {
+      "decision_id": "D1",
+      "condition": "Water heater has too little water",
+      "decision_type": "resource_check",
+      "responsible_controller": "WaterManager"
+    },
+    {
+      "decision_id": "D2",
+      "condition": "Too little milk",
+      "decision_type": "resource_check",
+      "responsible_controller": "MilkManager"
+    }
+  ],
+  "coordination_rules": {
+    "parallel_coordination": [
+      "GeträenkeOrchestrator coordinates WaterManager in parallel with ['B2b', 'B2c']",
+      "GeträenkeOrchestrator coordinates FilterManager in parallel with ['B2a', 'B2c']"
+    ],
+    "sequential_coordination": [
+      "GeträenkeOrchestrator ensures GeträenkeOrchestrator executes after dependencies",
+      "GeträenkeOrchestrator ensures FilterManager executes after dependencies",
+      "GeträenkeOrchestrator ensures FilterManager executes after dependencies",
+      "GeträenkeOrchestrator ensures WaterManager executes after dependencies",
+      "GeträenkeOrchestrator ensures CupManager executes after dependencies",
+      "GeträenkeOrchestrator ensures UserInterfaceManager executes after dependencies",
+      "GeträenkeOrchestrator ensures CupManager executes after dependencies",
+      "GeträenkeOrchestrator ensures GeträenkeOrchestrator executes after dependencies",
+      "GeträenkeOrchestrator ensures WaterManager executes after dependencies",
+      "GeträenkeOrchestrator ensures MilkManager executes after dependencies",
+      "GeträenkeOrchestrator ensures CoffeeBeansManager executes after dependencies"
+    ],
+    "error_handling": [],
+    "decision_coordination": []
+  },
+  "violations": []
+}

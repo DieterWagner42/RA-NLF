@@ -1,0 +1,313 @@
+{
+  "universal_operational_materials_framework": {
+    "description": "Universal framework for safety, hygiene, and special handling requirements across all domains",
+    "version": "1.0",
+    "scope": "Cross-domain operational materials management"
+  },
+  
+  "safety_classifications": {
+    "description": "Safety classification system for operational materials",
+    "hazard_categories": {
+      "explosive": {
+        "examples": ["rocket_propellants", "pyrotechnics", "compressed_gases"],
+        "safety_requirements": [
+          "Explosion-proof storage facilities",
+          "Static electricity elimination",
+          "Temperature and humidity control",
+          "Automated fire suppression systems",
+          "Remote handling equipment",
+          "Emergency evacuation procedures"
+        ],
+        "addressing_format": "EXP-{material_code}-{hazard_class}-{batch_id}",
+        "special_controllers": ["ExplosiveHandlingController", "EmergencyController"]
+      },
+      "toxic": {
+        "examples": ["nuclear_materials", "chemical_reagents", "cleaning_solvents"],
+        "safety_requirements": [
+          "Sealed containment systems",
+          "Atmospheric monitoring",
+          "Personal protective equipment",
+          "Decontamination procedures",
+          "Waste disposal protocols",
+          "Medical emergency response"
+        ],
+        "addressing_format": "TOX-{material_code}-{toxicity_level}-{batch_id}",
+        "special_controllers": ["ToxicMaterialController", "DecontaminationController"]
+      },
+      "cryogenic": {
+        "examples": ["liquid_nitrogen", "liquid_oxygen", "liquid_hydrogen"],
+        "safety_requirements": [
+          "Insulated storage systems",
+          "Pressure relief valves",
+          "Oxygen monitoring (asphyxiation risk)",
+          "Cold burn protection",
+          "Boil-off gas management",
+          "Emergency warming procedures"
+        ],
+        "addressing_format": "CRYO-{material_code}-{temperature}-{batch_id}",
+        "special_controllers": ["CryogenicController", "TemperatureController"]
+      },
+      "radioactive": {
+        "examples": ["uranium", "plutonium", "medical_isotopes"],
+        "safety_requirements": [
+          "Radiation shielding",
+          "Dosimetry monitoring",
+          "Contamination control",
+          "Decay heat management",
+          "Criticality safety",
+          "Radiation emergency response"
+        ],
+        "addressing_format": "RAD-{isotope}-{activity_level}-{batch_id}",
+        "special_controllers": ["RadiationController", "CriticalityController"]
+      },
+      "pressure_sensitive": {
+        "examples": ["compressed_air", "hydraulic_fluids", "pneumatic_systems"],
+        "safety_requirements": [
+          "Pressure monitoring systems",
+          "Rupture disc protection",
+          "Pressure testing protocols",
+          "Leak detection systems",
+          "Emergency depressurization",
+          "Pressure vessel certification"
+        ],
+        "addressing_format": "PRESS-{material_code}-{max_pressure}-{batch_id}",
+        "special_controllers": ["PressureController", "LeakDetectionController"]
+      }
+    }
+  },
+
+  "hygiene_classifications": {
+    "description": "Hygiene and sterility requirements for operational materials",
+    "sterility_levels": {
+      "sterile": {
+        "examples": ["medical_devices", "pharmaceutical_ingredients", "space_food"],
+        "requirements": [
+          "Sterile packaging with integrity monitoring",
+          "Aseptic handling procedures",
+          "Bioburden testing",
+          "Sterility validation",
+          "Controlled environment storage",
+          "Sterile transfer techniques"
+        ],
+        "addressing_format": "STER-{material_code}-{sterility_level}-{batch_id}",
+        "special_controllers": ["SterilityController", "AsepticController"]
+      },
+      "food_grade": {
+        "examples": ["milk", "sugar", "coffee_beans", "water"],
+        "requirements": [
+          "Food-grade materials contact",
+          "HACCP compliance",
+          "Temperature monitoring",
+          "Pest control",
+          "Cleaning validation",
+          "Allergen management"
+        ],
+        "addressing_format": "FOOD-{material_code}-{grade_level}-{batch_id}",
+        "special_controllers": ["FoodSafetyController", "HACCPController"]
+      },
+      "pharmaceutical": {
+        "examples": ["drug_substances", "excipients", "solvents"],
+        "requirements": [
+          "GMP compliance",
+          "Identity testing",
+          "Purity analysis",
+          "Stability studies",
+          "Chain of custody",
+          "Recall procedures"
+        ],
+        "addressing_format": "PHARM-{material_code}-{purity_grade}-{batch_id}",
+        "special_controllers": ["GMPController", "QualityController"]
+      },
+      "cleanroom": {
+        "examples": ["electronic_components", "precision_parts", "optical_elements"],
+        "requirements": [
+          "Particle contamination control",
+          "Controlled atmosphere",
+          "Electrostatic discharge protection",
+          "Personnel gowning procedures",
+          "Surface cleanliness validation",
+          "Environmental monitoring"
+        ],
+        "addressing_format": "CLEAN-{material_code}-{class_level}-{batch_id}",
+        "special_controllers": ["CleanroomController", "ContaminationController"]
+      }
+    }
+  },
+
+  "special_handling_requirements": {
+    "description": "Special handling, storage, and transport requirements",
+    "temperature_controlled": {
+      "deep_freeze": {
+        "temperature_range": "-80°C to -20°C",
+        "examples": ["biological_samples", "vaccines", "certain_chemicals"],
+        "requirements": [
+          "Ultra-low temperature freezers",
+          "Temperature alarm systems",
+          "Backup power systems",
+          "Cold chain validation",
+          "Temperature data logging",
+          "Emergency transfer procedures"
+        ],
+        "controllers": ["DeepFreezeController", "ColdChainController"]
+      },
+      "refrigerated": {
+        "temperature_range": "2°C to 8°C",
+        "examples": ["milk", "vaccines", "insulin", "biological_reagents"],
+        "requirements": [
+          "Continuous temperature monitoring",
+          "Alarm systems for temperature excursions",
+          "Validated cold storage equipment",
+          "Temperature mapping studies",
+          "Cold chain documentation",
+          "Emergency backup cooling"
+        ],
+        "controllers": ["RefrigerationController", "TemperatureMonitorController"]
+      },
+      "ambient_controlled": {
+        "temperature_range": "15°C to 25°C",
+        "examples": ["medications", "precision_instruments", "electronic_components"],
+        "requirements": [
+          "Climate-controlled environment",
+          "Humidity control (typically 45-65% RH)",
+          "Temperature and humidity monitoring",
+          "Environmental stability studies",
+          "Controlled access",
+          "Documentation of environmental conditions"
+        ],
+        "controllers": ["ClimateController", "HumidityController"]
+      }
+    },
+    
+    "atmosphere_controlled": {
+      "inert_gas": {
+        "examples": ["reactive_metals", "oxygen_sensitive_materials"],
+        "requirements": [
+          "Nitrogen or argon atmosphere",
+          "Oxygen level monitoring (<10 ppm)",
+          "Moisture control (<5 ppm)",
+          "Sealed storage systems",
+          "Gas purity verification",
+          "Emergency ventilation"
+        ],
+        "controllers": ["InertAtmosphereController", "GasMonitoringController"]
+      },
+      "vacuum": {
+        "examples": ["space_materials", "electron_beam_systems"],
+        "requirements": [
+          "High vacuum systems (10^-6 torr or better)",
+          "Vacuum monitoring",
+          "Leak detection systems",
+          "Outgassing control",
+          "Pump backup systems",
+          "Emergency venting procedures"
+        ],
+        "controllers": ["VacuumController", "LeakDetectionController"]
+      }
+    },
+
+    "containment_levels": {
+      "level_1": {
+        "description": "Standard laboratory practices",
+        "examples": ["water", "sugar", "coffee_beans"],
+        "requirements": ["Basic laboratory practices", "Standard PPE"]
+      },
+      "level_2": {
+        "description": "Enhanced containment",
+        "examples": ["milk", "cleaning_chemicals"],
+        "requirements": ["Limited access", "Decontamination procedures", "Biological safety cabinets"]
+      },
+      "level_3": {
+        "description": "High containment",
+        "examples": ["radioactive_materials", "toxic_chemicals"],
+        "requirements": ["Controlled access", "Specialized ventilation", "Full PPE"]
+      },
+      "level_4": {
+        "description": "Maximum containment",
+        "examples": ["weapons_grade_materials", "highly_infectious_agents"],
+        "requirements": ["Positive pressure suits", "Air lock entry", "Complete isolation"]
+      }
+    }
+  },
+
+  "addressing_and_tracking": {
+    "description": "Universal addressing system for operational materials",
+    "id_structure": {
+      "format": "{SAFETY_CLASS}-{HYGIENE_LEVEL}-{MATERIAL_CODE}-{BATCH_ID}-{LOCATION}",
+      "examples": [
+        "EXP-STER-RP1-B20241026-TANK001",
+        "FOOD-FOOD-MILK-B20241026-COOLER02",
+        "RAD-CLEAN-U235-B20241026-VAULT001"
+      ]
+    },
+    "traceability_requirements": {
+      "chain_of_custody": "Complete documentation from receipt to disposal",
+      "real_time_tracking": "RFID/barcode tracking with location updates",
+      "quality_documentation": "Certificates of analysis linked to batch IDs",
+      "environmental_history": "Complete temperature, humidity, pressure history",
+      "handling_log": "Personnel access and handling records",
+      "compliance_audit": "Regulatory compliance verification trail"
+    },
+    "alert_systems": {
+      "expiration_alerts": "Automated alerts for approaching expiration dates",
+      "environmental_alarms": "Real-time alarms for out-of-specification conditions",
+      "security_alerts": "Unauthorized access or tampering detection",
+      "quality_notifications": "Quality deviation or recall notifications",
+      "emergency_alerts": "Safety incident or emergency situation alerts"
+    }
+  },
+
+  "domain_specific_examples": {
+    "aerospace": {
+      "rocket_propellants": {
+        "safety_class": "explosive",
+        "hygiene_level": "cleanroom",
+        "special_requirements": [
+          "Static electricity elimination",
+          "Hydrazine vapor detection",
+          "Emergency deluge systems",
+          "Personnel decontamination"
+        ],
+        "addressing": "EXP-CLEAN-HYDRAZINE-B20241026-PROP001"
+      }
+    },
+    "nuclear": {
+      "uranium_fuel": {
+        "safety_class": "radioactive",
+        "hygiene_level": "cleanroom",
+        "special_requirements": [
+          "Criticality safety limits",
+          "Radiation monitoring",
+          "Material accountability",
+          "Safeguards compliance"
+        ],
+        "addressing": "RAD-CLEAN-U235-B20241026-VAULT001"
+      }
+    },
+    "beverage_preparation": {
+      "milk": {
+        "safety_class": "pressure_sensitive",
+        "hygiene_level": "food_grade",
+        "special_requirements": [
+          "Cold chain maintenance",
+          "Pasteurization verification",
+          "Microbiological testing",
+          "Shelf life monitoring"
+        ],
+        "addressing": "PRESS-FOOD-MILK-B20241026-COOLER02"
+      }
+    },
+    "medical": {
+      "sterile_instruments": {
+        "safety_class": "toxic",
+        "hygiene_level": "sterile",
+        "special_requirements": [
+          "Sterility validation",
+          "Biocompatibility testing",
+          "Packaging integrity",
+          "Traceability to patient"
+        ],
+        "addressing": "TOX-STER-SURGICAL-B20241026-OR001"
+      }
+    }
+  }
+}

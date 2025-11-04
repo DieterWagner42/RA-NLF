@@ -1,0 +1,466 @@
+{
+  "phase1_summary": "Domain: beverage_preparation; Capability: Coffee Preparation; Use Case: Prepare Milk Coffee; Actors: User (human), Timer (non_human); Temporal Requirements: 7am, at 7, every morning; Excluded: Manual coffee preparation, Bean sourcing and purchasing...",
+  "phase2_summary": "Analyzed 7 resources from preconditions; Created 7 Manager Controllers; Identified 7 Boundary Objects; Found 8 context-based transformations; Domain: beverage_preparation",
+  "phase3_summary": "Analyzed 10 UC steps; Generated 18 interactions; Identified 1 orchestration patterns; Found 0 missing preconditions",
+  "uc_steps": [
+    {
+      "step_id": "B1",
+      "step_text": "System clock reaches set time of 7:00h (Radio clock)",
+      "step_type": "trigger_step",
+      "verb": null,
+      "objects": [
+        "clock",
+        "time",
+        "7:00h",
+        "radio"
+      ],
+      "controllers": [
+        "ZeitManager"
+      ],
+      "entities": [
+        "Zeit"
+      ]
+    },
+    {
+      "step_id": "B2a",
+      "step_text": "The system activates the water heater",
+      "step_type": "parallel_step",
+      "verb": "activates",
+      "objects": [
+        "water",
+        "heater"
+      ],
+      "controllers": [
+        "WaterIsManager"
+      ],
+      "entities": [
+        "Water",
+        "Heater"
+      ]
+    },
+    {
+      "step_id": "B2b",
+      "step_text": "The system prepares filter",
+      "step_type": "parallel_step",
+      "verb": "prepares",
+      "objects": [
+        "filter"
+      ],
+      "controllers": [
+        "FilterManager"
+      ],
+      "entities": [
+        "Filter"
+      ]
+    },
+    {
+      "step_id": "B2c",
+      "step_text": "The system grinds the set amount at the set grinding degree directly into the filter",
+      "step_type": "parallel_step",
+      "verb": "grinds",
+      "objects": [
+        "set",
+        "grinding",
+        "degree",
+        "filter"
+      ],
+      "controllers": [
+        "CoffeeBeansAreManager"
+      ],
+      "entities": [
+        "CoffeeBeans",
+        "GroundCoffee"
+      ]
+    },
+    {
+      "step_id": "B2d",
+      "step_text": "The system retrieves cup from storage container and places it under the filter",
+      "step_type": "parallel_step",
+      "verb": "retrieves",
+      "objects": [
+        "cup",
+        "storage",
+        "container",
+        "filter"
+      ],
+      "controllers": [
+        "CupManager"
+      ],
+      "entities": [
+        "Cup",
+        "Storage"
+      ]
+    },
+    {
+      "step_id": "B3a",
+      "step_text": "The system begins brewing coffee with the set water amount into the cup",
+      "step_type": "parallel_step",
+      "verb": "begins",
+      "objects": [
+        "coffee",
+        "water",
+        "cup"
+      ],
+      "controllers": [
+        "CoffeeBeansAreManager",
+        "WaterIsManager",
+        "CupManager"
+      ],
+      "entities": [
+        "Coffee",
+        "Water",
+        "Cup"
+      ]
+    },
+    {
+      "step_id": "B3b",
+      "step_text": "The system adds milk to the cup",
+      "step_type": "parallel_step",
+      "verb": "adds",
+      "objects": [
+        "milk",
+        "cup"
+      ],
+      "controllers": [
+        "MilkIsManager",
+        "CupManager"
+      ],
+      "entities": [
+        "Milk",
+        "Cup"
+      ]
+    },
+    {
+      "step_id": "B4",
+      "step_text": "The system outputs a message to user",
+      "step_type": "normal_step",
+      "verb": "outputs",
+      "objects": [
+        "message",
+        "user"
+      ],
+      "controllers": [
+        "UserNotificationManager"
+      ],
+      "entities": []
+    },
+    {
+      "step_id": "B5",
+      "step_text": "The system presents cup to user",
+      "step_type": "normal_step",
+      "verb": "presents",
+      "objects": [
+        "cup",
+        "user"
+      ],
+      "controllers": [
+        "CupManager",
+        "UserDeliveryManager"
+      ],
+      "entities": []
+    },
+    {
+      "step_id": "B6",
+      "step_text": "End UC",
+      "step_type": "normal_step",
+      "verb": null,
+      "objects": [
+        "end"
+      ],
+      "controllers": [],
+      "entities": []
+    }
+  ],
+  "interactions": [
+    {
+      "interaction_id": "INT_001",
+      "interaction_type": "trigger",
+      "source_object": "Zeit",
+      "target_object": "ZeitManager",
+      "data_object": null,
+      "description": "Time trigger activates system at specified time",
+      "step_reference": "B1"
+    },
+    {
+      "interaction_id": "INT_002",
+      "interaction_type": "control_flow",
+      "source_object": "ZeitManager",
+      "target_object": "WaterIsManager",
+      "data_object": null,
+      "description": "Control flow from B1 to B2a",
+      "step_reference": "B1->B2a"
+    },
+    {
+      "interaction_id": "INT_003",
+      "interaction_type": "control_flow",
+      "source_object": "WaterIsManager",
+      "target_object": "FilterManager",
+      "data_object": null,
+      "description": "Control flow from B2a to B2b",
+      "step_reference": "B2a->B2b"
+    },
+    {
+      "interaction_id": "INT_004",
+      "interaction_type": "control_flow",
+      "source_object": "FilterManager",
+      "target_object": "CoffeeBeansAreManager",
+      "data_object": null,
+      "description": "Control flow from B2b to B2c",
+      "step_reference": "B2b->B2c"
+    },
+    {
+      "interaction_id": "INT_005",
+      "interaction_type": "control_flow",
+      "source_object": "CoffeeBeansAreManager",
+      "target_object": "CupManager",
+      "data_object": null,
+      "description": "Control flow from B2c to B2d",
+      "step_reference": "B2c->B2d"
+    },
+    {
+      "interaction_id": "INT_006",
+      "interaction_type": "control_flow",
+      "source_object": "CupManager",
+      "target_object": "CoffeeBeansAreManager",
+      "data_object": null,
+      "description": "Control flow from B2d to B3a",
+      "step_reference": "B2d->B3a"
+    },
+    {
+      "interaction_id": "INT_007",
+      "interaction_type": "control_flow",
+      "source_object": "CupManager",
+      "target_object": "WaterIsManager",
+      "data_object": null,
+      "description": "Control flow from B2d to B3a",
+      "step_reference": "B2d->B3a"
+    },
+    {
+      "interaction_id": "INT_008",
+      "interaction_type": "control_flow",
+      "source_object": "CupManager",
+      "target_object": "CupManager",
+      "data_object": null,
+      "description": "Control flow from B2d to B3a",
+      "step_reference": "B2d->B3a"
+    },
+    {
+      "interaction_id": "INT_009",
+      "interaction_type": "control_flow",
+      "source_object": "CoffeeBeansAreManager",
+      "target_object": "MilkIsManager",
+      "data_object": null,
+      "description": "Control flow from B3a to B3b",
+      "step_reference": "B3a->B3b"
+    },
+    {
+      "interaction_id": "INT_010",
+      "interaction_type": "control_flow",
+      "source_object": "WaterIsManager",
+      "target_object": "MilkIsManager",
+      "data_object": null,
+      "description": "Control flow from B3a to B3b",
+      "step_reference": "B3a->B3b"
+    },
+    {
+      "interaction_id": "INT_011",
+      "interaction_type": "control_flow",
+      "source_object": "CupManager",
+      "target_object": "MilkIsManager",
+      "data_object": null,
+      "description": "Control flow from B3a to B3b",
+      "step_reference": "B3a->B3b"
+    },
+    {
+      "interaction_id": "INT_012",
+      "interaction_type": "control_flow",
+      "source_object": "CoffeeBeansAreManager",
+      "target_object": "CupManager",
+      "data_object": null,
+      "description": "Control flow from B3a to B3b",
+      "step_reference": "B3a->B3b"
+    },
+    {
+      "interaction_id": "INT_013",
+      "interaction_type": "control_flow",
+      "source_object": "WaterIsManager",
+      "target_object": "CupManager",
+      "data_object": null,
+      "description": "Control flow from B3a to B3b",
+      "step_reference": "B3a->B3b"
+    },
+    {
+      "interaction_id": "INT_014",
+      "interaction_type": "control_flow",
+      "source_object": "CupManager",
+      "target_object": "CupManager",
+      "data_object": null,
+      "description": "Control flow from B3a to B3b",
+      "step_reference": "B3a->B3b"
+    },
+    {
+      "interaction_id": "INT_015",
+      "interaction_type": "control_flow",
+      "source_object": "MilkIsManager",
+      "target_object": "UserNotificationManager",
+      "data_object": null,
+      "description": "Control flow from B3b to B4",
+      "step_reference": "B3b->B4"
+    },
+    {
+      "interaction_id": "INT_016",
+      "interaction_type": "control_flow",
+      "source_object": "CupManager",
+      "target_object": "UserNotificationManager",
+      "data_object": null,
+      "description": "Control flow from B3b to B4",
+      "step_reference": "B3b->B4"
+    },
+    {
+      "interaction_id": "INT_017",
+      "interaction_type": "control_flow",
+      "source_object": "UserNotificationManager",
+      "target_object": "CupManager",
+      "data_object": null,
+      "description": "Control flow from B4 to B5",
+      "step_reference": "B4->B5"
+    },
+    {
+      "interaction_id": "INT_018",
+      "interaction_type": "control_flow",
+      "source_object": "UserNotificationManager",
+      "target_object": "UserDeliveryManager",
+      "data_object": null,
+      "description": "Control flow from B4 to B5",
+      "step_reference": "B4->B5"
+    }
+  ],
+  "orchestration_pattern": {
+    "GetränkeOrchestrator": [
+      "CupManager",
+      "WaterIsManager",
+      "MilkIsManager",
+      "CoffeeBeansAreManager"
+    ]
+  },
+  "controller_functions": [
+    {
+      "controller_name": "WaterIsManager",
+      "function_name": "activates",
+      "source": "uc_flow",
+      "description": "Function derived from UC step B2a: The system activates the water heater",
+      "step_references": [
+        "B2a"
+      ]
+    },
+    {
+      "controller_name": "FilterManager",
+      "function_name": "prepares",
+      "source": "uc_flow",
+      "description": "Function derived from UC step B2b: The system prepares filter",
+      "step_references": [
+        "B2b"
+      ]
+    },
+    {
+      "controller_name": "CoffeeBeansAreManager",
+      "function_name": "grinds",
+      "source": "uc_flow",
+      "description": "Function derived from UC step B2c: The system grinds the set amount at the set grinding degree directly into the filter",
+      "step_references": [
+        "B2c"
+      ]
+    },
+    {
+      "controller_name": "CupManager",
+      "function_name": "renrieves",
+      "source": "uc_flow",
+      "description": "Function derived from UC step B2d: The system retrieves cup from storage container and places it under the filter",
+      "step_references": [
+        "B2d"
+      ]
+    },
+    {
+      "controller_name": "CoffeeBeansAreManager",
+      "function_name": "begins",
+      "source": "uc_flow",
+      "description": "Function derived from UC step B3a: The system begins brewing coffee with the set water amount into the cup",
+      "step_references": [
+        "B3a"
+      ]
+    },
+    {
+      "controller_name": "WaterIsManager",
+      "function_name": "begins",
+      "source": "uc_flow",
+      "description": "Function derived from UC step B3a: The system begins brewing coffee with the set water amount into the cup",
+      "step_references": [
+        "B3a"
+      ]
+    },
+    {
+      "controller_name": "CupManager",
+      "function_name": "begins",
+      "source": "uc_flow",
+      "description": "Function derived from UC step B3a: The system begins brewing coffee with the set water amount into the cup",
+      "step_references": [
+        "B3a"
+      ]
+    },
+    {
+      "controller_name": "MilkIsManager",
+      "function_name": "adds",
+      "source": "uc_flow",
+      "description": "Function derived from UC step B3b: The system adds milk to the cup",
+      "step_references": [
+        "B3b"
+      ]
+    },
+    {
+      "controller_name": "CupManager",
+      "function_name": "adds",
+      "source": "uc_flow",
+      "description": "Function derived from UC step B3b: The system adds milk to the cup",
+      "step_references": [
+        "B3b"
+      ]
+    },
+    {
+      "controller_name": "UserNotificationManager",
+      "function_name": "outputs",
+      "source": "uc_flow",
+      "description": "Function derived from UC step B4: The system outputs a message to user",
+      "step_references": [
+        "B4"
+      ]
+    },
+    {
+      "controller_name": "CupManager",
+      "function_name": "presents",
+      "source": "uc_flow",
+      "description": "Function derived from UC step B5: The system presents cup to user",
+      "step_references": [
+        "B5"
+      ]
+    },
+    {
+      "controller_name": "UserDeliveryManager",
+      "function_name": "presents",
+      "source": "uc_flow",
+      "description": "Function derived from UC step B5: The system presents cup to user",
+      "step_references": [
+        "B5"
+      ]
+    }
+  ],
+  "entity_flows": [
+    {
+      "entity_name": "Kaffeemehl",
+      "source_controller": "KaffeeManager",
+      "target_controller": "FilterManager",
+      "transformation": "beans -> grinding -> ground coffee",
+      "step_reference": "B2c"
+    }
+  ],
+  "missing_preconditions": []
+}

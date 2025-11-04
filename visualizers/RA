@@ -1,0 +1,774 @@
+"""
+Official RUP/UML Robustness Analysis Diagram Engine
+Based on official symbols from https://de.wikipedia.org/wiki/Robustheitsanalyse
+"""
+
+import json
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+from matplotlib.patches import FancyBboxPatch, Circle, Rectangle, Polygon
+import numpy as np
+from typing import Dict, List, Tuple, Optional, Any
+from pathlib import Path
+import math
+from dataclasses import dataclass, field
+from enum import Enum
+
+class ComponentType(Enum):
+    ACTOR = "actor"
+    BOUNDARY = "boundary" 
+    CONTROLLER = "controller"
+    ENTITY = "entity"
+
+@dataclass
+class RAComponent:
+    """Official RUP/UML compliant RA component"""
+    id: str
+    label: str
+    component_type: ComponentType
+    stereotype: str
+    position: Tuple[float, float] = (0, 0)
+
+class OfficialRUPEngine:
+    """
+    Official RUP/UML Robustness Analysis engine using Wikipedia-documented symbols:
+    - Akteur: Stick figure (Strichmännchen)
+    - Boundary-Objekt: Rounded rectangle (Rechteck mit abgerundeten Kanten)  
+    - Control-Objekt: Oval/ellipse (Oval)
+    - Entity-Objekt: Rectangle (Rechteck)
+    """
+    
+    def __init__(self, figure_size: Tuple[int, int] = (16, 12)):
+        self.figure_size = figure_size
+        self.dpi = 300
+        
+        # Official RUP symbols according to Wikipedia
+        self.official_styles = {
+            # Akteur: Stick figure symbol
+            ComponentType.ACTOR: {
+                "symbol_type": "stickman",
+                "head_radius": 0.015,
+                "body_height": 0.04,
+                "arm_span": 0.03,
+                "leg_span": 0.025,
+                "color": "#000000",
+                "linewidth": 2.0,
+                "text_offset": (0, -0.08),
+                "fontsize": 10,
+                "fontweight": "normal"
+            },
+            
+            # Boundary-Objekt: Rounded rectangle (Rechteck mit abgerundeten Kanten)
+            ComponentType.BOUNDARY: {
+                "symbol_type": "rounded_rectangle",
+                "width": 0.12,
+                "height": 0.06,
+                "corner_radius": 0.015,
+                "fill_color": "#E8F4FD",  # Light blue
+                "border_color": "#2E86AB",  # Blue
+                "linewidth": 2.0,
+                "text_offset": (0, 0),
+                "fontsize": 9,
+                "fontweight": "normal"
+            },
+            
+            # Control-Objekt: Oval/ellipse
+            ComponentType.CONTROLLER: {
+                "symbol_type": "ellipse",
+                "width": 0.10,
+                "height": 0.06,
+                "fill_color": "#F0F8E8",  # Light green
+                "border_color": "#2E7D32",  # Green
+                "linewidth": 2.0,
+                "text_offset": (0, 0),
+                "fontsize": 9,
+                "fontweight": "normal"
+            },
+            
+            # Entity-Objekt: Rectangle
+            ComponentType.ENTITY: {
+                "symbol_type": "rectangle",
+                "width": 0.10,
+                "height": 0.06,
+                "fill_color": "#FFF3E0",  # Light orange
+                "border_color": "#F57C00",  # Orange
+                "linewidth": 2.0,
+                "text_offset": (0, 0),
+                "fontsize": 9,
+                "fontweight": "normal"
+            }
+        }
+        
+        # Clean edge styling
+        self.edge_style = {
+            "color": "#333333",
+            "linewidth": 1.5,
+            "alpha": 0.8,
+            "arrowstyle": "->",
+            "arrowsize": 10
+        }
+
+    def load_and_parse_json(self, json_file_path: str) -> Tuple[List[RAComponent], List[Dict], Dict[str, Any]]:
+        """Load and parse JSON data for official RUP visualization"""
+        with open(json_file_path, 'r', encoding='utf-8') as f:
+            json_data = json.load(f)
+        
+        components = self.parse_components_official(json_data)
+        edges = self.parse_edges_official(json_data)
+        
+        return components, edges, json_data
+
+    def parse_components_official(self, json_data: Dict[str, Any]) -> List[RAComponent]:
+        """Parse components for official RUP symbols"""
+        components = []
+        
+        # Get nodes from JSON
+        nodes = []
+        if "graph" in json_data and "nodes" in json_data["graph"]:
+            nodes = json_data["graph"]["nodes"]
+        elif "components" in json_data and "nodes" in json_data["components"]:
+            nodes = json_data["components"]["nodes"]
+        
+        for node in nodes:
+            component = RAComponent(
+                id=node["id"],
+                label=node["label"],
+                component_type=ComponentType(node["type"]),
+                stereotype=node["stereotype"]
+            )
+            components.append(component)
+        
+        return components
+
+    def parse_edges_official(self, json_data: Dict[str, Any]) -> List[Dict]:
+        """Parse edges for official visualization"""
+        edges = []
+        
+        edge_list = []
+        if "graph" in json_data and "edges" in json_data["graph"]:
+            edge_list = json_data["graph"]["edges"]
+        elif "components" in json_data and "edges" in json_data["components"]:
+            edge_list = json_data["components"]["edges"]
+        
+        for edge in edge_list:
+            edges.append({
+                "source": edge["source"],
+                "target": edge["target"],
+                "type": edge.get("type", "association"),
+                "label": edge.get("label", ""),
+                "relationship": edge.get("relationship", "")
+            })
+        
+        return edges
+
+    def calculate_clean_layout(self, components: List[RAComponent], edges: List[Dict]) -> None:
+        """
+        Calculate clean, organized layout following RUP conventions
+        Left to right: Actors -> Boundaries -> Controllers -> Entities
+        """
+        
+        # Group components by type
+        actors = [c for c in components if c.component_type == ComponentType.ACTOR]
+        boundaries = [c for c in components if c.component_type == ComponentType.BOUNDARY]
+        controllers = [c for c in components if c.component_type == ComponentType.CONTROLLER]
+        entities = [c for c in components if c.component_type == ComponentType.ENTITY]
+        
+        # Position actors on the far left
+        self.position_column(actors, x_position=0.08, y_start=0.1, y_end=0.9)
+        
+        # Position boundaries left-center with more space
+        self.position_column(boundaries, x_position=0.24, y_start=0.05, y_end=0.95)
+        
+        # Position controllers in center with much more space from entities  
+        self.position_column(controllers, x_position=0.40, y_start=0.02, y_end=0.98)
+        
+        # Position entities on the far right with maximum distance from controllers
+        self.position_column(entities, x_position=0.92, y_start=0.05, y_end=0.95)
+
+    def position_column(self, components: List[RAComponent], x_position: float, 
+                       y_start: float, y_end: float) -> None:
+        """Position components in a vertical column with adequate spacing"""
+        if not components:
+            return
+        
+        if len(components) == 1:
+            components[0].position = (x_position, (y_start + y_end) / 2)
+        else:
+            # Add padding to prevent overlap
+            # Circles have radius 0.03 = diameter 0.06, need much more space
+            padding = 0.25  # Dramatically increased spacing for circle symbols
+            total_height = y_end - y_start
+            available_height = total_height - (len(components) - 1) * padding
+            
+            if available_height > 0:
+                # Use available space with padding
+                spacing = available_height / max(1, len(components) - 1) if len(components) > 1 else 0
+                for i, component in enumerate(components):
+                    y_pos = y_start + i * (spacing + padding)
+                    component.position = (x_position, min(y_pos, y_end))
+            else:
+                # Fall back to linear spacing if too many components
+                y_positions = np.linspace(y_start, y_end, len(components))
+                for component, y_pos in zip(components, y_positions):
+                    component.position = (x_position, y_pos)
+
+    def draw_official_actor(self, ax: plt.Axes, x: float, y: float) -> None:
+        """Draw official stick figure symbol"""
+        style = self.official_styles[ComponentType.ACTOR]
+        
+        head_radius = style["head_radius"]
+        body_height = style["body_height"]
+        arm_span = style["arm_span"]
+        leg_span = style["leg_span"]
+        color = style["color"]
+        linewidth = style["linewidth"]
+        
+        # Head circle
+        head = Circle((x, y + body_height * 0.6), head_radius, 
+                     facecolor='white', edgecolor=color, linewidth=linewidth)
+        ax.add_patch(head)
+        
+        # Body vertical line
+        body_top = y + body_height * 0.6 - head_radius
+        body_bottom = y - body_height * 0.4
+        ax.plot([x, x], [body_top, body_bottom], color=color, linewidth=linewidth)
+        
+        # Arms horizontal line
+        arm_y = y + body_height * 0.2
+        ax.plot([x - arm_span/2, x + arm_span/2], [arm_y, arm_y], color=color, linewidth=linewidth)
+        
+        # Legs diagonal lines
+        ax.plot([x, x - leg_span/2], [body_bottom, y - body_height], color=color, linewidth=linewidth)
+        ax.plot([x, x + leg_span/2], [body_bottom, y - body_height], color=color, linewidth=linewidth)
+
+    def draw_official_boundary(self, ax: plt.Axes, x: float, y: float) -> None:
+        """Draw official boundary symbol: 90° counterclockwise rotated 'T' with foot touching a circle"""
+        style = self.official_styles[ComponentType.BOUNDARY]
+        
+        color = style["border_color"]
+        linewidth = style["linewidth"]
+        circle_radius = 0.02
+        t_height = 0.04
+        t_width = 0.03
+        
+        # Circle on the left side (after 90° counterclockwise rotation)
+        circle = Circle((x - t_height/2 - circle_radius, y), circle_radius, 
+                       facecolor='white', edgecolor=color, linewidth=linewidth)
+        ax.add_patch(circle)
+        
+        # Horizontal line of the T (now the main stem, touching the circle)
+        t_left = x - t_height/2
+        t_right = x + t_height/2
+        ax.plot([t_left, t_right], [y, y], color=color, linewidth=linewidth)
+        
+        # Vertical line of the T (now on the right side)
+        ax.plot([t_right, t_right], [y - t_width/2, y + t_width/2], color=color, linewidth=linewidth)
+
+    def draw_official_controller(self, ax: plt.Axes, x: float, y: float) -> None:
+        """Draw official controller symbol: Circle with tangential arrow tip at top"""
+        style = self.official_styles[ComponentType.CONTROLLER]
+        
+        color = style["border_color"]
+        fill_color = style["fill_color"]
+        linewidth = style["linewidth"]
+        circle_radius = 0.015  # Reduced from 0.03 to prevent overlaps
+        arrow_head_size = 0.008
+        
+        # Main circle
+        circle = Circle((x, y), circle_radius, 
+                       facecolor=fill_color, edgecolor=color, linewidth=linewidth)
+        ax.add_patch(circle)
+        
+        # Arrow tip positioned exactly at 12 o'clock (0 Uhr) touching the circle tangentially
+        # Only the arrow tip (spitze), no shaft
+        top_x = x
+        top_y = y + circle_radius
+        
+        # Arrow tip pointing left - just the < shape at the top of the circle
+        # The tip touches the circle at exactly 12 o'clock position
+        tip_size = arrow_head_size * 0.8
+        
+        # Two lines forming < shape pointing LEFT, with the tip at the left end
+        # The tip point is to the left, lines go from tip to circle
+        tip_x = top_x - tip_size
+        tip_y = top_y
+        
+        # Upper line of arrow tip (from left tip to circle top-right)
+        ax.plot([tip_x, top_x], 
+               [tip_y, top_y + tip_size/2], 
+               color=color, linewidth=linewidth*1.5)
+        
+        # Lower line of arrow tip (from left tip to circle top-left)  
+        ax.plot([tip_x, top_x], 
+               [tip_y, top_y - tip_size/2], 
+               color=color, linewidth=linewidth*1.5)
+
+    def draw_official_entity(self, ax: plt.Axes, x: float, y: float) -> None:
+        """Draw official entity symbol: Circle with tangential line at bottom"""
+        style = self.official_styles[ComponentType.ENTITY]
+        
+        color = style["border_color"]
+        fill_color = style["fill_color"]
+        linewidth = style["linewidth"]
+        circle_radius = 0.015  # Reduced from 0.03 to prevent overlaps
+        line_length = 0.04
+        
+        # Main circle
+        circle = Circle((x, y), circle_radius, 
+                       facecolor=fill_color, edgecolor=color, linewidth=linewidth)
+        ax.add_patch(circle)
+        
+        # Tangential line at bottom
+        line_start_x = x - line_length/2
+        line_end_x = x + line_length/2
+        line_y = y - circle_radius  # Tangent to bottom of circle
+        
+        ax.plot([line_start_x, line_end_x], [line_y, line_y], 
+               color=color, linewidth=linewidth)
+
+    def draw_official_component(self, component: RAComponent, ax: plt.Axes) -> None:
+        """Draw component using official RUP symbols"""
+        x, y = component.position
+        
+        # Draw the official symbol
+        if component.component_type == ComponentType.ACTOR:
+            self.draw_official_actor(ax, x, y)
+        elif component.component_type == ComponentType.BOUNDARY:
+            self.draw_official_boundary(ax, x, y)
+        elif component.component_type == ComponentType.CONTROLLER:
+            self.draw_official_controller(ax, x, y)
+        elif component.component_type == ComponentType.ENTITY:
+            self.draw_official_entity(ax, x, y)
+        
+        # Add clean component label
+        style = self.official_styles[component.component_type]
+        text_x = x + style["text_offset"][0]
+        text_y = y + style["text_offset"][1]
+        
+        # Clean label without stereotype brackets
+        clean_label = component.label
+        
+        # For actors, place text below the stick figure
+        if component.component_type == ComponentType.ACTOR:
+            text_y = y - 0.08
+        
+        # Intelligent text wrapping for long labels
+        if len(clean_label) > 12:
+            words = clean_label.split()
+            if len(words) > 1:
+                # Break at natural word boundaries
+                mid_point = len(words) // 2
+                line1 = " ".join(words[:mid_point])
+                line2 = " ".join(words[mid_point:])
+                clean_label = f"{line1}\n{line2}"
+        
+        # Add text with subtle background for readability
+        ax.text(text_x, text_y, clean_label,
+               ha='center', va='center' if component.component_type != ComponentType.ACTOR else 'top',
+               fontsize=style["fontsize"],
+               fontweight=style["fontweight"],
+               bbox=dict(boxstyle="round,pad=0.3", 
+                        facecolor='white', 
+                        alpha=0.85,
+                        edgecolor='lightgray',
+                        linewidth=0.5))
+
+    def draw_official_edge(self, edge: Dict, components_dict: Dict[str, RAComponent], ax: plt.Axes) -> None:
+        """Draw edges with correct arrow directions and line types"""
+        if edge["source"] not in components_dict or edge["target"] not in components_dict:
+            return
+        
+        source_comp = components_dict[edge["source"]]
+        target_comp = components_dict[edge["target"]]
+        
+        # Calculate connection points on component boundaries
+        source_point, target_point = self.calculate_edge_points(source_comp, target_comp)
+        
+        # Get relationship type
+        relationship = edge.get("relationship", "")
+        edge_type = edge.get("type", "association")
+        
+        # Handle different relationship types with correct arrows and line styles
+        if relationship == "use":
+            # USE: Arrow points TO Controller (Entity -> Controller)
+            # Blue dashed line with arrow pointing to controller
+            ax.annotate('', xy=source_point, xytext=target_point,
+                       arrowprops=dict(
+                           arrowstyle='->',
+                           color='blue',
+                           linestyle='--',
+                           linewidth=1.5,
+                           alpha=0.8,
+                           shrinkA=2, shrinkB=2
+                       ))
+            
+        elif relationship == "provide":
+            # PROVIDE: Arrow points TO Entity (Controller -> Entity)  
+            # Red dashed line with arrow pointing to entity
+            ax.annotate('', xy=target_point, xytext=source_point,
+                       arrowprops=dict(
+                           arrowstyle='->',
+                           color='red',
+                           linestyle='--',
+                           linewidth=1.5,
+                           alpha=0.8,
+                           shrinkA=2, shrinkB=2
+                       ))
+            
+        else:
+            # Control flow and Actor-Boundary connections: Simple lines without arrows
+            ax.plot([source_point[0], target_point[0]], [source_point[1], target_point[1]], 
+                   color='black', linewidth=1.5, alpha=0.7)
+        
+        # Add relationship label if present and meaningful
+        if relationship in ["use", "provide"]:
+            mid_x = (source_point[0] + target_point[0]) / 2
+            mid_y = (source_point[1] + target_point[1]) / 2
+            
+            # Offset label to avoid line overlap
+            dx = target_point[0] - source_point[0]
+            dy = target_point[1] - source_point[1]
+            length = math.sqrt(dx*dx + dy*dy)
+            
+            if length > 0:
+                # Perpendicular offset
+                offset_x = -dy / length * 0.03
+                offset_y = dx / length * 0.03
+            else:
+                offset_x, offset_y = 0.02, 0.02
+            
+            color = 'blue' if relationship == 'use' else 'red'
+            ax.text(mid_x + offset_x, mid_y + offset_y, relationship,
+                   ha='center', va='center',
+                   fontsize=8,
+                   style='italic',
+                   color=color,
+                   bbox=dict(boxstyle="round,pad=0.2", 
+                           facecolor='lightyellow', 
+                           alpha=0.8,
+                           edgecolor='gray',
+                           linewidth=0.3))
+
+    def calculate_edge_points(self, source: RAComponent, target: RAComponent) -> Tuple[Tuple[float, float], Tuple[float, float]]:
+        """Calculate connection points on component boundaries"""
+        source_x, source_y = source.position
+        target_x, target_y = target.position
+        
+        # Get component dimensions
+        source_style = self.official_styles[source.component_type]
+        target_style = self.official_styles[target.component_type]
+        
+        # Calculate offsets based on component type and size
+        if source.component_type == ComponentType.ACTOR:
+            source_offset = 0.03  # Stick figure size
+        elif source.component_type in [ComponentType.CONTROLLER, ComponentType.ENTITY]:
+            source_offset = 0.03  # Circle radius
+        else:
+            source_offset = 0.04  # Boundary T symbol
+        
+        if target.component_type == ComponentType.ACTOR:
+            target_offset = 0.03
+        elif target.component_type in [ComponentType.CONTROLLER, ComponentType.ENTITY]:
+            target_offset = 0.03  # Circle radius
+        else:
+            target_offset = 0.04  # Boundary T symbol
+        
+        # Calculate direction and apply offsets
+        dx = target_x - source_x
+        dy = target_y - source_y
+        distance = math.sqrt(dx*dx + dy*dy)
+        
+        if distance > 0:
+            # Unit vector
+            ux = dx / distance
+            uy = dy / distance
+            
+            # Connection points
+            source_point = (source_x + ux * source_offset, source_y + uy * source_offset)
+            target_point = (target_x - ux * target_offset, target_y - uy * target_offset)
+        else:
+            source_point = (source_x, source_y)
+            target_point = (target_x, target_y)
+        
+        return source_point, target_point
+
+    def add_missing_actor_boundary_connections(self, components: List[RAComponent], edges: List[Dict]) -> List[Dict]:
+        """Add missing Actor-Boundary connections based on UC-Methode rules"""
+        
+        # Get all actors and boundaries
+        actors = [c for c in components if c.component_type == ComponentType.ACTOR]
+        boundaries = [c for c in components if c.component_type == ComponentType.BOUNDARY]
+        
+        # Define Actor-Boundary mappings based on UC text (UC1 and UC3)
+        actor_boundary_mappings = {
+            # UC1 - Coffee preparation mappings
+            "Timer": ["TimeTriggerBoundary"],
+            "User": ["HMIAdditiveInputBoundary", "HMIStatusDisplayBoundary", "ProductDeliveryBoundary"],
+            "ExternalTrigger": ["WaterSupplyBoundary", "CoffeeBeansSupplyBoundary", "MilkSupplyBoundary", "SugarSupplyBoundary", 
+                               "WeatherSupplyBoundary", "SatelliteSupplyBoundary", "RocketIsFueledAndSupplyBoundary", "LaunchWindowSupplyBoundary"],
+            
+            # UC3 - Rocket launch mappings (based on UC3 actors: Mission Control, Launch Sequencer)
+            "MissionControl": ["LaunchControlBoundary", "MissionCommandBoundary", "TelemetryDisplayBoundary"],
+            "LaunchSequencer": ["SequencerControlBoundary", "IgnitionTriggerBoundary", "SafetySystemBoundary"]
+        }
+        
+        # Create existing edges set for quick lookup
+        existing_edges = set()
+        for edge in edges:
+            existing_edges.add((edge["source"], edge["target"]))
+        
+        # Add missing Actor-Boundary connections
+        new_edges = list(edges)  # Copy existing edges
+        
+        for actor in actors:
+            if actor.id in actor_boundary_mappings:
+                target_boundaries = actor_boundary_mappings[actor.id]
+                
+                for boundary_name in target_boundaries:
+                    # Check if boundary exists in components
+                    boundary_exists = any(b.id == boundary_name for b in boundaries)
+                    
+                    if boundary_exists and (actor.id, boundary_name) not in existing_edges:
+                        # Add Actor -> Boundary connection
+                        new_edge = {
+                            "source": actor.id,
+                            "target": boundary_name,
+                            "type": "association",
+                            "relationship": "interacts",
+                            "label": f"{actor.id} interacts with {boundary_name}"
+                        }
+                        new_edges.append(new_edge)
+                        print(f"Added missing Actor-Boundary connection: {actor.id} -> {boundary_name}")
+        
+        return new_edges
+
+    def add_missing_provide_relationships(self, components: List[RAComponent], edges: List[Dict]) -> List[Dict]:
+        """Add missing PROVIDE relationships based on logical outputs"""
+        
+        # Get all controllers and entities
+        controllers = [c for c in components if c.component_type == ComponentType.CONTROLLER]
+        entities = [c for c in components if c.component_type == ComponentType.ENTITY]
+        
+        # Create existing edges set for quick lookup
+        existing_edges = set()
+        for edge in edges:
+            existing_edges.add((edge["source"], edge["target"]))
+        
+        # Define logical PROVIDE mappings for rocket launch operations
+        provide_mappings = {
+            # Controllers that should provide typical outputs
+            "CheckManager": ["CheckResult", "SystemStatus"],
+            "SequencerManager": ["SequenceStatus", "IgnitionSignal"],
+            "TrajectoryManager": ["NavigationData", "TrajectoryStatus"],
+            "SatelliteManager": ["DeploymentConfirmation", "SatelliteStatus"],
+            "DeploymentManager": ["DeployedSatellite", "DeploymentResult"],
+            "ProceduresManager": ["ProcedureStatus", "RecoverySignal"],
+            "ProtocolsManager": ["SafetyStatus", "ProtocolActivation"],
+            "CorrectionManager": ["CorrectionResult", "GuidanceUpdate"],
+            "ConditionManager": ["AlertSignal", "AbortSignal"]
+        }
+        
+        # Add missing PROVIDE relationships
+        new_edges = list(edges)  # Copy existing edges
+        
+        for controller in controllers:
+            if controller.id in provide_mappings:
+                target_entities = provide_mappings[controller.id]
+                
+                for entity_name in target_entities:
+                    # Check if entity exists or create simplified version
+                    entity_exists = any(e.id == entity_name for e in entities)
+                    
+                    # For demonstration, use existing entities that make sense
+                    if "Status" in entity_name and any(e.id == "Status" for e in entities):
+                        target_entity = "Status"
+                    elif "Result" in entity_name and any(e.id == "Result" for e in entities):
+                        target_entity = "Result"
+                    elif "Signal" in entity_name and any(e.id == "Signal" for e in entities):
+                        target_entity = "Signal"
+                    elif controller.id == "DeploymentManager" and any(e.id == "Satellite" for e in entities):
+                        target_entity = "Satellite"
+                    else:
+                        continue  # Skip if no matching entity found
+                    
+                    if (controller.id, target_entity) not in existing_edges:
+                        # Add Controller -> Entity PROVIDE connection
+                        new_edge = {
+                            "source": controller.id,
+                            "target": target_entity,
+                            "type": "data_flow",
+                            "relationship": "provide",
+                            "label": f"{controller.id} provides {target_entity}"
+                        }
+                        new_edges.append(new_edge)
+                        print(f"Added missing PROVIDE relationship: {controller.id} -> {target_entity}")
+        
+        return new_edges
+
+    def create_official_rup_diagram(self, json_file_path: str, output_path: str = None) -> str:
+        """Create official RUP/UML compliant Robustness Analysis diagram"""
+        
+        # Load and parse data
+        components, edges, json_data = self.load_and_parse_json(json_file_path)
+        
+        if not components:
+            raise ValueError("No components found in JSON data")
+        
+        # Calculate clean layout
+        self.calculate_clean_layout(components, edges)
+        
+        # Create figure with professional styling
+        fig, ax = plt.subplots(1, 1, figsize=self.figure_size, dpi=self.dpi)
+        fig.patch.set_facecolor('white')
+        
+        # Set clean axes
+        ax.set_xlim(0, 1)
+        ax.set_ylim(0, 1)
+        ax.set_aspect('equal')
+        ax.axis('off')
+        
+        # Add subtle grid for professional look
+        ax.grid(True, alpha=0.1, linestyle='-', linewidth=0.5, color='lightgray')
+        
+        # Create components dictionary
+        components_dict = {comp.id: comp for comp in components}
+        
+        # Add missing Actor-Boundary connections
+        edges = self.add_missing_actor_boundary_connections(components, edges)
+        
+        # Add missing PROVIDE relationships for rocket launch
+        edges = self.add_missing_provide_relationships(components, edges)
+        
+        # Draw edges first (behind components)
+        for edge in edges:
+            self.draw_official_edge(edge, components_dict, ax)
+        
+        # Draw components on top
+        for component in components:
+            self.draw_official_component(component, ax)
+        
+        # Add title and metadata
+        metadata = json_data.get("metadata", {})
+        uc_name = metadata.get("uc_name", "Robustness Analysis")
+        domain = metadata.get("domain", "")
+        
+        title = f"Robustness Analysis: {uc_name}"
+        if domain:
+            title += f" ({domain.replace('_', ' ').title()})"
+        
+        ax.text(0.5, 0.95, title, transform=ax.transAxes,
+               ha='center', va='top', fontsize=14, fontweight='bold')
+        
+        # Add subtitle with standards reference
+        subtitle = "Official RUP/UML Symbols (Wikipedia Standard)"
+        ax.text(0.5, 0.91, subtitle, transform=ax.transAxes,
+               ha='center', va='top', fontsize=10, style='italic', color='gray')
+        
+        # Add legend for component types
+        self.add_official_legend(ax, components)
+        
+        # Generate output path
+        if output_path is None:
+            json_path = Path(json_file_path)
+            metadata = json_data.get("metadata", {})
+            uc_name = metadata.get("uc_name", "Unknown_UC")
+            timestamp = metadata.get("analysis_timestamp", "")
+            
+            output_path = str(json_path.parent / f"{uc_name}_Official_RUP_RA_{timestamp}.png")
+        
+        # Save with high quality
+        plt.tight_layout()
+        plt.savefig(output_path, dpi=self.dpi, bbox_inches='tight', 
+                   facecolor='white', edgecolor='none', pad_inches=0.2)
+        plt.close()
+        
+        return output_path
+
+    def add_official_legend(self, ax: plt.Axes, components: List[RAComponent]) -> None:
+        """Add legend showing official RUP symbols"""
+        legend_elements = []
+        
+        # Only show legend for component types that actually exist
+        existing_types = set(comp.component_type for comp in components)
+        
+        type_descriptions = {
+            ComponentType.ACTOR: "Akteur (Stick Figure)",
+            ComponentType.BOUNDARY: "Boundary-Objekt (gedrehtes T mit Kreis)",
+            ComponentType.CONTROLLER: "Control-Objekt (Kreis mit Pfeilspitze)",
+            ComponentType.ENTITY: "Entity-Objekt (Kreis mit Linie)"
+        }
+        
+        for comp_type in [ComponentType.ACTOR, ComponentType.BOUNDARY, ComponentType.CONTROLLER, ComponentType.ENTITY]:
+            if comp_type in existing_types:
+                style = self.official_styles[comp_type]
+                
+                if comp_type == ComponentType.ACTOR:
+                    # Special handling for stick figure
+                    element = plt.Line2D([0], [0], marker='o', color='black',
+                                       markersize=8, linewidth=0,
+                                       label=type_descriptions[comp_type])
+                elif comp_type == ComponentType.CONTROLLER:
+                    # Ellipse marker
+                    element = plt.Line2D([0], [0], marker='o', color='w',
+                                       markerfacecolor=style["fill_color"],
+                                       markeredgecolor=style["border_color"],
+                                       markersize=12, linewidth=2,
+                                       label=type_descriptions[comp_type])
+                else:
+                    # Rectangle markers
+                    element = plt.Line2D([0], [0], marker='s', color='w',
+                                       markerfacecolor=style["fill_color"],
+                                       markeredgecolor=style["border_color"],
+                                       markersize=10, linewidth=2,
+                                       label=type_descriptions[comp_type])
+                
+                legend_elements.append(element)
+        
+        # Position legend
+        ax.legend(handles=legend_elements, 
+                 loc='upper left', 
+                 bbox_to_anchor=(0.02, 0.88),
+                 fontsize=9,
+                 title="Official RUP/UML Symbols",
+                 title_fontsize=10,
+                 frameon=True,
+                 fancybox=True,
+                 shadow=True,
+                 framealpha=0.95)
+
+
+def main():
+    """Demo of official RUP/UML engine"""
+    print("Official RUP/UML Robustness Analysis Engine")
+    print("Using Wikipedia-documented symbols")
+    print("=" * 60)
+    
+    # Create official engine
+    engine = OfficialRUPEngine(figure_size=(16, 12))
+    
+    # Process visualization files
+    output_dir = Path("output")
+    viz_files = list(output_dir.glob("*_visualization_*.json"))
+    
+    if not viz_files:
+        print("No visualization JSON files found")
+        return
+    
+    print(f"Found {len(viz_files)} visualization JSON files")
+    
+    for json_file in viz_files:
+        print(f"\nProcessing: {json_file.name}")
+        
+        try:
+            diagram_output = engine.create_official_rup_diagram(str(json_file))
+            print(f"  Official RUP diagram: {Path(diagram_output).name}")
+            
+        except Exception as e:
+            print(f"  Error: {e}")
+    
+    print("\nOfficial RUP/UML diagrams completed!")
+    print("Symbols according to: https://de.wikipedia.org/wiki/Robustheitsanalyse")
+
+
+if __name__ == "__main__":
+    main()

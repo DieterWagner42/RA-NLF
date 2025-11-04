@@ -1,0 +1,584 @@
+{
+  "meta": {
+    "use_case": "UC3_Rocket_Launch_Improved",
+    "domain": "rocket_science",
+    "total_ra_classes": 101,
+    "analysis_engine": "generic_uc_analyzer.py",
+    "generated_at": "2025-10-29T11:14:58.987735",
+    "json_format_version": "1.0"
+  },
+  "components": {
+    "actors": [
+      {
+        "name": "Ground Systems"
+      },
+      {
+        "name": "Mission Control"
+      },
+      {
+        "name": "Goal"
+      },
+      {
+        "name": "Launch Sequencer"
+      }
+    ],
+    "controllers": [
+      {
+        "name": "A1ConditionManager"
+      },
+      {
+        "name": "A3ConditionManager"
+      },
+      {
+        "name": "AbortnotificationManager"
+      },
+      {
+        "name": "AbortsequenceManager"
+      },
+      {
+        "name": "BurnManager"
+      },
+      {
+        "name": "ContinueManager"
+      },
+      {
+        "name": "DataManager"
+      },
+      {
+        "name": "FailurereportManager"
+      },
+      {
+        "name": "FirststageManager"
+      },
+      {
+        "name": "FlightprogramManager"
+      },
+      {
+        "name": "FlighttelemetryManager"
+      },
+      {
+        "name": "GroundSystemsSupplyController"
+      },
+      {
+        "name": "HMIController"
+      },
+      {
+        "name": "LaunchWindowSupplyController"
+      },
+      {
+        "name": "LaunchsequenceManager"
+      },
+      {
+        "name": "MainenginesManager"
+      },
+      {
+        "name": "MechanismManager"
+      },
+      {
+        "name": "OptimaltrajectoryManager"
+      },
+      {
+        "name": "OrbitalparametersManager"
+      },
+      {
+        "name": "ParametersManager"
+      },
+      {
+        "name": "ProceduresManager"
+      },
+      {
+        "name": "PropellantflowManager"
+      },
+      {
+        "name": "ReportManager"
+      },
+      {
+        "name": "RocketSupplyController"
+      },
+      {
+        "name": "Rocket_ScienceDomainOrchestrator"
+      },
+      {
+        "name": "SatelliteManager"
+      },
+      {
+        "name": "SatelliteSupplyController"
+      },
+      {
+        "name": "SatellitedeploymentManager"
+      },
+      {
+        "name": "SecondstageManager"
+      },
+      {
+        "name": "SeparationstatusManager"
+      },
+      {
+        "name": "SubsystemsManager"
+      },
+      {
+        "name": "TimeManager"
+      },
+      {
+        "name": "TimetelemetryManager"
+      },
+      {
+        "name": "TrajectoryManager"
+      },
+      {
+        "name": "TriggerManager"
+      },
+      {
+        "name": "WeatherSupplyController"
+      }
+    ],
+    "boundaries": [
+      {
+        "name": "GroundSystemsSupplyBoundary"
+      },
+      {
+        "name": "HMIUserInputBoundary"
+      },
+      {
+        "name": "LaunchWindowSupplyBoundary"
+      },
+      {
+        "name": "RocketSupplyBoundary"
+      },
+      {
+        "name": "SatelliteSupplyBoundary"
+      },
+      {
+        "name": "WeatherSupplyBoundary"
+      },
+      {
+        "name": "MissionControlOutputBoundary"
+      },
+      {
+        "name": "MissionControlInputBoundary"
+      }
+    ],
+    "entities": [
+      {
+        "name": "AbortNotification"
+      },
+      {
+        "name": "AbortSequence"
+      },
+      {
+        "name": "Abortprocedures"
+      },
+      {
+        "name": "Burn"
+      },
+      {
+        "name": "CalculatedAltitude"
+      },
+      {
+        "name": "CombustionChamber"
+      },
+      {
+        "name": "Correctionparameters"
+      },
+      {
+        "name": "CurrentFlow"
+      },
+      {
+        "name": "Data"
+      },
+      {
+        "name": "DiagnosticData"
+      },
+      {
+        "name": "FailureReport"
+      },
+      {
+        "name": "FirstStage"
+      },
+      {
+        "name": "FlightProgram"
+      },
+      {
+        "name": "FlightTelemetry"
+      },
+      {
+        "name": "Flightdata"
+      },
+      {
+        "name": "GroundStations"
+      },
+      {
+        "name": "GroundSystems"
+      },
+      {
+        "name": "GuidanceComputer"
+      },
+      {
+        "name": "Ignition"
+      },
+      {
+        "name": "LaunchSequence"
+      },
+      {
+        "name": "LaunchWindow"
+      },
+      {
+        "name": "MainEngines"
+      },
+      {
+        "name": "Mechanism"
+      },
+      {
+        "name": "MissionControl"
+      },
+      {
+        "name": "OptimalTrajectory"
+      },
+      {
+        "name": "OrbitalAdjustment"
+      },
+      {
+        "name": "Orbitalparameters"
+      },
+      {
+        "name": "Orbitalposition"
+      },
+      {
+        "name": "Parameters"
+      },
+      {
+        "name": "PlannedTrajectory"
+      },
+      {
+        "name": "Procedures"
+      },
+      {
+        "name": "PropellantFlow"
+      },
+      {
+        "name": "Real"
+      },
+      {
+        "name": "Report"
+      },
+      {
+        "name": "Rocket"
+      },
+      {
+        "name": "SafetyProtocols"
+      },
+      {
+        "name": "Satellite"
+      },
+      {
+        "name": "SatelliteDeployment"
+      },
+      {
+        "name": "ScheduledTime"
+      },
+      {
+        "name": "SecondStage"
+      },
+      {
+        "name": "SeparationStatus"
+      },
+      {
+        "name": "Separationmechanism"
+      },
+      {
+        "name": "Stageignition"
+      },
+      {
+        "name": "Subsystems"
+      },
+      {
+        "name": "Successreport"
+      },
+      {
+        "name": "Target"
+      },
+      {
+        "name": "TargetOrbit"
+      },
+      {
+        "name": "TelemetryData"
+      },
+      {
+        "name": "TelemetryStream"
+      },
+      {
+        "name": "Timetelemetry"
+      },
+      {
+        "name": "TimingParameters"
+      },
+      {
+        "name": "Trajectory"
+      },
+      {
+        "name": "Validation"
+      },
+      {
+        "name": "Weather"
+      }
+    ]
+  },
+  "relationships": {
+    "control_flows": [
+      {
+        "source": "A1ConditionManager",
+        "destination": "A3ConditionManager",
+        "rule": "Rule 2",
+        "description": "Sequential processing"
+      },
+      {
+        "source": "A3ConditionManager",
+        "destination": "AbortnotificationManager",
+        "rule": "Rule 2",
+        "description": "Sequential processing"
+      },
+      {
+        "source": "AbortnotificationManager",
+        "destination": "AbortsequenceManager",
+        "rule": "Rule 2",
+        "description": "Sequential processing"
+      },
+      {
+        "source": "AbortsequenceManager",
+        "destination": "BurnManager",
+        "rule": "Rule 2",
+        "description": "Sequential processing"
+      },
+      {
+        "source": "BurnManager",
+        "destination": "ContinueManager",
+        "rule": "Rule 2",
+        "description": "Sequential processing"
+      },
+      {
+        "source": "ContinueManager",
+        "destination": "DataManager",
+        "rule": "Rule 2",
+        "description": "Sequential processing"
+      },
+      {
+        "source": "DataManager",
+        "destination": "FailurereportManager",
+        "rule": "Rule 2",
+        "description": "Sequential processing"
+      },
+      {
+        "source": "FailurereportManager",
+        "destination": "FirststageManager",
+        "rule": "Rule 2",
+        "description": "Sequential processing"
+      },
+      {
+        "source": "FirststageManager",
+        "destination": "FlightprogramManager",
+        "rule": "Rule 2",
+        "description": "Sequential processing"
+      },
+      {
+        "source": "FlightprogramManager",
+        "destination": "FlighttelemetryManager",
+        "rule": "Rule 2",
+        "description": "Sequential processing"
+      },
+      {
+        "source": "FlighttelemetryManager",
+        "destination": "LaunchsequenceManager",
+        "rule": "Rule 2",
+        "description": "Sequential processing"
+      },
+      {
+        "source": "LaunchsequenceManager",
+        "destination": "MainenginesManager",
+        "rule": "Rule 2",
+        "description": "Sequential processing"
+      }
+    ],
+    "data_flows": [
+      {
+        "source": "BurnManager",
+        "destination": "Burn",
+        "type": "use",
+        "entity": "Burn"
+      },
+      {
+        "source": "DataManager",
+        "destination": "Data",
+        "type": "use",
+        "entity": "Data"
+      },
+      {
+        "source": "GroundSystemsSupplyController",
+        "destination": "GroundSystems",
+        "type": "use",
+        "entity": "GroundSystems"
+      },
+      {
+        "source": "LaunchWindowSupplyController",
+        "destination": "LaunchWindow",
+        "type": "use",
+        "entity": "LaunchWindow"
+      },
+      {
+        "source": "MechanismManager",
+        "destination": "Mechanism",
+        "type": "use",
+        "entity": "Mechanism"
+      },
+      {
+        "source": "OrbitalparametersManager",
+        "destination": "Orbitalparameters",
+        "type": "use",
+        "entity": "Orbitalparameters"
+      },
+      {
+        "source": "ParametersManager",
+        "destination": "Parameters",
+        "type": "use",
+        "entity": "Parameters"
+      },
+      {
+        "source": "ProceduresManager",
+        "destination": "Procedures",
+        "type": "use",
+        "entity": "Procedures"
+      },
+      {
+        "source": "ReportManager",
+        "destination": "FailureReport",
+        "type": "use",
+        "entity": "FailureReport"
+      },
+      {
+        "source": "RocketSupplyController",
+        "destination": "Rocket",
+        "type": "use",
+        "entity": "Rocket"
+      },
+      {
+        "source": "Rocket_ScienceDomainOrchestrator",
+        "destination": "Rocket",
+        "type": "use",
+        "entity": "Rocket"
+      },
+      {
+        "source": "SatelliteManager",
+        "destination": "Satellite",
+        "type": "use",
+        "entity": "Satellite"
+      },
+      {
+        "source": "SatelliteSupplyController",
+        "destination": "Satellite",
+        "type": "use",
+        "entity": "Satellite"
+      },
+      {
+        "source": "SatellitedeploymentManager",
+        "destination": "Satellite",
+        "type": "use",
+        "entity": "Satellite"
+      },
+      {
+        "source": "SubsystemsManager",
+        "destination": "Subsystems",
+        "type": "use",
+        "entity": "Subsystems"
+      }
+    ],
+    "actor_boundary_connections": [
+      {
+        "source": "Ground Systems",
+        "destination": "GroundSystemsSupplyBoundary",
+        "rule": "UC-Methode Rule 1",
+        "description": "Actor triggers system through boundary"
+      },
+      {
+        "source": "Ground Systems",
+        "destination": "LaunchWindowSupplyBoundary",
+        "rule": "UC-Methode Rule 1",
+        "description": "Actor triggers system through boundary"
+      },
+      {
+        "source": "Ground Systems",
+        "destination": "RocketSupplyBoundary",
+        "rule": "UC-Methode Rule 1",
+        "description": "Actor triggers system through boundary"
+      },
+      {
+        "source": "Ground Systems",
+        "destination": "SatelliteSupplyBoundary",
+        "rule": "UC-Methode Rule 1",
+        "description": "Actor triggers system through boundary"
+      },
+      {
+        "source": "Ground Systems",
+        "destination": "WeatherSupplyBoundary",
+        "rule": "UC-Methode Rule 1",
+        "description": "Actor triggers system through boundary"
+      },
+      {
+        "source": "Mission Control",
+        "destination": "HMIUserInputBoundary",
+        "rule": "UC-Methode Rule 1",
+        "description": "Actor triggers system through boundary"
+      },
+      {
+        "source": "Mission Control",
+        "destination": "MissionControlOutputBoundary",
+        "rule": "UC-Methode Rule 1",
+        "description": "Actor triggers system through boundary"
+      },
+      {
+        "source": "Mission Control",
+        "destination": "MissionControlInputBoundary",
+        "rule": "UC-Methode Rule 1",
+        "description": "Actor triggers system through boundary"
+      },
+      {
+        "source": "Launch Sequencer",
+        "destination": "GroundSystemsSupplyBoundary",
+        "rule": "UC-Methode Rule 1",
+        "description": "Actor triggers system through boundary"
+      },
+      {
+        "source": "Launch Sequencer",
+        "destination": "LaunchWindowSupplyBoundary",
+        "rule": "UC-Methode Rule 1",
+        "description": "Actor triggers system through boundary"
+      },
+      {
+        "source": "Launch Sequencer",
+        "destination": "RocketSupplyBoundary",
+        "rule": "UC-Methode Rule 1",
+        "description": "Actor triggers system through boundary"
+      },
+      {
+        "source": "Launch Sequencer",
+        "destination": "SatelliteSupplyBoundary",
+        "rule": "UC-Methode Rule 1",
+        "description": "Actor triggers system through boundary"
+      },
+      {
+        "source": "Launch Sequencer",
+        "destination": "WeatherSupplyBoundary",
+        "rule": "UC-Methode Rule 1",
+        "description": "Actor triggers system through boundary"
+      }
+    ]
+  },
+  "summary": {
+    "total_components": 101,
+    "actors_count": 4,
+    "controllers_count": 36,
+    "boundaries_count": 8,
+    "entities_count": 54,
+    "control_flows_count": 12,
+    "data_flows_count": 15,
+    "actor_boundary_connections_count": 13
+  }
+}

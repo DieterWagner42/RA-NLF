@@ -1,0 +1,42 @@
+Capability: Extended Syntax Testing
+Feature: UC Syntax Extensions
+
+Use Case: Test Extended UC Syntax
+Goal: Validate all extended UC syntax elements
+
+Preconditions:
+- System is ready for testing
+- Extended syntax parser is implemented
+
+Actors: System Admin, Test Controller
+
+Basic Flow:
+B1 (trigger) Test sequence starts at scheduled time
+B2 The system validates syntax elements
+B3 The system processes basic flow statements
+B4 Continue main flow
+B5 End UC
+
+Alternative Flows:
+A1 at B2 Syntax validation fails
+A1.1 The system generates error report
+A1.2 Continue at B5
+A1.3 End Use Case
+
+A2 at B3 Processing encounters error
+A2.1 The system attempts recovery
+A2.2 Continue with B4
+A2.3 End UC
+
+Extension Flows:
+E1 at B2 Additional validation required
+E1.1 The system performs extended validation
+E1.2 Continue basic flow
+E1.3 Continue at step B3
+
+E2 at any time Admin requests status
+E2.1 The system provides status information
+E2.2 Continue in main flow
+
+Postcondition:
+All syntax elements are properly parsed and processed.
