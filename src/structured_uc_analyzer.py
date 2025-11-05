@@ -22,7 +22,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__)))
 # Import existing components
 from domain_verb_loader import DomainVerbLoader, VerbType
 from generative_context_manager import GenerativeContextManager, GeneratedContext, ContextType
-from official_rup_engine import OfficialRUPEngine
+# Pure RUP visualizer is imported dynamically in _generate_rup_diagram()
 
 class LineType(Enum):
     """Types of lines in UC files"""
@@ -100,7 +100,7 @@ class RAClass:
     description: str
     step_id: str = ""
     element_type: str = "functional"
-    parallel_group: int = 0  # 0 = sequential, 1 = P1 (B2x), 2 = P2 (B3x), etc.
+    parallel_group: int = 0  # 0 = sequential, 2 = P2 (B2x), 3 = P3 (B3x), etc.
 
 @dataclass
 class ControlFlow:
@@ -129,8 +129,12 @@ class ParallelFlowNode:
     node_id: str
     node_type: str  # "distribution" or "merge"
     step_range: str  # e.g., "B2a-B2b" for parallel steps
-    parallel_steps: List[str]  # List of parallel step IDs
+    parallel_steps: List[str] = None  # List of parallel step IDs
     description: str = ""
+    
+    def __post_init__(self):
+        if self.parallel_steps is None:
+            self.parallel_steps = []
 
 @dataclass
 class StepContext:
@@ -214,7 +218,7 @@ class StructuredUCAnalyzer:
         self.step_sequence: List[str] = []  # Track step order for control flows
         self.parallel_flow_nodes: List[ParallelFlowNode] = []  # Track parallel nodes
         self.all_lines: List[str] = []  # Store all file lines for look-ahead
-        self.parallel_counter = 0  # Counter for P1, P2, P3, etc.
+        self.parallel_counter = 1  # Counter for P1, P2, P3, etc.
         self.in_parallel_flow = False  # Track if we're currently in a parallel flow
         
         # Entity deduplication tracking
@@ -2688,58 +2692,128 @@ class StructuredUCAnalyzer:
         return data_flows
     
     def _generate_control_flows(self):
-        """Generate control flows between sequential and parallel steps with distribution/merge nodes"""
-        print("[CONTROL] Generating control flows...")
+        """Generate control flows based on the correct specification logic using existing regex functions"""
+        print("[CONTROL] Generating control flows using correct logic with regex functions...")
         
-        # Get all step analyses in order
-        step_analyses = [la for la in self.line_analyses if la.step_id]
+        # Get all step analyses with controllers in order
+        step_analyses = [la for la in self.line_analyses if la.step_id and self._get_controller_for_step(la)]
         
-        for i, current_step in enumerate(step_analyses):
-            # Find controller for current step
-            current_controller = None
-            for ra_class in current_step.ra_classes:
-                if ra_class.ra_type == RAType.CONTROLLER:
-                    current_controller = ra_class.name
-                    break
+        if len(step_analyses) <= 1:
+            return
+        
+        # Parse steps using existing regex functions
+        parsed_steps = []
+        for step in step_analyses:
+            step_id = step.step_id
+            controller = self._get_controller_for_step(step)
             
-            if not current_controller:
-                continue
+            # Use regex pattern to determine step type directly
+            is_parallel = self._has_parallel_pattern(step_id)
+            step_number = self._extract_parallel_step_number(step_id) if is_parallel else None
+            step_type = 'parallel' if is_parallel else 'serial'
+                
+            parsed_steps.append({
+                'step_id': step_id,
+                'type': step_type,
+                'step_number': step_number,
+                'controller': controller,
+                'line_analysis': step
+            })
+        
+        print(f"[CONTROL] Parsed {len(parsed_steps)} steps for control flow analysis")
+        for ps in parsed_steps:
+            print(f"  - {ps['step_id']}: {ps['type']} (num={ps['step_number']}) -> {ps['controller']}")
+        
+        # Apply correct control flow logic
+        for i in range(len(parsed_steps) - 1):
+            current = parsed_steps[i]
+            next_step = parsed_steps[i + 1]
             
-            # Check if current step is part of a parallel group
-            is_in_parallel_group = self._is_in_parallel_group(current_step.step_id)
-            is_first_parallel = self._is_first_in_parallel_group(current_step.step_id)
+            current_type = current['type']
+            next_type = next_step['type']
+            current_num = current['step_number']
+            next_num = next_step['step_number']
             
-            # Check if current step is last after parallel group  
-            is_after_parallel_group = self._is_after_parallel_group(current_step.step_id, i, step_analyses)
+            print(f"[CONTROL] Analyzing: {current['step_id']} ({current_type}) -> {next_step['step_id']} ({next_type})")
             
-            # Generate appropriate control flows based on parallel patterns
-            if is_in_parallel_group:
-                # Current step is part of parallel group (e.g., B2a, B2b, B2c, B2d)
-                # For parallel steps, we DO NOT create direct flows here
-                # The distribution/merge flows will be created by _generate_parallel_control_flows()
-                # Skip direct flow creation for parallel steps
-                pass
-            elif is_after_parallel_group:
-                # Current step follows a parallel group (e.g., B3 after B2a/B2b/B2c/B2d)
-                # Flow should go: Merge -> Current
-                self._create_parallel_end_flows(current_step, i, step_analyses)
-            else:
-                # Normal sequential flow
-                self._create_sequential_flows(current_step, i, step_analyses)
+            # Rule 1: serial -> serial
+            if current_type == 'serial' and next_type == 'serial':
+                print(f"[CONTROL] Rule 1: serial -> serial")
+                self._create_control_flow(current, next_step, "sequential", "Rule 1 - Serial to Serial")
+                
+            # Rule 2: serial -> parallel
+            elif current_type == 'serial' and next_type == 'parallel':
+                print(f"[CONTROL] Rule 2: serial -> parallel (add P{next_num}_START)")
+                px_start = f"P{next_num}_START"
+                px_end = f"P{next_num}_END"
+                step_range = self._get_parallel_step_range(next_step['step_id'])
+                
+                # Add parallel distribution node
+                self._add_parallel_node(current['line_analysis'], px_start, 'distribution', step_range)
+                self._add_parallel_node(current['line_analysis'], px_end, 'merge', step_range)                
+                # Connect current to Px_START
+                self._create_control_flow_to_parallel_node(current, px_start, "sequential", "Rule 2 - Serial to Parallel Distribution")
+                
+            # Rule 3: parallel -> parallel (same step number)
+            elif (current_type == 'parallel' and next_type == 'parallel' and current_num == next_num):
+                print(f"[CONTROL] Rule 3: parallel -> parallel (same step {current_num}) - no direct connection")
+                # No direct connection - they're in the same parallel group
+                 # Connect current to Px_START
+                self._create_control_flow_from_parallel_node (px_start ,current , "parallel", "Rule 3: parallel -> parallel (same step number)")
+                self._create_control_flow_to_parallel_node(current, px_end, "sequential", "Rule 3: parallel -> parallel (same step number)")
+                
+                
+            # Rule 4: parallel -> parallel (different step number)
+            elif (current_type == 'parallel' and next_type == 'parallel' and current_num != next_num):
+                 # finalize current 
+                self._create_control_flow_from_parallel_node (px_start ,current , "parallel", "Rule 4: parallel -> parallel (different step number)")
+                self._create_control_flow_to_parallel_node(current, px_end, "sequential", "Rule 4: parallel -> parallel (different step number)")
+                print(f"[CONTROL] Rule 4: parallel -> parallel (different steps {current_num} -> {next_num})")
+                px_endold = px_end
+                px_end = f"P{next_num}_END"
+                px_start = f"P{next_num}_START"
+                
+                current_range = self._get_parallel_step_range(current['step_id'])
+                next_range = self._get_parallel_step_range(next_step['step_id'])
+
+
+                # Add parallel nodes
+                self._add_parallel_node(current['line_analysis'], px_end, 'merge', current_range)
+                self._add_parallel_node(next_step['line_analysis'], px_start, 'distribution', next_range)
+                
+                # Connect Px_END with Px+1_START
+                self._create_control_flow_between_parallel_nodes(px_endold, px_start, "sequential", "Rule 4 - Parallel Group Transition")
+                
+            # Rule 5: parallel -> serial
+            elif current_type == 'parallel' and next_type == 'serial':
+                print(f"[CONTROL] Rule 5: parallel -> serial (add P{current_num}_END)")
+                current_range = self._get_parallel_step_range(current['step_id'])
+                
+                # finalize current 
+                self._create_control_flow_from_parallel_node (px_start ,current , "parallel", "Rule 5: parallel -> serial")
+                self._create_control_flow_to_parallel_node(current, px_end, "sequential", "Rule 5: parallel -> serial")
+               # Add parallel merge node
+                self._add_parallel_node(current['line_analysis'], px_end, 'merge', current_range)
+                
+                # Connect Px_END to next serial step
+                self._create_control_flow_from_parallel_node(px_end, next_step, "sequential", "Rule 5 - Parallel to Serial Merge")
+        
+        print(f"[CONTROL] Control flow generation completed")
     
     def _is_in_parallel_group(self, step_id: str) -> bool:
-        """Check if step is part of a parallel group (has letter suffix)"""
-        match = re.match(r'^([BAEF]\d+)([a-z])$', step_id)
+        """Check if step is part of a parallel group (has letter suffix)
+        Recognizes: B5a, B5b, A1.2a, A1.2b, E3.3a, E3.3b"""
+        match = re.match(r'^([BAE]\d+(?:\.\d+)?)([a-z])$', step_id)
         if not match:
             return False
         
         # Check if there are other steps with same base but different letters
-        base_step = match.group(1)
+        base_step = match.group(1)  # B5, A1.2, E3.3
         parallel_steps = []
         
         for line_analysis in self.line_analyses:
             if line_analysis.step_id:
-                step_match = re.match(r'^([BAEF]\d+)([a-z])$', line_analysis.step_id)
+                step_match = re.match(r'^([BAE]\d+(?:\.\d+)?)([a-z])$', line_analysis.step_id)
                 if step_match and step_match.group(1) == base_step:
                     parallel_steps.append(line_analysis.step_id)
         
@@ -2748,8 +2822,50 @@ class StructuredUCAnalyzer:
     
     def _is_first_in_parallel_group(self, step_id: str) -> bool:
         """Check if step is first in a parallel group (suffix 'a')"""
-        match = re.match(r'^([BAEF]\d+)([a-z])$', step_id)
+        match = re.match(r'^([BAE]\d+(?:\.\d+)?)([a-z])$', step_id)
         return match and match.group(2) == 'a'
+    
+    def _has_parallel_pattern(self, step_id: str) -> bool:
+        """Check if step has parallel pattern (letter suffix) using regex only
+        Returns True for: B2a, B3b, A1.2a, E3.3b, etc."""
+        return re.match(r'^[BAE]\d+(?:\.\d+)?[a-z]$', step_id) is not None
+    
+    def _extract_parallel_step_number(self, step_id: str) -> Optional[int]:
+        """Extract the parallel step number from step_id using regex
+        B2a -> 2, A1.2a -> 12, E3.3b -> 33"""
+        match = re.match(r'^[BAE](\d+)(?:\.(\d+))?[a-z]$', step_id)
+        if not match:
+            return None
+        
+        main_num = int(match.group(1))
+        sub_num = int(match.group(2)) if match.group(2) else 0
+        
+        # Create unique number: B2a=2, A1.2a=12, E3.3a=33
+        return main_num * 10 + sub_num if sub_num > 0 else main_num
+    
+    def _get_parallel_step_range(self, step_id: str) -> str:
+        """Get the range of parallel steps for a given step_id
+        B2a -> B2a-B2d, A1.2a -> A1.2a-A1.2d"""
+        match = re.match(r'^([BAE]\d+(?:\.\d+)?)([a-z])$', step_id)
+        if not match:
+            return step_id
+        
+        base_step = match.group(1)  # B2, A1.2, E3.3
+        
+        # Find all parallel steps with same base
+        parallel_steps = []
+        for line_analysis in self.line_analyses:
+            if line_analysis.step_id:
+                step_match = re.match(r'^([BAE]\d+(?:\.\d+)?)([a-z])$', line_analysis.step_id)
+                if step_match and step_match.group(1) == base_step:
+                    parallel_steps.append(line_analysis.step_id)
+        
+        if len(parallel_steps) <= 1:
+            return step_id
+        
+        # Sort and create range
+        parallel_steps.sort()
+        return f"{parallel_steps[0]}-{parallel_steps[-1]}"
     
     def _is_after_parallel_group(self, step_id: str, current_index: int, step_analyses: List) -> bool:
         """Check if step comes after a parallel group"""
@@ -2758,11 +2874,11 @@ class StructuredUCAnalyzer:
         
         # Check if previous step was part of a parallel group
         prev_step = step_analyses[current_index - 1]
-        prev_match = re.match(r'^([BAEF]\d+)([a-z])$', prev_step.step_id)
+        prev_match = re.match(r'^([BAE]\d+(?:\.\d+)?)([a-z])$', prev_step.step_id)
         
         # If previous step has letter suffix and current doesn't continue the group
         if prev_match:
-            curr_match = re.match(r'^([BAEF]\d+)([a-z]?)$', step_id)
+            curr_match = re.match(r'^([BAE]\d+(?:\.\d+)?)([a-z]?)$', step_id)
             if curr_match:
                 prev_base = prev_match.group(1)
                 curr_base = curr_match.group(1)
@@ -2963,18 +3079,100 @@ class StructuredUCAnalyzer:
                 return ra_class.name
         return None
     
+    def _create_control_flow(self, current, next_step, flow_type, rule):
+        """Create a standard control flow between two steps"""
+        control_flow = ControlFlow(
+            source_step=current['step_id'],
+            target_step=next_step['step_id'],
+            source_controller=current['controller'],
+            target_controller=next_step['controller'],
+            flow_type=flow_type,
+            rule=rule,
+            description=f"{flow_type.capitalize()} flow from {current['step_id']} to {next_step['step_id']}"
+        )
+        current['line_analysis'].control_flows.append(control_flow)
+        print(f"[CONTROL] Created flow: {current['controller']} -> {next_step['controller']} ({rule})")
+    
+    def _add_parallel_node(self, line_analysis, node_id, node_type, step_range):
+        """Add a parallel flow node"""
+        parallel_node = ParallelFlowNode(
+            node_id=node_id,
+            node_type=node_type,
+            step_range=step_range,
+            description=f"{node_type.capitalize()} node for parallel steps {step_range}",
+            parallel_steps=step_range.split('-') if '-' in step_range else [step_range]
+        )
+        
+        # Add to global parallel nodes if not already present
+        if not any(pn.node_id == node_id for pn in self.parallel_flow_nodes):
+            self.parallel_flow_nodes.append(parallel_node)
+            print(f"[CONTROL] Added parallel node: {node_id} ({node_type}) for {step_range}")
+    
+    def _create_control_flow_to_parallel_node(self, current, node_id, flow_type, rule):
+        """Create a control flow from a step to a parallel node"""
+        control_flow = ControlFlow(
+            source_step=current['step_id'],
+            target_step=node_id,
+            source_controller=current['controller'],
+            target_controller=node_id,
+            flow_type=flow_type,
+            rule=rule,
+            description=f"Flow from {current['step_id']} to parallel {node_id}"
+        )
+        current['line_analysis'].control_flows.append(control_flow)
+        print(f"[CONTROL] Created flow to parallel node: {current['controller']} -> {node_id} ({rule})")
+    
+    def _create_control_flow_from_parallel_node(self, node_id, next_step, flow_type, rule):
+        """Create a control flow from a parallel node to a step"""
+        control_flow = ControlFlow(
+            source_step=node_id,
+            target_step=next_step['step_id'],
+            source_controller=node_id,
+            target_controller=next_step['controller'],
+            flow_type=flow_type,
+            rule=rule,
+            description=f"Flow from parallel {node_id} to {next_step['step_id']}"
+        )
+        next_step['line_analysis'].control_flows.append(control_flow)
+        print(f"[CONTROL] Created flow from parallel node: {node_id} -> {next_step['controller']} ({rule})")
+    
+    def _create_control_flow_between_parallel_nodes(self, source_node, target_node, flow_type, rule):
+        """Create a control flow between two parallel nodes"""
+        # We need to store this somewhere - let's add it to the first line analysis for now
+        if self.line_analyses:
+            control_flow = ControlFlow(
+                source_step=source_node,
+                target_step=target_node,
+                source_controller=source_node,
+                target_controller=target_node,
+                flow_type=flow_type,
+                rule=rule,
+                description=f"Flow between parallel nodes {source_node} -> {target_node}"
+            )
+            # Find a suitable line analysis to attach this to
+            # Prefer attaching to the first line that has a step_id
+            target_line = None
+            for la in self.line_analyses:
+                if la.step_id:
+                    target_line = la
+                    break
+            
+            if target_line:
+                target_line.control_flows.append(control_flow)
+                print(f"[CONTROL] Created flow between parallel nodes: {source_node} -> {target_node} ({rule})")
+    
     
     def _get_parallel_group_from_step_id(self, step_id: str) -> int:
         """
         Determine parallel group directly from step_id
-        Returns: 0 for sequential, 1 for P1 (B2x), 2 for P2 (B3x), etc.
+        Returns: 0 for sequential, 2 for P2 (B2x), 3 for P3 (B3x), etc.
         """
         # Check if this step is part of a parallel group
         match = re.match(r'^B(\d+)([a-z])$', step_id)
         if match:
             base_number = int(match.group(1))
-            # B2x -> parallel group 1, B3x -> parallel group 2, etc.
-            return base_number - 1
+            # B2x -> parallel group 2, B3x -> parallel group 3, etc.
+            return base_number
         
         # For non-parallel steps (B1, B4, A1, E1, etc.), return 0 (sequential)
         return 0
@@ -3026,6 +3224,9 @@ class StructuredUCAnalyzer:
                 'entities': [{'name': ra.name, 'description': ra.description} for ra in entities],
                 'control_flow_nodes': [{'name': pn.node_id, 'description': pn.description, 'type': pn.node_type} for pn in all_parallel_nodes]
             },
+            'layout': {
+                'uc_step_order': self._generate_uc_step_layout_order(controllers, all_parallel_nodes)
+            },
             'relationships': {
                 'control_flows': [
                     {
@@ -3036,7 +3237,7 @@ class StructuredUCAnalyzer:
                         'rule': cf.rule,
                         'description': cf.description
                     } for cf in all_control_flows
-                ] + self._generate_parallel_control_flows(),
+                ],  # Removed old _generate_parallel_control_flows() - now using correct control flow logic
                 'data_flows': [
                     {
                         'controller': df.controller,
@@ -3095,6 +3296,94 @@ class StructuredUCAnalyzer:
         
         print(f"[JSON] Analysis saved to: {json_file_path}")
         return json_file_path
+    
+    def _generate_uc_step_layout_order(self, controllers: List[RAClass], parallel_nodes: List[ParallelFlowNode]) -> List[Dict]:
+        """Generiere UC-Schritt Layout-Reihenfolge basierend auf bestehenden Analysen"""
+        
+        # Extrahiere UC-Schritt-Nummern aus Controller-Descriptions
+        controller_steps = []
+        for controller in controllers:
+            step_num = self._extract_step_number_from_description(controller.description)
+            controller_steps.append({
+                'step_number': step_num,
+                'type': 'controller',
+                'name': controller.name,
+                'parallel_group': controller.parallel_group
+            })
+        
+        # Sortiere nach Schritt-Nummer
+        controller_steps.sort(key=lambda x: x['step_number'])
+        
+        # Erstelle Layout-Order mit Control Flow Nodes
+        layout_order = []
+        parallel_nodes_by_group = {}
+        
+        # Gruppiere parallel nodes
+        for node in parallel_nodes:
+            import re
+            match = re.match(r'P(\d+)_(START|END)', node.node_id)
+            if match:
+                group_num = int(match.group(1))
+                node_type = match.group(2)
+                if group_num not in parallel_nodes_by_group:
+                    parallel_nodes_by_group[group_num] = {}
+                parallel_nodes_by_group[group_num][node_type] = node.node_id
+        
+        # Baue Layout-Reihenfolge auf
+        current_parallel_groups = sorted(parallel_nodes_by_group.keys())
+        used_parallel_groups = set()
+        
+        for controller_info in controller_steps:
+            step_num = controller_info['step_number']
+            parallel_group = controller_info['parallel_group']
+            
+            # Füge parallel nodes vor entsprechenden Controllers hinzu
+            for group_num in current_parallel_groups:
+                if group_num in used_parallel_groups:
+                    continue
+                if group_num == parallel_group:
+                    # START node vor parallel group
+                    if 'START' in parallel_nodes_by_group[group_num]:
+                        layout_order.append({
+                            'type': 'control_flow_node',
+                            'name': parallel_nodes_by_group[group_num]['START'],
+                            'position_before_group': group_num
+                        })
+                    break
+            
+            # Füge Controller hinzu
+            layout_order.append(controller_info)
+            
+            # Füge END node nach parallel group hinzu
+            if parallel_group > 0 and parallel_group not in used_parallel_groups:
+                if 'END' in parallel_nodes_by_group[parallel_group]:
+                    layout_order.append({
+                        'type': 'control_flow_node', 
+                        'name': parallel_nodes_by_group[parallel_group]['END'],
+                        'position_after_group': parallel_group
+                    })
+                used_parallel_groups.add(parallel_group)
+        
+        return layout_order
+    
+    def _extract_step_number_from_description(self, description: str) -> int:
+        """Extrahiere Schritt-Nummer aus Description für Sortierung"""
+        import re
+        
+        # Suche nach "in B1", "in A1", "in E1" etc.
+        match = re.search(r'in ([BAE])(\d+)', description)
+        if match:
+            step_letter = match.group(1)
+            step_number = int(match.group(2))
+            
+            if step_letter == 'B':
+                return step_number
+            elif step_letter == 'A':
+                return 100 + step_number  # A flows nach B flows
+            elif step_letter == 'E':
+                return 200 + step_number  # E flows nach A flows
+        
+        return 999  # Unknown/default
     
     def _extract_nlp_context_for_step(self, step_id: str) -> Dict[str, Any]:
         """Extract NLP context information for debugging purposes"""
@@ -3756,7 +4045,7 @@ class StructuredUCAnalyzer:
 
     def _generate_rup_diagram(self, json_file_path: str) -> str:
         """
-        Generate RUP diagram from JSON analysis using official RUP engine
+        Generate RUP diagram from JSON analysis using pure RUP visualizer
         
         Args:
             json_file_path: Path to the JSON analysis file
@@ -3765,23 +4054,14 @@ class StructuredUCAnalyzer:
             Path to generated diagram file
         """
         try:
-            # Create RUP engine
-            rup_engine = OfficialRUPEngine(figure_size=(20, 16))
+            from pure_rup_visualizer import PureRUPVisualizer
             
-            # Generate diagram from JSON (this creates it in root directory)
-            temp_diagram_path = rup_engine.create_official_rup_diagram_from_json(json_file_path)
+            # Create pure RUP visualizer
+            visualizer = PureRUPVisualizer(figure_size=(20, 16))
             
-            # Move diagram to new directory for consistency
-            if temp_diagram_path and os.path.exists(temp_diagram_path):
-                import shutil
-                diagram_filename = os.path.basename(temp_diagram_path)
-                final_diagram_path = os.path.join("new", diagram_filename)
-                shutil.move(temp_diagram_path, final_diagram_path)
-                print(f"[DIAGRAM] RUP diagram generated: {final_diagram_path}")
-                return final_diagram_path
-            else:
-                print(f"[ERROR] Diagram file not found: {temp_diagram_path}")
-                return ""
+            # Generate diagram from JSON directly to new directory
+            diagram_path = visualizer.generate_diagram(json_file_path)
+            return diagram_path
             
         except Exception as e:
             print(f"[ERROR] Failed to generate RUP diagram: {e}")
@@ -3889,6 +4169,21 @@ def main():
         analyzer = StructuredUCAnalyzer(domain_name="beverage_preparation")
         line_analyses, json_output = analyzer.analyze_uc_file("Use Case/UC1.txt")
         print(f"[SUCCESS] Analysis completed. Generated: {json_output}")
+        
+        # Generate RA diagrams using both engines
+        print("[RUP] Generating RA diagrams...")
+        
+        # SVG-basierte Visualisierung mit Wikipedia-Symbolen
+        from svg_rup_visualizer import SVGRUPVisualizer
+        svg_visualizer = SVGRUPVisualizer()
+        svg_diagram_path = svg_visualizer.generate_svg(json_output)
+        print(f"[SUCCESS] SVG RA diagram generated: {svg_diagram_path}")
+        
+        # Original RUP engine als Backup
+        from official_rup_engine import OfficialRUPEngine
+        engine = OfficialRUPEngine()
+        png_diagram_path = engine.create_official_rup_diagram_from_json(json_output)
+        print(f"[SUCCESS] PNG RA diagram generated: {png_diagram_path}")
         
     except Exception as e:
         print(f"[ERROR] Error during analysis: {e}")
