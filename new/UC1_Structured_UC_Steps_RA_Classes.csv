@@ -1,6 +1,8 @@
 UC_Schritt;Schritt_Text;RA_Klasse;RA_Typ;Stereotype;Beschreibung;Control_Flow_Source;Control_Flow_Type;Control_Flow_Rule;Data_Flow_Entity;Data_Flow_Type;Data_Flow_Description
 ;- Coffee beans are available in the system;CoffeeBeans;Entity;<<entity>>;Precondition entity: coffee_beans;;;;;;
 ;- Coffee beans are available in the system;CoffeeBeansSupplyBoundary;Boundary;<<boundary>>;Boundary for CoffeeBeans supply monitoring and alerts;;;;;;
+;- Coffee beans are available in the system;Coffee;Entity;<<entity>>;Precondition entity: coffee;;;;;;
+;- Coffee beans are available in the system;CoffeeSupplyBoundary;Boundary;<<boundary>>;Boundary for Coffee supply monitoring and alerts;;;;;;
 ;- Water is available in the system;Water;Entity;<<entity>>;Precondition entity: water;;;;;;
 ;- Water is available in the system;WaterSupplyBoundary;Boundary;<<boundary>>;Boundary for Water supply monitoring and alerts;;;;;;
 ;- Milk is available in the system;Milk;Entity;<<entity>>;Precondition entity: milk;;;;;;
@@ -8,62 +10,62 @@ UC_Schritt;Schritt_Text;RA_Klasse;RA_Typ;Stereotype;Beschreibung;Control_Flow_So
 ;- Sugar is available in the system;Sugar;Entity;<<entity>>;Precondition entity: sugar;;;;;;
 ;- Sugar is available in the system;SugarSupplyBoundary;Boundary;<<boundary>>;Boundary for Sugar supply monitoring and alerts;;;;;;
 ;Actors: User;User;Actor;<<actor>>;System actor: User;;;;;;
-B1;B1 (trigger) System clock reaches the user defined time of 7:00h (Radio clock);TimeManager;Controller;<<controller>>;Manages reach function in B1;;;;Time;provide;TimeManager provides Time as result
+B1;B1 (trigger) System clock reaches the user defined time of 7:00h (Radio clock);TimeManager;Controller;<<controller>>;Manages time operations in B1;;;;Time;provide;TimeManager provides Time as result
 B1;B1 (trigger) System clock reaches the user defined time of 7:00h (Radio clock);Time;Entity;<<entity>>;Domain entity: time;;;;;;
 P1_START;Parallel flow distribution for B2a;P1_START;ControlFlowNode;<<distribution>>;Distribution node for parallel steps B2a;;;;;;
-B2a;B2a The system activates the water heater;WaterManager;Controller;<<controller>>;Abstract controller with functions: monitorTemperature, heatWater, protectOverheating;;;;HotWater;provide;WaterManager provides HotWater as result
-B2b;B2b The system prepares filter;PrepareManager;Controller;<<controller>>;Manages prepare function in B2b (functional alternative to implementation element);;;;FilteredLiquid;provide;PrepareManager provides FilteredLiquid as result
-B2c;B2c The system grinds the user defined amount of coffe beens with the user defined grinding degree directly into the filter;UserDefinedAmountManager;Controller;<<controller>>;Manages grind function in B2c;;;;UserDefinedGrindingDegree;use;UserDefinedAmountManager uses UserDefinedGrindingDegree as input
-B2c;B2c The system grinds the user defined amount of coffe beens with the user defined grinding degree directly into the filter;UserDefinedAmountManager;Controller;<<controller>>;Manages grind function in B2c;;;;Filter;provide;UserDefinedAmountManager provides output to Filter
-B2c;B2c The system grinds the user defined amount of coffe beens with the user defined grinding degree directly into the filter;UserDefinedAmountManager;Controller;<<controller>>;Manages grind function in B2c;;;;UserDefinedAmount;provide;UserDefinedAmountManager provides UserDefinedAmount as result
+B2a;B2a The system activates the water heater;WaterLiquidManager;Controller;<<controller>>;Manages waterliquid operations in B2a;;;;HotWater;provide;WaterLiquidManager provides HotWater as result
+B2b;B2b The system prepares filter;FilterManager;Controller;<<controller>>;Manages filter operations in B2b;;;;FilteredLiquid;provide;FilterManager provides FilteredLiquid as result
+B2c;B2c The system grinds the user defined amount of coffe beens with the user defined grinding degree directly into the filter;CoffeeSolidManager;Controller;<<controller>>;Manages coffeesolid operations in B2c;;;;UserDefinedGrindingDegree;use;CoffeeSolidManager uses UserDefinedGrindingDegree as input
+B2c;B2c The system grinds the user defined amount of coffe beens with the user defined grinding degree directly into the filter;CoffeeSolidManager;Controller;<<controller>>;Manages coffeesolid operations in B2c;;;;Filter;provide;CoffeeSolidManager provides output to Filter
+B2c;B2c The system grinds the user defined amount of coffe beens with the user defined grinding degree directly into the filter;CoffeeSolidManager;Controller;<<controller>>;Manages coffeesolid operations in B2c;;;;UserDefinedAmount;provide;CoffeeSolidManager provides UserDefinedAmount as result
 B2c;B2c The system grinds the user defined amount of coffe beens with the user defined grinding degree directly into the filter;UserDefinedAmount;Entity;<<entity>>;Domain entity: userdefinedamount;;;;;;
 B2c;B2c The system grinds the user defined amount of coffe beens with the user defined grinding degree directly into the filter;UserDefinedGrindingDegree;Entity;<<entity>>;Domain entity: userdefinedgrindingdegree;;;;;;
-B2c;B2c The system grinds the user defined amount of coffe beens with the user defined grinding degree directly into the filter;CoffeBeens;Entity;<<entity>>;Domain entity: coffebeens;;;;;;
-B2d;B2d The system retrieves cup from storage container and places it under the filter;CupManager;Controller;<<controller>>;Manages retrieve function in B2d;;;;StorageContainer;use;CupManager uses StorageContainer as input
-B2d;B2d The system retrieves cup from storage container and places it under the filter;CupManager;Controller;<<controller>>;Manages retrieve function in B2d;;;;Cup;provide;CupManager provides Cup as result
+B2c;B2c The system grinds the user defined amount of coffe beens with the user defined grinding degree directly into the filter;CoffeeBeans;Entity;<<entity>>;Domain entity: coffeebeans;;;;;;
+B2d;B2d The system retrieves cup from storage container and places it under the filter;CupManager;Controller;<<controller>>;Manages cup operations in B2d;;;;StorageContainer;use;CupManager uses StorageContainer as input
+B2d;B2d The system retrieves cup from storage container and places it under the filter;CupManager;Controller;<<controller>>;Manages cup operations in B2d;;;;Cup;provide;CupManager provides Cup as result
 B2d;B2d The system retrieves cup from storage container and places it under the filter;Cup;Entity;<<entity>>;Domain entity: cup;;;;;;
 B2d;B2d The system retrieves cup from storage container and places it under the filter;StorageContainer;Entity;<<entity>>;Domain entity: storagecontainer;;;;;;
 P1_END;Parallel flow merge for B2a;P1_END;ControlFlowNode;<<merge>>;Merge node for parallel steps B2a;;;;;;
 P2_START;Parallel flow distribution for B3a;P2_START;ControlFlowNode;<<distribution>>;Distribution node for parallel steps B3a;;;;;;
-B3a;B3a The system begins brewing coffee with the defined amount of water into the cup;WaterManager;Controller;<<controller>>;Abstract controller with functions: monitorTemperature, heatWater, protectOverheating;;;;Coffee;provide;WaterManager provides Coffee as result
+B3a;B3a The system begins brewing coffee with the defined amount of water into the cup;CoffeeLiquidManager;Controller;<<controller>>;Manages coffeeliquid operations in B3a;;;;Coffee;provide;CoffeeLiquidManager provides Coffee as result
 B3a;B3a The system begins brewing coffee with the defined amount of water into the cup;Coffee;Entity;<<entity>>;Domain entity: coffee;;;;;;
 B3a;B3a The system begins brewing coffee with the defined amount of water into the cup;DefinedAmount;Entity;<<entity>>;Domain entity: definedamount;;;;;;
-B3b;B3b The system adds milk to the cup;MilkManager;Controller;<<controller>>;Abstract controller with functions: trackFreshness, maintainTemperature, monitorExpiration;;;;Cup;provide;MilkManager provides output to Cup
-B3b;B3b The system adds milk to the cup;MilkManager;Controller;<<controller>>;Abstract controller with functions: trackFreshness, maintainTemperature, monitorExpiration;;;;Milk;provide;MilkManager provides Milk as result
+B3b;B3b The system adds milk to the cup;MilkLiquidManager;Controller;<<controller>>;Manages milkliquid operations in B3b;;;;Cup;provide;MilkLiquidManager provides output to Cup
+B3b;B3b The system adds milk to the cup;MilkLiquidManager;Controller;<<controller>>;Manages milkliquid operations in B3b;;;;Milk;provide;MilkLiquidManager provides Milk as result
 B3b;B3b The system adds milk to the cup;Milk;Entity;<<entity>>;Domain entity: milk;;;;;;
 B3b;B3b The system adds milk to the cup;Cup;Entity;<<entity>>;Domain entity: cup;;;;;;
 P2_END;Parallel flow merge for B3a;P2_END;ControlFlowNode;<<merge>>;Merge node for parallel steps B3a;;;;;;
-B4;B4 The system outputs a message to user;MessageManager;Controller;<<controller>>;Manages output function in B4;PARALLEL_MERGE;after_parallel;Rule 4 - Parallel Flow;;;
-B4;B4 The system outputs a message to user;MessageManager;Controller;<<controller>>;Manages output function in B4;;;;Message;provide;MessageManager provides Message as result
+B4;B4 The system outputs a message to user;MessageManager;Controller;<<controller>>;Manages message operations in B4;PARALLEL_MERGE;after_parallel;Rule 4 - Parallel Flow;;;
+B4;B4 The system outputs a message to user;MessageManager;Controller;<<controller>>;Manages message operations in B4;;;;Message;provide;MessageManager provides Message as result
 B4;B4 The system outputs a message to user;Message;Entity;<<entity>>;Domain entity: message;;;;;;
 B4;B4 The system outputs a message to user;UserCommunicationBoundary;Boundary;<<boundary>>;Boundary for User communication with system;;;;;;
-B5;B5 The system presents cup to user;CupManager;Controller;<<controller>>;Manages present function in B5;MessageManager;sequential;Rule 2;;;
-B5;B5 The system presents cup to user;CupManager;Controller;<<controller>>;Manages present function in B5;;;;Cup;provide;CupManager provides Cup as result
+B5;B5 The system presents cup to user;UserManager;Controller;<<controller>>;Manages user operations in B5;MessageManager;sequential;Rule 2;;;
+B5;B5 The system presents cup to user;UserManager;Controller;<<controller>>;Manages user operations in B5;;;;Cup;provide;UserManager provides Cup as result
 B5;B5 The system presents cup to user;Cup;Entity;<<entity>>;Domain entity: cup;;;;;;
 B5;B5 The system presents cup to user;UserCommunicationBoundary;Boundary;<<boundary>>;Boundary for User communication with system;;;;;;
-A1;A1 at B2a Water heater has too little water;WaterManager;Controller;<<controller>>;Abstract controller with functions: monitorTemperature, heatWater, protectOverheating;;;;B2aWaterHeater;use;WaterManager interacts with B2aWaterHeater
-A1;A1 at B2a Water heater has too little water;WaterManager;Controller;<<controller>>;Abstract controller with functions: monitorTemperature, heatWater, protectOverheating;;;;TooLittleWater;provide;WaterManager provides TooLittleWater as result
+A1;A1 at B2a Water heater has too little water;A1ConditionManager;Controller;<<controller>>;Manages a1condition operations in A1;;;;B2aWaterHeater;use;A1ConditionManager interacts with B2aWaterHeater
+A1;A1 at B2a Water heater has too little water;A1ConditionManager;Controller;<<controller>>;Manages a1condition operations in A1;;;;TooLittleWater;provide;A1ConditionManager provides TooLittleWater as result
 A1;A1 at B2a Water heater has too little water;TooLittleWater;Entity;<<entity>>;Domain entity: toolittlewater;;;;;;
-A1.1;A1.1 The system switches off water heater;WaterManager;Controller;<<controller>>;Abstract controller with functions: monitorTemperature, heatWater, protectOverheating;WaterManager;sequential;Rule 2;;;
-A1.2;A1.2 The system outputs an error message to user;ErrorMessageManager;Controller;<<controller>>;Manages output function in A1.2;WaterManager;sequential;Rule 2;;;
-A1.2;A1.2 The system outputs an error message to user;ErrorMessageManager;Controller;<<controller>>;Manages output function in A1.2;;;;ErrorMessage;provide;ErrorMessageManager provides ErrorMessage as result
+A1.1;A1.1 The system switches off water heater;WaterLiquidManager;Controller;<<controller>>;Manages waterliquid operations in A1.1;A1ConditionManager;sequential;Rule 2;;;
+A1.2;A1.2 The system outputs an error message to user;MessageManager;Controller;<<controller>>;Manages message operations in A1.2;WaterLiquidManager;sequential;Rule 2;;;
+A1.2;A1.2 The system outputs an error message to user;MessageManager;Controller;<<controller>>;Manages message operations in A1.2;;;;ErrorMessage;provide;MessageManager provides ErrorMessage as result
 A1.2;A1.2 The system outputs an error message to user;ErrorMessage;Entity;<<entity>>;Domain entity: errormessage;;;;;;
 A1.2;A1.2 The system outputs an error message to user;UserCommunicationBoundary;Boundary;<<boundary>>;Boundary for User communication with system;;;;;;
 A2;A2 at B3b Too little milk;LittleMilk;Entity;<<entity>>;Domain entity: littlemilk;;;;;;
-A2.1;A2.1 The system stops milk addition;MilkManager;Controller;<<controller>>;Abstract controller with functions: pourMilk, addMilk, hygieneSafetyControl;;;;MilkAddition;provide;MilkManager provides MilkAddition as result
+A2.1;A2.1 The system stops milk addition;MilkLiquidManager;Controller;<<controller>>;Manages milkliquid operations in A2.1;;;;MilkAddition;provide;MilkLiquidManager provides MilkAddition as result
 A2.1;A2.1 The system stops milk addition;MilkAddition;Entity;<<entity>>;Domain entity: milkaddition;;;;;;
-A2.2;A2.2 The system outputs an error message to user;ErrorMessageManager;Controller;<<controller>>;Manages output function in A2.2;MilkManager;sequential;Rule 2;;;
-A2.2;A2.2 The system outputs an error message to user;ErrorMessageManager;Controller;<<controller>>;Manages output function in A2.2;;;;ErrorMessage;provide;ErrorMessageManager provides ErrorMessage as result
+A2.2;A2.2 The system outputs an error message to user;MessageManager;Controller;<<controller>>;Manages message operations in A2.2;MilkLiquidManager;sequential;Rule 2;;;
+A2.2;A2.2 The system outputs an error message to user;MessageManager;Controller;<<controller>>;Manages message operations in A2.2;;;;ErrorMessage;provide;MessageManager provides ErrorMessage as result
 A2.2;A2.2 The system outputs an error message to user;ErrorMessage;Entity;<<entity>>;Domain entity: errormessage;;;;;;
 A2.2;A2.2 The system outputs an error message to user;UserCommunicationBoundary;Boundary;<<boundary>>;Boundary for User communication with system;;;;;;
-A3;A3 at any time Overheat detected;DetectManager;Controller;<<controller>>;Manages detect function in A3;;;;AnyTime;use;DetectManager interacts with AnyTime
+A3;A3 at any time Overheat detected;TimeManager;Controller;<<controller>>;Manages time operations in A3;;;;AnyTime;use;TimeManager interacts with AnyTime
 A3;A3 at any time Overheat detected;AnyTime;Entity;<<entity>>;Domain entity: anytime;;;;;;
-A3.1;A3.1 The system stops all actions;AllActionsManager;Controller;<<controller>>;Manages stop function in A3.1;DetectManager;sequential;Rule 2;;;
-A3.1;A3.1 The system stops all actions;AllActionsManager;Controller;<<controller>>;Manages stop function in A3.1;;;;AllActions;provide;AllActionsManager provides AllActions as result
+A3.1;A3.1 The system stops all actions;ActionsManager;Controller;<<controller>>;Manages actions operations in A3.1;TimeManager;sequential;Rule 2;;;
+A3.1;A3.1 The system stops all actions;ActionsManager;Controller;<<controller>>;Manages actions operations in A3.1;;;;AllActions;provide;ActionsManager provides AllActions as result
 A3.1;A3.1 The system stops all actions;AllActions;Entity;<<entity>>;Domain entity: allactions;;;;;;
 A3.2;A3.2 The system switch of itself;Switch;Entity;<<entity>>;Domain entity: switch;;;;;;
-E1;E1 B3-B5 (trigger) User wants sugar in coffee;SugarManager;Controller;<<controller>>;Abstract controller with functions: addSugar, measureSugar, trackInventory;;;;Sugar;provide;SugarManager provides Sugar as result
+E1;E1 B3-B5 (trigger) User wants sugar in coffee;UserRequestManager;Controller;<<controller>>;Manages userrequest operations in E1;;;;Sugar;provide;UserRequestManager provides Sugar as result
 E1;E1 B3-B5 (trigger) User wants sugar in coffee;Sugar;Entity;<<entity>>;Domain entity: sugar;;;;;;
-E1.1;E1.1 The system adds defined amount of sugar to the cup;SugarManager;Controller;<<controller>>;Abstract controller with functions: addSugar, measureSugar, trackInventory;SugarManager;sequential;Rule 2;;;
-E1.1;E1.1 The system adds defined amount of sugar to the cup;SugarManager;Controller;<<controller>>;Abstract controller with functions: addSugar, measureSugar, trackInventory;;;;DefinedAmount;provide;SugarManager provides DefinedAmount as result
+E1.1;E1.1 The system adds defined amount of sugar to the cup;SugarSolidManager;Controller;<<controller>>;Manages sugarsolid operations in E1.1;UserRequestManager;sequential;Rule 2;;;
+E1.1;E1.1 The system adds defined amount of sugar to the cup;SugarSolidManager;Controller;<<controller>>;Manages sugarsolid operations in E1.1;;;;DefinedAmount;provide;SugarSolidManager provides DefinedAmount as result
 E1.1;E1.1 The system adds defined amount of sugar to the cup;DefinedAmount;Entity;<<entity>>;Domain entity: definedamount;;;;;;

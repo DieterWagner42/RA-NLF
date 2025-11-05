@@ -96,7 +96,7 @@
           "storage_operations": ["monitorWaterQuality", "trackWaterLevel", "maintainPressure"]
         },
         "operation_patterns": {
-          "heating_operations": ["heat", "activate heater", "warm", "boil", "brew", "hot water"],
+          "heating_operations": ["heat", "activate heater", "warm", "boil", "hot water"],
           "storage_operations": ["store", "container", "reservoir", "tank"]
         }
       },
@@ -130,6 +130,32 @@
         "id_format": "CLEAN-{type}-{concentration}-{batch}",
         "safety_parameters": ["concentration", "compatibility", "rinse_requirements"],
         "usage_tracking": "Dilution ratios and application records"
+      },
+      "coffee": {
+        "id_format": "COFFEE-{blend}-{strength}-{batch}",
+        "quality_parameters": ["extraction_time", "water_temperature", "grind_fineness"],
+        "brewing_requirements": "Controlled extraction process",
+        "function_mappings": {
+          "brewing_operations": ["brewCoffee", "controlExtraction", "manageBrewTime", "extractCoffee"],
+          "preparation_operations": ["prepareBrew", "initiateBrewing", "startExtraction"]
+        },
+        "operation_patterns": {
+          "brewing_operations": ["begins brewing", "brew coffee", "brewing coffee", "extraction", "brewing process"],
+          "preparation_operations": ["prepare brew", "setup brewing", "ready brew"]
+        }
+      },
+      "time": {
+        "id_format": "TIME-{schedule}-{precision}-{batch}",
+        "control_parameters": ["schedule", "timing", "precision", "synchronization"],
+        "timing_requirements": "Accurate time-based control and scheduling",
+        "function_mappings": {
+          "timing_operations": ["monitorTime", "checkSchedule", "manageTimer", "controlTiming"],
+          "scheduling_operations": ["scheduleEvent", "setTimer", "trackTime", "synchronizeTime"]
+        },
+        "operation_patterns": {
+          "timing_operations": ["reaches time", "clock reaches", "system clock", "defined time", "timer", "time control"],
+          "scheduling_operations": ["schedule", "set time", "timer setup", "time management"]
+        }
       }
     }
   },
@@ -169,11 +195,79 @@
     "present": ["presents", "present"],
     "reach": ["reaches", "reach"]
   },
+  "aggregation_states": {
+    "solid": {
+      "specific_keywords": ["solid", "powder", "granules", "crystals", "beans", "grind", "grinding", "ground", "dose"],
+      "specific_operations": ["grind", "store", "dose", "sieve", "mix_dry"],
+      "state_suffix": "Solid",
+      "description": "Solid aggregation state - particles, powders, granules"
+    },
+    "liquid": {
+      "specific_keywords": ["liquid", "pour", "flow", "brew", "brewing", "extraction", "steam", "froth", "add", "heat", "cool"],
+      "specific_operations": ["pour", "brew", "extract", "serve", "heat", "cool", "pump", "valve"],
+      "state_suffix": "Liquid", 
+      "description": "Liquid aggregation state - flows, can be heated/cooled"
+    },
+    "gas": {
+      "specific_keywords": ["gas", "vapor", "steam", "pressure", "compress", "expand", "ventilate"],
+      "specific_operations": ["compress", "expand", "ventilate", "pressurize", "release"],
+      "state_suffix": "Gas",
+      "description": "Gaseous aggregation state - compressible, expandable"
+    }
+  },
+  "universal_keywords": {
+    "all_states": ["measure", "amount", "quantity", "volume", "weight", "store", "supply", "available", "required"]
+  },
+  "material_specific_contexts": {
+    "coffee": {
+      "solid_indicators": ["bean", "beans", "grind", "grinding", "ground"],
+      "liquid_indicators": ["brew", "brewing", "extraction", "into cup", "brewed"],
+      "ambiguous_terms": ["coffee"],
+      "requirements": {
+        "solid": ["storage", "grinding_precision", "freshness"],
+        "liquid": ["brewing_temperature", "extraction_time"]
+      },
+      "variant_features": {
+        "solid": ["grinder_type", "bean_storage", "grind_settings"],
+        "liquid": ["brewing_method", "temperature_control", "extraction_pressure"]
+      }
+    },
+    "milk": {
+      "solid_indicators": ["powder", "dry", "mix", "dissolve", "reconstitute"],
+      "liquid_indicators": ["fresh", "cold", "refrigerate", "steam", "froth"],
+      "ambiguous_terms": ["milk"],
+      "requirements": {
+        "solid": ["dry_storage", "moisture_control", "dosing_precision"],
+        "liquid": ["cooling", "temperature_control", "expiration_monitoring"]
+      },
+      "variant_features": {
+        "solid": ["dry_storage", "dosing_system", "mixing_chamber"],
+        "liquid": ["refrigeration", "freshness_tracking", "temperature_sensors"]
+      }
+    },
+    "water": {
+      "liquid_indicators": ["pour", "flow", "heat", "hot", "cold"],
+      "gas_indicators": ["steam", "vapor", "evaporate"],
+      "ambiguous_terms": ["water"],
+      "requirements": {
+        "liquid": ["quality_control", "temperature_regulation"],
+        "gas": ["pressure_control", "condensation_management"]
+      }
+    },
+    "sugar": {
+      "solid_indicators": ["granules", "crystals", "measure", "dose", "amount"],
+      "ambiguous_terms": ["sugar"],
+      "requirements": {
+        "solid": ["dry_storage", "dosing_precision"]
+      }
+    }
+  },
   "technical_context_mapping": {
-    "time_keywords": ["time", "clock", "timer", "7:00h", "reaches set time", "schedule"],
+    "time_keywords": ["time", "clock", "timer", "7:00h", "reaches set time", "schedule", "reaches time", "system clock", "defined time"],
     "thermal_keywords": ["heater", "heat", "temperature", "activate", "warm", "hot", "cool"],
     "mechanical_keywords": ["grind", "motor", "mechanical", "degree", "amount", "grinding"],
-    "liquid_keywords": ["brew", "pour", "flow", "water", "milk", "liquid", "steam"],
+    "brewing_keywords": ["brew", "brewing", "begins brewing", "extraction", "brewing process"],
+    "liquid_keywords": ["pour", "flow", "water", "milk", "liquid", "steam"],
     "filter_keywords": ["filter", "prepare", "clean", "filtration"],
     "container_keywords": ["cup", "container", "storage", "retrieve", "place", "tank"],
     "communication_keywords": ["message", "output", "user", "display", "present", "interface"],
@@ -183,6 +277,7 @@
       "Time Control": ["time_keywords"],
       "Thermal Control": ["thermal_keywords"],
       "Mechanical Control": ["mechanical_keywords"],
+      "Brewing Control": ["brewing_keywords"],
       "Liquid Control": ["liquid_keywords"],
       "Filter Preparation": ["filter_keywords"],
       "Container Management": ["container_keywords"],

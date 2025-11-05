@@ -16,9 +16,13 @@ from dataclasses import dataclass
 from enum import Enum
 import spacy
 
+# Add src directory to path for imports
+sys.path.append(os.path.join(os.path.dirname(__file__)))
+
 # Import existing components
 from domain_verb_loader import DomainVerbLoader, VerbType
 from generative_context_manager import GenerativeContextManager, GeneratedContext, ContextType
+from official_rup_engine import OfficialRUPEngine
 
 class LineType(Enum):
     """Types of lines in UC files"""
@@ -220,6 +224,9 @@ class StructuredUCAnalyzer:
         self.uc_goal = ""  # Extracted goal from UC text
         self.uc_title = ""  # UC title/name
         
+        # Aggregation state tracking
+        self.aggregation_warnings: List[str] = []  # Track ambiguity warnings
+        
         # Section context tracking
         self.current_section = None  # Track current section (preconditions, actors, etc.)
         
@@ -237,6 +244,259 @@ class StructuredUCAnalyzer:
             print("ERROR: spaCy model 'en_core_web_md' not found")
             print("Please install: python -m spacy download en_core_web_md")
             sys.exit(1)
+    
+    def _detect_aggregation_state(self, text_lower: str, verb_lemma: str, material_name: str) -> Optional[Tuple[str, List[str]]]:
+        """
+        Generic aggregation state detection for any material: solid/liquid/gas
+        
+        Args:
+            text_lower: Lowercase text to analyze
+            verb_lemma: Lemmatized verb
+            material_name: Name of the material (e.g., 'coffee', 'milk', 'water')
+            
+        Returns:
+            Tuple of (state, warnings) or None if no clear state detected
+            state: 'solid', 'liquid', 'gas'
+            warnings: List of ambiguity warnings
+        """
+        domain_config = self.verb_loader.domain_configs[self.domain_name]
+        aggregation_states = domain_config.get('aggregation_states', {})
+        material_contexts = domain_config.get('material_specific_contexts', {})
+        
+        warnings = []
+        detected_states = []
+        
+        # Get material-specific context
+        material_context = material_contexts.get(material_name, {})
+        ambiguous_terms = material_context.get('ambiguous_terms', [])
+        
+        # Check if text contains ambiguous terms that need context analysis
+        has_ambiguous_terms = any(term in text_lower for term in ambiguous_terms)
+        
+        # Get universal keywords that apply to all states
+        universal_keywords = domain_config.get('universal_keywords', {}).get('all_states', [])
+        has_universal_keywords = any(keyword in text_lower for keyword in universal_keywords)
+        
+        # Check each aggregation state
+        for state_name, state_config in aggregation_states.items():
+            specific_keywords = state_config.get('specific_keywords', [])
+            specific_operations = state_config.get('specific_operations', [])
+            
+            # Check material-specific indicators
+            specific_indicators = material_context.get(f'{state_name}_indicators', [])
+            
+            # Check for specific keyword matches (excluding universal keywords)
+            specific_keyword_match = any(keyword in text_lower for keyword in specific_keywords + specific_indicators)
+            
+            # Check for operation matches
+            operation_match = verb_lemma in specific_operations
+            
+            # Detect state based on specific keywords or operations
+            if specific_keyword_match or operation_match:
+                detected_states.append((state_name, state_config.get('state_suffix', state_name.title())))
+                print(f"[DEBUG AGGREGATION] Detected {material_name} {state_name.upper()} state: specific_match={specific_keyword_match}, operation_match={operation_match}")
+        
+        # Handle universal keywords (ambiguous cases)
+        if has_universal_keywords and len(detected_states) == 0:
+            warning = f"UNIVERSAL KEYWORD WARNING: Found universal keywords (measure/amount/etc.) for '{material_name}' without specific state indicators in text: '{text_lower[:50]}...'"
+            warnings.append(warning)
+            print(f"[WARNING AGGREGATION] {warning}")
+        
+        # Handle results
+        if len(detected_states) == 0:
+            if has_ambiguous_terms:
+                warning = f"AMBIGUITY WARNING: Material '{material_name}' found in ambiguous context. Cannot determine aggregation state from text: '{text_lower[:50]}...'"
+                warnings.append(warning)
+                print(f"[WARNING AGGREGATION] {warning}")
+                return None
+            # No clear indicators, return default based on common physical state
+            default_state = self._get_default_material_state(material_name)
+            if default_state:
+                return (default_state, warnings)
+            return None
+            
+        elif len(detected_states) == 1:
+            state_name, state_suffix = detected_states[0]
+            return (state_name, warnings)
+            
+        else:
+            # Multiple states detected - this is an ambiguity
+            state_names = [state[0] for state in detected_states]
+            warning = f"AMBIGUITY WARNING: Multiple aggregation states detected for '{material_name}': {state_names} in text: '{text_lower[:50]}...'"
+            warnings.append(warning)
+            print(f"[WARNING AGGREGATION] {warning}")
+            
+            # Return the first detected state but with warning
+            state_name, state_suffix = detected_states[0]
+            return (state_name, warnings)
+    
+    def _get_default_material_state(self, material_name: str) -> Optional[str]:
+        """Get default physical state for materials when context is unclear"""
+        defaults = {
+            'water': 'liquid',
+            'milk': 'liquid', 
+            'coffee': 'liquid',  # Default to liquid coffee unless grinding context
+            'sugar': 'solid',
+            'salt': 'solid',
+            'oil': 'liquid',
+            'steam': 'gas',
+            'air': 'gas'
+        }
+        return defaults.get(material_name)
+    
+    def _generate_aggregation_controller_name(self, material_name: str, aggregation_state: str) -> str:
+        """Generate controller name based on material and aggregation state"""
+        domain_config = self.verb_loader.domain_configs[self.domain_name]
+        aggregation_states = domain_config.get('aggregation_states', {})
+        
+        state_config = aggregation_states.get(aggregation_state, {})
+        state_suffix = state_config.get('state_suffix', aggregation_state.title())
+        
+        material_base = material_name.title()
+        return f"{material_base}{state_suffix}Manager"
+    
+    def _spell_correct_text(self, text: str) -> str:
+        """
+        Apply spell correction to text using domain-specific vocabulary
+        
+        Args:
+            text: Text to correct
+            
+        Returns:
+            Spell-corrected text
+        """
+        # Get domain-specific vocabulary
+        domain_config = self.verb_loader.domain_configs[self.domain_name]
+        material_contexts = domain_config.get('material_specific_contexts', {})
+        aggregation_states = domain_config.get('aggregation_states', {})
+        
+        # Build correction vocabulary
+        correction_vocabulary = {}
+        
+        # Add materials and their common variations
+        for material_name, context in material_contexts.items():
+            # Common misspellings for materials
+            if material_name == "coffee":
+                correction_vocabulary.update({
+                    "coffe": "coffee",
+                    "cofee": "coffee", 
+                    "cofffe": "coffee",
+                    "coffie": "coffee"
+                })
+            elif material_name == "milk":
+                correction_vocabulary.update({
+                    "melk": "milk",
+                    "milc": "milk"
+                })
+            elif material_name == "water":
+                correction_vocabulary.update({
+                    "watter": "water",
+                    "watr": "water"
+                })
+            
+            # Add indicators with common misspellings
+            solid_indicators = context.get('solid_indicators', [])
+            for indicator in solid_indicators:
+                if indicator == "beans":
+                    correction_vocabulary.update({
+                        "beens": "beans",
+                        "bens": "beans",
+                        "bean": "beans"  # plural correction
+                    })
+                elif indicator == "grind":
+                    correction_vocabulary.update({
+                        "grind": "grind",
+                        "grinding": "grinding",
+                        "grinds": "grind"
+                    })
+        
+        # Add aggregation state keywords
+        for state_name, state_config in aggregation_states.items():
+            keywords = state_config.get('specific_keywords', [])
+            for keyword in keywords:
+                if keyword == "powder":
+                    correction_vocabulary.update({
+                        "powdr": "powder",
+                        "poweder": "powder"
+                    })
+        
+        # Apply corrections
+        corrected_text = text
+        for misspelling, correction in correction_vocabulary.items():
+            # Use word boundary matching to avoid partial replacements
+            import re
+            pattern = r'\b' + re.escape(misspelling) + r'\b'
+            corrected_text = re.sub(pattern, correction, corrected_text, flags=re.IGNORECASE)
+        
+        # Log corrections if any were made
+        if corrected_text != text:
+            print(f"[SPELL CORRECTION] '{text}' -> '{corrected_text}'")
+        
+        return corrected_text
+    
+    def _detect_material_state_controller(self, text_lower: str, verb_lemma: str) -> Optional[str]:
+        """
+        Detect controller based on material and aggregation state using NLP token analysis
+        
+        Args:
+            text_lower: Lowercase text to analyze
+            verb_lemma: Lemmatized verb
+            
+        Returns:
+            Controller name or None if no material state detected
+        """
+        # Apply spell correction first
+        corrected_text = self._spell_correct_text(text_lower)
+        
+        # Use spaCy NLP to analyze the corrected text
+        doc = self.nlp(corrected_text)
+        
+        # Extract all token lemmas and noun chunk roots
+        token_lemmas = [token.lemma_ for token in doc]
+        noun_roots = [chunk.root.lemma_ for chunk in doc.noun_chunks]
+        all_lemmas = set(token_lemmas + noun_roots)
+        
+        # Get all materials from domain configuration
+        domain_config = self.verb_loader.domain_configs[self.domain_name]
+        material_contexts = domain_config.get('material_specific_contexts', {})
+        
+        # Check each material using NLP lemmas
+        for material_name, material_context in material_contexts.items():
+            # Check if material lemma is found in NLP analysis
+            found_material = material_name in all_lemmas
+            
+            # Also check for compound forms like "coffee" from "coffee beans"
+            if not found_material:
+                # Check if material name appears in any noun chunk
+                for chunk in doc.noun_chunks:
+                    if material_name in chunk.text.lower():
+                        found_material = True
+                        break
+            
+            if found_material:
+                print(f"[DEBUG NLP MATERIAL] Found material '{material_name}' in corrected text")
+                
+                # Try to detect aggregation state for this material
+                state_result = self._detect_aggregation_state(corrected_text, verb_lemma, material_name)
+                
+                if state_result:
+                    aggregation_state, warnings = state_result
+                    
+                    # Add warnings to global tracking
+                    self.aggregation_warnings.extend(warnings)
+                    
+                    # Generate controller name
+                    controller_name = self._generate_aggregation_controller_name(material_name, aggregation_state)
+                    
+                    # Get requirements and features for debug output
+                    requirements = material_context.get('requirements', {}).get(aggregation_state, [])
+                    features = material_context.get('variant_features', {}).get(aggregation_state, [])
+                    
+                    print(f"[DEBUG MATERIAL STATE] Detected {material_name} {aggregation_state.upper()} state: {controller_name} (requirements: {requirements}, features: {features})")
+                    
+                    return controller_name
+        
+        return None
     
     def analyze_uc_file(self, uc_file_path: str) -> Tuple[List[LineAnalysis], str]:
         """
@@ -288,6 +548,9 @@ class StructuredUCAnalyzer:
         output_json_path = self._generate_json_output(uc_file_path)
         self._generate_csv_output(uc_file_path)
         
+        # Generate RA diagram using official RUP engine
+        diagram_path = self._generate_rup_diagram(output_json_path)
+        
         return self.line_analyses, output_json_path
     
     def _backup_old_analysis(self):
@@ -322,13 +585,16 @@ class StructuredUCAnalyzer:
     def _analyze_line(self, line_number: int, line_text: str) -> LineAnalysis:
         """Analyze a single line completely with generative context"""
         
+        # 0. Apply spell correction to the entire line first
+        corrected_line_text = self._spell_correct_text(line_text)
+        
         # 1. Determine line type
-        line_type = self._classify_line_type(line_text)
+        line_type = self._classify_line_type(corrected_line_text)
         
-        # 2. Extract step ID if applicable
-        step_id = self._extract_step_id(line_text, line_type)
+        # 2. Extract step ID if applicable  
+        step_id = self._extract_step_id(corrected_line_text, line_type)
         
-        # Debug line classification for Sugar
+        # Debug line classification for Sugar (use original text for debug output)
         if "sugar" in line_text.lower():
             print(f"[DEBUG SUGAR] Line: '{line_text}' -> Type: {line_type}, Section: {getattr(self, 'current_section', 'None')}")
         
@@ -337,28 +603,28 @@ class StructuredUCAnalyzer:
         
         # 4. Generate contexts using NLP and domain knowledge - SKIP for meta-lines
         generated_contexts = []
-        if line_text.strip() and not is_meta_line:  # Only for non-empty, non-meta lines
-            generated_contexts = self.context_manager.generate_contexts_for_text(line_text, step_id)
+        if corrected_line_text.strip() and not is_meta_line:  # Only for non-empty, non-meta lines
+            generated_contexts = self.context_manager.generate_contexts_for_text(corrected_line_text, step_id)
             if step_id:
                 self.generated_contexts[step_id] = generated_contexts
         
         # 5. Perform grammatical analysis for step lines
         grammatical = GrammaticalAnalysis()
         if line_type == LineType.STEP:
-            grammatical = self._perform_grammatical_analysis(line_text)
+            grammatical = self._perform_grammatical_analysis(corrected_line_text)
         
         # 6. Determine step context using both traditional and generative approaches
         step_context = None
         if step_id:
-            step_context = self._determine_step_context_enhanced(step_id, line_text, line_type, grammatical, generated_contexts)
+            step_context = self._determine_step_context_enhanced(step_id, corrected_line_text, line_type, grammatical, generated_contexts)
         
         # 7. Generate RA classes - SKIP for meta-lines (only context, no RA classes)
         ra_classes = []
         if not is_meta_line:
-            ra_classes = self._generate_ra_classes_for_line_enhanced(line_text, line_type, step_id, grammatical, step_context, generated_contexts)
+            ra_classes = self._generate_ra_classes_for_line_enhanced(corrected_line_text, line_type, step_id, grammatical, step_context, generated_contexts)
         elif line_type == LineType.PRECONDITION:
             # Special case: Preconditions generate only essential entities and boundaries
-            ra_classes = self._generate_precondition_entities_only(line_text, line_type)
+            ra_classes = self._generate_precondition_entities_only(corrected_line_text, line_type)
             if "sugar" in line_text.lower():
                 print(f"[DEBUG SUGAR RA] Precondition RA classes: {[ra.name for ra in ra_classes]}")
         
@@ -374,7 +640,7 @@ class StructuredUCAnalyzer:
         
         return LineAnalysis(
             line_number=line_number,
-            line_text=line_text,
+            line_text=line_text,  # Keep original text for display purposes
             line_type=line_type,
             step_id=step_id,
             step_context=step_context,
@@ -934,66 +1200,34 @@ class StructuredUCAnalyzer:
         return ra_classes
     
     def _generate_controller_for_step(self, step_id: str, grammatical: GrammaticalAnalysis, step_context: StepContext = None, line_text: str = "") -> Optional[RAClass]:
-        """Generate Controller based on NLP-generated contexts and functional purpose"""
+        """Generate Controller using domain-agnostic approach from generic_uc_analyzer.py"""
         if not grammatical.main_verb:
             return None
         
-        # Priority 1: Use NLP-generated functional contexts (abstract controllers)
-        if step_id in self.generated_contexts:
-            functional_controllers = [ctx for ctx in self.generated_contexts[step_id] 
-                                    if ctx.context_type.value == "functional_context" and 
-                                    ctx.context_name.endswith("Manager")]
-            
-            if functional_controllers:
-                # Use the first functional controller from NLP analysis
-                nlp_controller = functional_controllers[0]
-                controller_name = nlp_controller.context_name
-                
-                # Create description based on functional requirements
-                functions = nlp_controller.special_requirements
-                if functions:
-                    description = f"Abstract controller with functions: {', '.join(functions[:3])}"
-                else:
-                    description = f"Manages {grammatical.verb_lemma} function in {step_id}"
-                
-                # Determine parallel group from step_id
-                parallel_group = self._get_parallel_group_from_step_id(step_id)
-                
-                return RAClass(
-                    name=controller_name,
-                    ra_type=RAType.CONTROLLER,
-                    stereotype="<<controller>>",
-                    description=description,
-                    step_id=step_id,
-                    parallel_group=parallel_group
-                )
+        # Create a step-like object for the generic logic
+        step_info = type('StepInfo', (), {
+            'step_id': step_id,
+            'step_text': line_text,
+            'flow_type': self._determine_flow_type(step_id)
+        })()
         
-        # Priority 2: If we have step context, use context-specific naming
-        if step_context and step_context.technical_context:
-            controller_name, description = self.verb_loader.get_context_specific_controller_name(
-                step_text=line_text,
-                technical_context=step_context.technical_context,
-                direct_object=grammatical.direct_object,
-                verb_lemma=grammatical.verb_lemma,
-                domain_name=self.domain_name
-            )
-            # Add step_id to description
-            description = description.replace("in step", f"in {step_id}")
-        else:
-            # Priority 3: Check if direct object is implementation element, then use functional alternative
-            if grammatical.direct_object and self._is_implementation_element(grammatical.direct_object):
-                # Use verb-based naming for implementation elements
-                verb_clean = grammatical.verb_lemma.capitalize()
-                controller_name = f"{verb_clean}Manager"
-                description = f"Manages {grammatical.verb_lemma} function in {step_id} (functional alternative to implementation element)"
-            elif grammatical.direct_object:
-                obj_clean = self._clean_entity_name(grammatical.direct_object)
-                controller_name = f"{obj_clean}Manager"
-                description = f"Manages {grammatical.verb_lemma} function in {step_id}"
-            else:
-                verb_clean = grammatical.verb_lemma.capitalize()
-                controller_name = f"{verb_clean}Manager"
-                description = f"Manages {grammatical.verb_lemma} function in {step_id}"
+        # Create verb analysis object for the generic logic
+        verb_analysis = type('VerbAnalysis', (), {
+            'original_text': line_text,
+            'verb_lemma': grammatical.main_verb,
+            'direct_object': grammatical.direct_object,
+            'suggested_functional_activity': None  # We don't use this in structured analyzer
+        })()
+        
+        # Use the proven generic controller naming logic
+        controller_name = self._derive_generic_controller_name(verb_analysis, step_info)
+        
+        if not controller_name:
+            # Fallback to verb-based naming
+            controller_name = f"{grammatical.main_verb.capitalize()}Manager"
+        
+        # Generate description
+        description = f"Manages {controller_name.replace('Manager', '').lower()} operations in {step_id}"
         
         # Determine parallel group from step_id
         parallel_group = self._get_parallel_group_from_step_id(step_id)
@@ -1006,6 +1240,141 @@ class StructuredUCAnalyzer:
             step_id=step_id,
             parallel_group=parallel_group
         )
+    
+    def _determine_flow_type(self, step_id: str) -> str:
+        """Determine flow type from step_id"""
+        if step_id.startswith('A'):
+            return "alternative"
+        elif step_id.startswith('E'):
+            return "extension"
+        else:
+            return "main"
+    
+    def _is_trigger_step(self, step) -> bool:
+        """Check if step is a trigger (domain-agnostic)"""
+        # Main UC trigger
+        if step.step_id == "B1" or "(trigger)" in step.step_text:
+            return True
+        
+        # Alternative flow condition triggers
+        if step.flow_type == "alternative" and not "." in step.step_id:
+            return True
+        
+        # Extension flow triggers
+        if step.flow_type == "extension" and not "." in step.step_id:
+            return True
+        
+        return False
+    
+    def _derive_generic_controller_name(self, verb_analysis, step) -> Optional[str]:
+        """Generate domain-agnostic controller names (from generic_uc_analyzer.py)"""
+        # Pattern-based controller naming
+        if step.step_id == "B1" or self._is_trigger_step(step):
+            if "time" in verb_analysis.original_text.lower() or "clock" in verb_analysis.original_text.lower():
+                return "TimeManager"
+            elif "user" in verb_analysis.original_text.lower():
+                return "UserRequestManager"
+            elif step.flow_type == "alternative":
+                return f"{step.step_id.split('.')[0]}ConditionManager"
+            else:
+                return "TriggerManager"
+        
+        # Use functional activity if available (for implementation elements)
+        if hasattr(verb_analysis, 'suggested_functional_activity') and verb_analysis.suggested_functional_activity:
+            # Generic NLP parsing of functional suggestion
+            controller_name = self._derive_abstract_controller_from_nlp(verb_analysis.suggested_functional_activity)
+            if controller_name:
+                return controller_name
+        
+        # Priority: Generic material state-based controller detection
+        text_lower = verb_analysis.original_text.lower()
+        
+        # Material state-based controller detection (generic approach)
+        material_controller = self._detect_material_state_controller(text_lower, verb_analysis.verb_lemma)
+        if material_controller:
+            return material_controller
+        
+        # Specific domain mappings for expected controllers 
+        
+        # Water-related operations
+        if ("water" in text_lower or "heater" in text_lower) and ("activate" in text_lower or "heat" in text_lower):
+            return "WaterManager"
+        
+        # Filter-related operations  
+        if "filter" in text_lower and ("prepare" in text_lower or "ready" in text_lower):
+            return "FilterManager"
+            
+        # Cup/Container operations
+        if "cup" in text_lower and ("retrieve" in text_lower or "place" in text_lower or "present" in text_lower):
+            if "present" in text_lower and "user" in text_lower:
+                return "UserManager"  # B5: present to user
+            return "CupManager"
+            
+        # Message/Communication operations
+        if "message" in text_lower and ("output" in text_lower or "display" in text_lower):
+            return "MessageManager"
+        
+        # Object-based controller naming (check for implementation elements first)
+        if verb_analysis.direct_object:
+            # Check if direct object contains implementation elements
+            obj_words = verb_analysis.direct_object.lower().split()
+            for word in obj_words:
+                impl_info = self.verb_loader.get_implementation_element_info(word, self.domain_name)
+                if impl_info:
+                    # Use verb-based naming instead for implementation elements
+                    verb_action = verb_analysis.verb_lemma.capitalize()
+                    # Try to extract the actual target from context
+                    if "water" in verb_analysis.direct_object.lower():
+                        return f"Water{verb_action}ingManager"
+                    elif "coffee" in verb_analysis.direct_object.lower():
+                        return f"Coffee{verb_action}ingManager"
+                    else:
+                        return f"{verb_action}Manager"
+            
+            # No implementation elements - use object-based naming
+            main_object = verb_analysis.direct_object.split()[-1].capitalize()
+            return f"{main_object}Manager"
+        
+        # Verb-based controller naming
+        verb_action = verb_analysis.verb_lemma.capitalize()
+        return f"{verb_action}Manager"
+    
+    def _derive_abstract_controller_from_nlp(self, functional_suggestion: str) -> Optional[str]:
+        """
+        Generic NLP analysis to derive abstract controller names from functional suggestions
+        Pattern: "The system <verb>s the <target>" -> "<Target>ProcessingManager"
+        """
+        if not functional_suggestion:
+            return None
+            
+        # Parse with spaCy for semantic understanding
+        doc = self.nlp(functional_suggestion.lower())
+        
+        # Find main action verb and target object
+        main_verb = None
+        target_object = None
+        
+        for token in doc:
+            if token.dep_ == "ROOT" and token.pos_ == "VERB":
+                main_verb = token
+                # Find direct object (target)
+                for child in token.children:
+                    if child.dep_ == "dobj":
+                        target_object = child.text
+                        break
+                break
+        
+        if target_object:
+            # Create abstract controller name: {Target}ProcessingManager
+            target_capitalized = target_object.capitalize()
+            return f"{target_capitalized}ProcessingManager"
+        elif main_verb:
+            # Fallback: Use verb-based naming with "Manager" suffix
+            verb_base = main_verb.lemma_.capitalize()
+            return f"{verb_base}Manager"
+            
+        return None
+    
     
     def _generate_entities_for_step(self, step_id: str, grammatical: GrammaticalAnalysis, line_text: str) -> List[RAClass]:
         """Generate Entities from direct object, prepositional objects, and compound nouns (spaCy-based)"""
@@ -1168,6 +1537,293 @@ class StructuredUCAnalyzer:
                 return True
         
         return False
+    
+    def _generate_semantic_controller_name(self, step_id: str, line_text: str, grammatical: GrammaticalAnalysis) -> Tuple[str, str]:
+        """Generate controller name based on SEMANTIC DOMAIN ANALYSIS of the complete sentence context"""
+        
+        # Step 1: Analyze the COMPLETE sentence for domain objects and context
+        doc = self.nlp(line_text) if self.nlp else None
+        if not doc:
+            # Fallback if no spaCy
+            return f"{grammatical.verb_lemma.capitalize()}Manager", f"Manages {grammatical.verb_lemma} function in {step_id}"
+        
+        # Step 2: Extract ALL semantic entities (not just direct object!)
+        semantic_entities = []
+        for chunk in doc.noun_chunks:
+            entity_text = chunk.text.strip().lower()
+            if entity_text not in ['system', 'the system']:
+                semantic_entities.append(entity_text)
+        
+        # Step 3: Determine PRIMARY DOMAIN from the complete context
+        primary_domain = self._determine_primary_domain_from_context(line_text, semantic_entities, grammatical)
+        
+        # Step 4: Generate controller name based on PRIMARY DOMAIN (NOT verb!)
+        if primary_domain:
+            controller_name = f"{primary_domain}Manager"
+            description = f"Manages {primary_domain.lower()} operations in {step_id}"
+        else:
+            # Fallback: use cleaned direct object
+            if grammatical.direct_object:
+                obj_clean = self._clean_entity_name(grammatical.direct_object)
+                controller_name = f"{obj_clean}Manager"
+                description = f"Manages {obj_clean.lower()} operations in {step_id}"
+            else:
+                controller_name = f"{grammatical.verb_lemma.capitalize()}Manager"
+                description = f"Manages {grammatical.verb_lemma} function in {step_id}"
+        
+        return controller_name, description
+    
+    def _determine_primary_domain_from_context(self, line_text: str, semantic_entities: List[str], grammatical: GrammaticalAnalysis) -> str:
+        """Determine primary domain from CORE ACTION CONTEXT using GENERIC domain knowledge from JSON"""
+        line_lower = line_text.lower()
+        
+        if self.domain_name not in self.verb_loader.domain_configs:
+            return None
+            
+        domain_config = self.verb_loader.domain_configs[self.domain_name]
+        
+        # PRIORITY 0: Technical context mapping - HIGHEST PRIORITY for domain-specific keywords
+        technical_mapping = domain_config.get('technical_context_mapping', {})
+        if technical_mapping:
+            contexts = technical_mapping.get('contexts', {})
+            for context_name, keyword_lists in contexts.items():
+                for keyword_list_name in keyword_lists:
+                    keywords = technical_mapping.get(keyword_list_name, [])
+                    for keyword in keywords:
+                        if keyword.lower() in line_lower:
+                            # Extract domain from context name (e.g., "Time Control" -> "Time")
+                            domain_from_context = context_name.split()[0]  # Get first word
+                            print(f"[DEBUG DOMAIN] Found technical context '{context_name}' via keyword '{keyword}' -> {domain_from_context}Manager")
+                            return domain_from_context
+        
+        # PRIORITY 1: Domain JSON verb classification
+        verb_classification = domain_config.get('verb_classification', {})
+        
+        # Check transformation verbs (highest priority - they define core business functions)
+        transformation_verbs = verb_classification.get('transformation_verbs', {}).get('verbs', {})
+        if grammatical.verb_lemma in transformation_verbs:
+            transformation_info = transformation_verbs[grammatical.verb_lemma]
+            return self._extract_domain_from_transformation(transformation_info)
+        
+        # Check transaction verbs 
+        transaction_verbs = verb_classification.get('transaction_verbs', {}).get('verbs', {})
+        if grammatical.verb_lemma in transaction_verbs:
+            transaction_info = transaction_verbs[grammatical.verb_lemma]
+            return self._extract_domain_from_verb_info(transaction_info, line_text)
+        
+        # Check function verbs
+        function_verbs = verb_classification.get('function_verbs', {}).get('verbs', {})
+        if grammatical.verb_lemma in function_verbs:
+            function_info = function_verbs[grammatical.verb_lemma]
+            return self._extract_domain_from_verb_info(function_info, line_text)
+        
+        # PRIORITY 2: Material/entity analysis from domain JSON
+        operational_materials = domain_config.get('operational_materials_addressing', {}).get('material_types', {})
+        for material_name, material_config in operational_materials.items():
+            material_keywords = material_config.get('keywords', [])
+            if not material_keywords:
+                material_keywords = [material_name.replace('_', ' '), material_name.replace('_', '')]
+            
+            # Check if any material keywords appear in the sentence
+            for keyword in material_keywords:
+                if keyword.lower() in line_lower:
+                    # Return the material as domain (e.g., coffee_beans -> Coffee)
+                    return self._normalize_material_to_domain(material_name)
+        
+        # PRIORITY 3: Semantic entity analysis - focus on PRIMARY BUSINESS OBJECT
+        primary_business_entity = self._identify_primary_business_entity(semantic_entities, line_text)
+        if primary_business_entity:
+            domain_candidate = self._normalize_material_to_domain(primary_business_entity)
+            if domain_candidate:
+                return domain_candidate
+        
+        # PRIORITY 4: Fallback semantic entity analysis
+        for entity in semantic_entities:
+            clean_entity = self._clean_entity_name(entity)
+            if clean_entity and len(clean_entity) > 3:
+                # Skip implementation details and focus on business objects
+                if not self._is_implementation_detail(clean_entity):
+                    domain_candidate = self._normalize_material_to_domain(clean_entity)
+                    if domain_candidate:
+                        return domain_candidate
+        
+        return None
+    
+    def _extract_domain_from_transformation(self, transformation_info: str) -> str:
+        """Extract domain from transformation pattern (e.g., 'CoffeeBeans -> GroundCoffee' -> 'Coffee')"""
+        if ' -> ' in transformation_info:
+            source = transformation_info.split(' -> ')[0].strip()
+            return self._normalize_material_to_domain(source)
+        return None
+    
+    def _extract_domain_from_verb_info(self, verb_info: str, line_text: str) -> str:
+        """Extract domain from verb description using GENERIC domain materials from JSON"""
+        verb_lower = verb_info.lower()
+        line_lower = line_text.lower()
+        
+        # Get domain indicators from domain JSON configuration
+        if self.domain_name in self.verb_loader.domain_configs:
+            domain_config = self.verb_loader.domain_configs[self.domain_name]
+            operational_materials = domain_config.get('operational_materials_addressing', {}).get('material_types', {})
+            
+            # Extract all material names and their keywords from domain JSON
+            domain_indicators = []
+            for material_name, material_config in operational_materials.items():
+                # Add the material name itself
+                domain_indicators.append(material_name.replace('_', '').lower())
+                # Add keywords if defined
+                keywords = material_config.get('keywords', [])
+                domain_indicators.extend([kw.lower() for kw in keywords])
+            
+            # Check for domain indicators in verb description and line text
+            for indicator in domain_indicators:
+                if indicator in verb_lower or indicator in line_lower:
+                    return self._normalize_material_to_domain(indicator)
+        
+        return None
+    
+    def _normalize_material_to_domain(self, material_name: str) -> str:
+        """GENERIC normalization of material names to domain controllers using domain JSON configuration"""
+        if not material_name:
+            return None
+            
+        material_lower = material_name.lower().replace('_', '').replace(' ', '')
+        
+        # Use domain JSON to find the correct domain controller
+        if self.domain_name in self.verb_loader.domain_configs:
+            domain_config = self.verb_loader.domain_configs[self.domain_name]
+            operational_materials = domain_config.get('operational_materials_addressing', {}).get('material_types', {})
+            
+            # Check if the material_name matches any known materials in domain JSON
+            for domain_material, material_config in operational_materials.items():
+                domain_material_clean = domain_material.lower().replace('_', '')
+                
+                # Direct match
+                if material_lower == domain_material_clean:
+                    return self._extract_domain_controller_name(domain_material)
+                
+                # Check keywords
+                keywords = material_config.get('keywords', [])
+                for keyword in keywords:
+                    keyword_clean = keyword.lower().replace('_', '').replace(' ', '')
+                    if material_lower == keyword_clean or keyword_clean in material_lower:
+                        return self._extract_domain_controller_name(domain_material)
+                
+                # Partial match (e.g., "coffee" matches "coffee_beans")
+                if material_lower in domain_material_clean or domain_material_clean in material_lower:
+                    return self._extract_domain_controller_name(domain_material)
+        
+        # Fallback: Extract meaningful controller name from material name
+        return self._extract_domain_controller_name(material_name)
+    
+    def _extract_domain_controller_name(self, material_name: str) -> str:
+        """COMPLETELY GENERIC extraction of controller domain name from material name"""
+        if not material_name:
+            return None
+        
+        # Split by underscore and take the PRIMARY domain word (first part)
+        parts = material_name.lower().split('_')
+        main_domain = parts[0]
+        
+        # GENERIC rule: Primary material is the controller domain
+        # coffee_beans -> Coffee, water -> Water, milk -> Milk, rocket_fuel -> Rocket, etc.
+        return main_domain.capitalize()
+    
+    def _identify_primary_business_entity(self, semantic_entities: List[str], line_text: str) -> str:
+        """Identify the PRIMARY BUSINESS OBJECT from sentence context, ignoring implementation details"""
+        line_lower = line_text.lower()
+        
+        # Get domain materials from JSON to identify what are business objects
+        business_objects = []
+        if self.domain_name in self.verb_loader.domain_configs:
+            domain_config = self.verb_loader.domain_configs[self.domain_name]
+            operational_materials = domain_config.get('operational_materials_addressing', {}).get('material_types', {})
+            
+            # Extract known business objects from domain JSON
+            for material_name in operational_materials.keys():
+                business_objects.append(material_name.replace('_', '').lower())
+                # Also add individual words (e.g., "coffee" from "coffee_beans")
+                parts = material_name.lower().split('_')
+                business_objects.extend(parts)
+        
+        # Analyze sentence for primary business object pattern
+        # Pattern 1: "verb + OBJECT + preposition + implementation" -> OBJECT is primary
+        # Example: "retrieves cup from storage container" -> "cup" is primary business object
+        
+        # Look for business objects in semantic entities, prioritizing by business importance
+        primary_candidates = []
+        for entity in semantic_entities:
+            entity_clean = entity.lower().replace('_', '').replace(' ', '')
+            
+            # Check if entity is a known business object
+            if entity_clean in business_objects:
+                primary_candidates.append((entity, self._get_business_priority(entity_clean, line_lower)))
+        
+        # Return the highest priority business object
+        if primary_candidates:
+            # Sort by priority (higher is better)
+            primary_candidates.sort(key=lambda x: x[1], reverse=True)
+            return primary_candidates[0][0]
+        
+        return None
+    
+    def _get_business_priority(self, entity: str, line_text: str) -> int:
+        """GENERIC business priority score using domain JSON knowledge (higher = more important as primary business object)"""
+        priority = 0
+        
+        # High priority: Direct object patterns (verb + entity)
+        direct_object_verbs = ['retrieves', 'presents', 'delivers', 'produces', 'provides', 'creates']
+        if any(f"{verb} {entity}" in line_text for verb in direct_object_verbs):
+            priority += 10
+        
+        # Use domain JSON to determine business priority
+        if self.domain_name in self.verb_loader.domain_configs:
+            domain_config = self.verb_loader.domain_configs[self.domain_name]
+            operational_materials = domain_config.get('operational_materials_addressing', {}).get('material_types', {})
+            
+            # High priority: Primary operational materials (end products)
+            for material_name, material_config in operational_materials.items():
+                material_clean = material_name.replace('_', '').lower()
+                if entity == material_clean:
+                    # Check if it's a primary product or customer-facing item
+                    safety_class = material_config.get('safety_requirements', {}).get('safety_class', '')
+                    if 'food_grade' in safety_class or 'customer_facing' in safety_class:
+                        priority += 5
+                    else:
+                        priority += 3
+                    break
+            
+            # Low priority: Implementation elements
+            impl_elements = domain_config.get('implementation_elements', {}).get('elements', {})
+            for impl_key in impl_elements.keys():
+                impl_clean = impl_key.replace('_', '').lower()
+                if entity == impl_clean:
+                    priority -= 5
+                    break
+        
+        return priority
+    
+    def _is_implementation_detail(self, entity_name: str) -> bool:
+        """Check if entity is an implementation detail rather than a business object"""
+        entity_lower = entity_name.lower()
+        
+        # Generic implementation detail patterns
+        implementation_patterns = [
+            'container', 'storage', 'heater', 'system', 'component', 
+            'device', 'mechanism', 'apparatus', 'unit', 'module'
+        ]
+        
+        # Check domain-specific implementation elements from JSON
+        if self.domain_name in self.verb_loader.domain_configs:
+            domain_config = self.verb_loader.domain_configs[self.domain_name]
+            impl_elements = domain_config.get('implementation_elements', {}).get('elements', {})
+            
+            # Add domain-specific implementation elements
+            for impl_key in impl_elements.keys():
+                implementation_patterns.append(impl_key.replace('_', '').lower())
+        
+        # Check if entity matches implementation patterns
+        return any(pattern in entity_lower for pattern in implementation_patterns)
     
     def _determine_step_context(self, step_id: str, line_text: str, line_type: LineType, grammatical: GrammaticalAnalysis) -> StepContext:
         """Determine the context of a UC step"""
@@ -1579,7 +2235,7 @@ class StructuredUCAnalyzer:
         # Determine the functional purpose
         for entity in entities:
             if entity in ['filter', 'filtration']:
-                if purpose in ['kaffeezubereitung', 'milchkaffee', 'espresso']:
+                if purpose in ['kaffeezubereitung', 'milchkaffee', 'espresso', 'milk_coffee', 'coffee_preparation']:
                     description_parts.append(f"Filter für {purpose.capitalize()}")
                     break
             elif entity in ['water', 'heater', 'heating']:
@@ -1633,7 +2289,7 @@ class StructuredUCAnalyzer:
             # Coffee grinding - check for grinding verbs AND grinding-related entities (including Betriebsstoffe)
             if main_verb in ['grind', 'mill'] and any(e in ['grind', 'grinding', 'beans', 'coffee_beans', 'coffeebeans', 'amount', 'degree', 'set'] for e in entities):
                 bean_knowledge = betriebsmittel.get('coffee_beans', {})
-                if purpose in ['kaffeezubereitung', 'milchkaffee', 'espresso']:
+                if purpose in ['kaffeezubereitung', 'milchkaffee', 'espresso', 'milk_coffee', 'coffee_preparation']:
                     print(f"[DEBUG] {step_id}: Grinding detected - verb: {main_verb}, entities: {entities}, betriebsmittel: {list(betriebsmittel.keys())}")
                     return f"Kaffeebohnen mahlen für {purpose.capitalize()}"
             
@@ -1641,7 +2297,7 @@ class StructuredUCAnalyzer:
             for entity in entities:
                 # Water heating for coffee preparation (spaCy + domain analysis)
                 if entity in ['water', 'heater'] and main_verb in ['activate', 'heat', 'turn']:
-                    if purpose in ['kaffeezubereitung', 'milchkaffee', 'espresso']:
+                    if purpose in ['kaffeezubereitung', 'milchkaffee', 'espresso', 'milk_coffee', 'coffee_preparation']:
                         # Use spaCy + domain knowledge for semantic context analysis
                         required_materials = self._llm_analyze_required_betriebsmittel(main_verb, entities, betriebsmittel)
                         context_description = self._llm_generate_semantic_context(main_verb, entities, purpose, required_materials)
@@ -1650,17 +2306,17 @@ class StructuredUCAnalyzer:
                 
                 # Filter preparation for coffee
                 elif entity in ['filter'] and main_verb in ['prepare', 'ready', 'setup']:
-                    if purpose in ['kaffeezubereitung', 'milchkaffee', 'espresso']:
+                    if purpose in ['kaffeezubereitung', 'milchkaffee', 'espresso', 'milk_coffee', 'coffee_preparation']:
                         return f"Filter preparation for {purpose}"
                 
                 # Cup/Container handling
                 elif entity in ['cup', 'container'] and main_verb in ['retrieve', 'place', 'position']:
-                    if purpose in ['kaffeezubereitung', 'milchkaffee', 'espresso']:
+                    if purpose in ['kaffeezubereitung', 'milchkaffee', 'espresso', 'milk_coffee', 'coffee_preparation']:
                         return f"Cup positioning for {purpose}"
                 
                 # Coffee brewing (LLM semantic analysis with Betriebsstoffe)
                 elif entity in ['coffee'] and main_verb in ['brew', 'make', 'prepare']:
-                    if purpose in ['kaffeezubereitung', 'milchkaffee', 'espresso']:
+                    if purpose in ['kaffeezubereitung', 'milchkaffee', 'espresso', 'milk_coffee', 'coffee_preparation']:
                         # Use LLM to semantically determine required Betriebsstoffe for brewing
                         required_materials = self._llm_analyze_required_betriebsmittel(main_verb, entities, betriebsmittel)
                         context_description = self._llm_generate_semantic_context(main_verb, entities, purpose, required_materials)
@@ -1669,7 +2325,7 @@ class StructuredUCAnalyzer:
                 
                 # Milk addition (spaCy + domain analysis)
                 elif entity in ['milk'] and main_verb in ['add', 'pour']:
-                    if 'milchkaffee' in purpose:
+                    if any(term in purpose for term in ['milchkaffee', 'milk_coffee']):
                         # Use spaCy + domain knowledge for semantic context analysis
                         required_materials = self._llm_analyze_required_betriebsmittel(main_verb, entities, betriebsmittel)
                         context_description = self._llm_generate_semantic_context(main_verb, entities, purpose, required_materials)
@@ -3097,6 +3753,41 @@ class StructuredUCAnalyzer:
             expected_suffix += 1
         
         return True
+
+    def _generate_rup_diagram(self, json_file_path: str) -> str:
+        """
+        Generate RUP diagram from JSON analysis using official RUP engine
+        
+        Args:
+            json_file_path: Path to the JSON analysis file
+            
+        Returns:
+            Path to generated diagram file
+        """
+        try:
+            # Create RUP engine
+            rup_engine = OfficialRUPEngine(figure_size=(20, 16))
+            
+            # Generate diagram from JSON (this creates it in root directory)
+            temp_diagram_path = rup_engine.create_official_rup_diagram_from_json(json_file_path)
+            
+            # Move diagram to new directory for consistency
+            if temp_diagram_path and os.path.exists(temp_diagram_path):
+                import shutil
+                diagram_filename = os.path.basename(temp_diagram_path)
+                final_diagram_path = os.path.join("new", diagram_filename)
+                shutil.move(temp_diagram_path, final_diagram_path)
+                print(f"[DIAGRAM] RUP diagram generated: {final_diagram_path}")
+                return final_diagram_path
+            else:
+                print(f"[ERROR] Diagram file not found: {temp_diagram_path}")
+                return ""
+            
+        except Exception as e:
+            print(f"[ERROR] Failed to generate RUP diagram: {e}")
+            import traceback
+            traceback.print_exc()
+            return ""
 
 def main():
     """Test the structured analyzer"""
