@@ -9,7 +9,7 @@ import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
 
 from pathlib import Path
-from generic_uc_analyzer import GenericUCAnalyzer
+from oldpy.generic_uc_analyzer import GenericUCAnalyzer
 
 def test_safety_hygiene_analysis():
     """Test safety and hygiene analysis across different domains"""

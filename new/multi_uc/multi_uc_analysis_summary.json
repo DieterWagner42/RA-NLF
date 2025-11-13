@@ -1,0 +1,126 @@
+{
+  "config": {
+    "analysis_name": "Coffee Machine Multi-UC Analysis",
+    "description": "Combined analysis of multiple use cases with shared material controllers",
+    "domain": "beverage_preparation",
+    "use_cases": [
+      {
+        "id": "UC1",
+        "file": "Use Case/UC1.txt",
+        "name": "Prepare Milk Coffee",
+        "enabled": true
+      },
+      {
+        "id": "UC2",
+        "file": "Use Case/UC2.txt",
+        "name": "Prepare Espresso",
+        "enabled": true
+      }
+    ],
+    "analysis_mode": "combined",
+    "output": {
+      "directory": "new/multi_uc",
+      "formats": [
+        "json",
+        "csv",
+        "svg",
+        "png"
+      ],
+      "diagram_name": "UC1_UC2_Combined_RA_Diagram"
+    },
+    "options": {
+      "share_controllers": true,
+      "show_controller_functions": true,
+      "merge_duplicate_entities": true,
+      "generate_combined_diagram": false
+    }
+  },
+  "analyses": {
+    "UC1": {
+      "name": "Prepare Milk Coffee",
+      "file": "Use Case/UC1.txt",
+      "status": "completed",
+      "json_output": "new\\multi_uc\\UC1_Structured_RA_Analysis.json",
+      "total_lines": 58,
+      "total_steps": 25
+    },
+    "UC2": {
+      "name": "Prepare Espresso",
+      "file": "Use Case/UC2.txt",
+      "status": "completed",
+      "json_output": "new\\multi_uc\\UC2_Structured_RA_Analysis.json",
+      "total_lines": 97,
+      "total_steps": 41
+    }
+  },
+  "controller_registry": {
+    "total_controllers": 7,
+    "controllers": [
+      {
+        "name": "WaterLiquidManager",
+        "material": "water",
+        "aggregation_state": "liquid",
+        "functions": [
+          "heat",
+          "press",
+          "pressurize"
+        ]
+      },
+      {
+        "name": "CoffeeSolidManager",
+        "material": "coffee",
+        "aggregation_state": "solid",
+        "functions": [
+          "grind"
+        ]
+      },
+      {
+        "name": "CoffeeLiquidManager",
+        "material": "coffee",
+        "aggregation_state": "liquid",
+        "functions": [
+          "brew"
+        ]
+      },
+      {
+        "name": "MilkLiquidManager",
+        "material": "milk",
+        "aggregation_state": "liquid",
+        "functions": [
+          "add",
+          "stop"
+        ]
+      },
+      {
+        "name": "SugarSolidManager",
+        "material": "sugar",
+        "aggregation_state": "solid",
+        "functions": [
+          "add"
+        ]
+      },
+      {
+        "name": "FilterManager",
+        "material": "filter",
+        "aggregation_state": null,
+        "functions": [
+          "prepare"
+        ]
+      },
+      {
+        "name": "CupManager",
+        "material": "cup",
+        "aggregation_state": null,
+        "functions": [
+          "present",
+          "store"
+        ]
+      }
+    ]
+  },
+  "summary": {
+    "total_use_cases": 2,
+    "completed": 2,
+    "failed": 0
+  }
+}

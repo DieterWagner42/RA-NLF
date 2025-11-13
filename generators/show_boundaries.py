@@ -4,7 +4,7 @@ Extract and display boundary components from multi-UC analysis
 Shows how boundaries are identified for beverage preparation domain
 """
 
-from generic_uc_analyzer import GenericUCAnalyzer
+from oldpy.generic_uc_analyzer import GenericUCAnalyzer
 from pathlib import Path
 
 def show_boundaries_analysis():

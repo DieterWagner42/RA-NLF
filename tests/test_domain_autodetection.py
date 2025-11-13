@@ -3,7 +3,7 @@
 Test script to demonstrate domain auto-detection functionality of the generic UC analyzer
 """
 
-from generic_uc_analyzer import GenericUCAnalyzer
+from oldpy.generic_uc_analyzer import GenericUCAnalyzer
 from pathlib import Path
 
 def test_domain_autodetection():

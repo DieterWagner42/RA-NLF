@@ -4,7 +4,7 @@ Test script to demonstrate multi-UC analysis capability
 Shows how to analyze multiple UCs from the same domain
 """
 
-from generic_uc_analyzer import GenericUCAnalyzer
+from oldpy.generic_uc_analyzer import GenericUCAnalyzer
 from pathlib import Path
 
 def test_multi_uc_beverage_domain():

@@ -44,6 +44,8 @@ class DomainVerbLoader:
         if os.path.exists(common_path):
             with open(common_path, 'r', encoding='utf-8') as f:
                 self.common_config = json.load(f)
+                # Also add to domain_configs for consistent access pattern
+                self.domain_configs['common_domain'] = self.common_config
                 print(f"Loaded common domain configuration")
         else:
             print(f"WARNING: Common domain file not found: {common_path}")

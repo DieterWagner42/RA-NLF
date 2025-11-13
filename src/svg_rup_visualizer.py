@@ -59,7 +59,7 @@ class SVGRUPVisualizer:
     - Entity: https://de.wikipedia.org/wiki/Robustheitsanalyse#/media/Datei:Robustness_Diagram_Entity.svg
     """
     
-    def __init__(self, canvas_width=1200, canvas_height=2000):
+    def __init__(self, canvas_width=1400, canvas_height=2000):
         self.canvas_width = canvas_width
         self.canvas_height = canvas_height
         
@@ -289,39 +289,35 @@ class SVGRUPVisualizer:
         entities = [c for c in components if c.component_type == ComponentType.ENTITY]
         control_nodes = [c for c in components if c.component_type == ComponentType.CONTROL_FLOW_NODE]
         
-        # Layout-Parameter
+        # Layout-Parameter - gleichmäßige Verteilung über die gesamte Canvas-Breite
         margin = 50
-        actor_x = margin
-        boundary_x = 150
-        controller_x = 300
-        entity_x = 600
+        # Berechne gleichmäßige Abstände: 4 Spalten über 1400px Canvas
+        # Actors: ~6%, Boundaries: ~32%, Controllers: ~58%, Entities: ~84%
+        actor_x = 84          # Etwas mehr Rand links
+        boundary_x = 448      # Gleichmäßiger Abstand (364px von Actors)
+        controller_x = 812    # Gleichmäßiger Abstand (364px von Boundaries)
+        entity_x = 1176       # Gleichmäßiger Abstand (364px von Controllers)
         
-        # Actors links positionieren
+        # Actors links positionieren mit kleinerem Abstand
         if actors:
-            self._position_column(actors, actor_x, margin, self.canvas_height - margin)
-        
-        # Boundaries links-mitte positionieren  
+            self._position_compact_column(actors, actor_x, margin, spacing=70)
+
+        # Boundaries links-mitte positionieren mit größerem Abstand
         if boundaries:
-            # Nur erste 8 Boundaries anzeigen
-            visible_boundaries = boundaries[:8]
-            self._position_column(visible_boundaries, boundary_x, margin, self.canvas_height - margin)
+            # Alle Boundaries anzeigen (kein Limit mehr)
+            visible_boundaries = boundaries
+            # Größerer Startpunkt und größerer Abstand für Boundaries
+            boundary_start = margin + 50  # Nicht direkt am Rand starten
+            self._position_compact_column(visible_boundaries, boundary_x, boundary_start, spacing=100)
         
         # Controllers und Control Flow Nodes nach UC-Schritten positionieren (datengetrieben)
         if controllers:
             self._position_controllers_with_flow_nodes(controllers, control_nodes, controller_x)
         
-        # Entities rechts positionieren
+        # Entities rechts in einer Spalte mit größerem Abstand positionieren
         if entities:
-            # Entities in 2 Spalten aufteilen
-            entity_cols = 2
-            entities_per_col = len(entities) // entity_cols + (1 if len(entities) % entity_cols else 0)
-            for col in range(entity_cols):
-                start_idx = col * entities_per_col
-                end_idx = min(start_idx + entities_per_col, len(entities))
-                col_entities = entities[start_idx:end_idx]
-                if col_entities:
-                    x_pos = entity_x + col * 120
-                    self._position_column(col_entities, x_pos, margin, self.canvas_height - margin)
+            # Alle Entities in einer Spalte mit größerem Abstand
+            self._position_compact_column(entities, entity_x, margin, spacing=90)
         
         return components
     
@@ -329,7 +325,7 @@ class SVGRUPVisualizer:
         """Komponenten in einer Spalte positionieren"""
         if not components:
             return
-        
+
         if len(components) == 1:
             components[0].position = (x_position, (y_start + y_end) / 2)
         else:
@@ -337,6 +333,16 @@ class SVGRUPVisualizer:
             for i, component in enumerate(components):
                 y_position = y_start + i * y_step
                 component.position = (x_position, y_position)
+
+    def _position_compact_column(self, components: List[RAComponent], x_position: float, y_start: float, spacing: int = 70):
+        """Komponenten in einer Spalte mit festem Abstand positionieren"""
+        if not components:
+            return
+
+        # Fester Abstand zwischen Komponenten
+        for i, component in enumerate(components):
+            y_position = y_start + i * spacing
+            component.position = (x_position, y_position)
     
     def _position_controllers_with_flow_nodes(self, controllers: List[RAComponent], control_nodes: List[RAComponent], x_center: float):
         """Controllers und Control Flow Nodes datengetrieben positionieren basierend auf Control Flows"""
@@ -541,10 +547,10 @@ class SVGRUPVisualizer:
         </g>
         '''
         
-        # Label unter dem Symbol
-        label_y = y + symbol_size['height']/2 + 20
+        # Label näher am Symbol (unter dem Symbol)
+        label_y = y + symbol_size['height']/2 + 8
         label = f'''
-        <text x="{x}" y="{label_y}" text-anchor="middle" 
+        <text x="{x}" y="{label_y}" text-anchor="middle"
               font-family="Arial, sans-serif" font-size="12" fill="black">
             {component.name}
         </text>

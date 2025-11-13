@@ -22,6 +22,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__)))
 # Import existing components
 from domain_verb_loader import DomainVerbLoader, VerbType
 from generative_context_manager import GenerativeContextManager, GeneratedContext, ContextType
+from material_controller_registry import MaterialControllerRegistry, extract_function_from_verb
 # Pure RUP visualizer is imported dynamically in _generate_rup_diagram()
 
 class LineType(Enum):
@@ -211,7 +212,10 @@ class StructuredUCAnalyzer:
         
         # Initialize generative context manager
         self.context_manager = GenerativeContextManager(domain_name)
-        
+
+        # Initialize material controller registry
+        self.controller_registry = MaterialControllerRegistry()
+
         # Analysis state
         self.uc_context = UCContext()
         self.line_analyses: List[LineAnalysis] = []
@@ -495,8 +499,12 @@ class StructuredUCAnalyzer:
                 if word.lower() == "beens" and i > 0:
                     # Get previous word
                     prev_word = words[i - 1].lower()
-                    # Common materials that pair with "beans" (include common misspellings!)
-                    material_terms = ['coffee', 'coffe', 'cofee', 'cocoa', 'cacao', 'soy', 'vanilla']
+                    # Load materials from domain JSON (GENERIC!)
+                    domain_materials = self._load_domain_materials()
+                    material_terms = []
+                    for material_variants in domain_materials.values():
+                        material_terms.extend([v.lower() for v in material_variants])
+
                     if prev_word in material_terms:
                         # Force correction to "beans" instead of "been"
                         corrections_made[word] = "beans"
@@ -1366,14 +1374,24 @@ class StructuredUCAnalyzer:
             return ra_classes
         
         # Check if this is a TRIGGER step (B1 or contains "(trigger)")
-        # Triggers have ONLY Boundary - NO Controller, NO Entities, NO Data Flows
         is_trigger = step_id == "B1" or "(trigger)" in line_text.lower()
 
         if is_trigger:
-            # TRIGGER: Only generate Boundary (Actor -> Boundary signal)
+            # TRIGGER: Generate Boundary + Controller based on Actor type
+            # Example: Actor "Time" -> SystemControlManager for scheduling
+            #          Actor "User" -> HMIManager for user interaction (handled in flow generation)
+
+            # 1. Generate Boundary
             boundaries = self._generate_boundaries_for_step(step_id, grammatical, line_text)
             ra_classes.extend(boundaries)
-            return ra_classes  # Return early - no controller, no entities for triggers
+
+            # 2. Generate Controller based on Actor/Trigger type
+            trigger_controller = self._generate_trigger_controller(step_id, line_text, grammatical)
+            if trigger_controller:
+                ra_classes.append(trigger_controller)
+
+            # Triggers don't generate entities or data flows
+            return ra_classes
 
         # 3. Generate Controller (only for NON-trigger steps with verbs)
         if grammatical.main_verb:
@@ -1505,6 +1523,16 @@ class StructuredUCAnalyzer:
         if not grammatical.main_verb:
             return None
 
+        # PRIORITY 1: Try Material Controller Registry approach
+        # This ensures controllers represent MATERIALS, not verbs/implementation
+        registry_controller = self._generate_controller_using_registry(step_id, grammatical, line_text)
+        if registry_controller:
+            print(f"[REGISTRY] Using material controller: {registry_controller.name} for function {grammatical.verb_lemma}() in {step_id}")
+            return registry_controller
+
+        # FALLBACK: Use legacy controller generation logic
+        # This will be used for special cases (HMI, System, triggers, etc.)
+
         # SPECIAL HANDLING: Control action verbs (stop, switch, pause, etc.)
         # GENERIC RULE: Search ENTIRE line text for material references
         # - "switch off water heater" -> contains "water" -> WaterLiquidManager
@@ -1523,9 +1551,11 @@ class StructuredUCAnalyzer:
 
             if not is_system_level:
                 # Step 2: GENERIC material search in ENTIRE line text
-                # Get all known materials (generic approach)
-                material_names = ['water', 'milk', 'coffee', 'sugar', 'tea', 'filter', 'cup',
-                                 'bean', 'cream', 'syrup', 'chocolate', 'powder']
+                # Get all known materials from domain JSON (GENERIC!)
+                domain_materials = self._load_domain_materials()
+                material_names = []
+                for material_variants in domain_materials.values():
+                    material_names.extend([v.lower() for v in material_variants])
 
                 # Search for ANY material in the line text
                 found_material = None
@@ -1632,7 +1662,272 @@ class StructuredUCAnalyzer:
             step_id=step_id,
             parallel_group=parallel_group
         )
-    
+
+    def _generate_controller_using_registry(self, step_id: str, grammatical: GrammaticalAnalysis, line_text: str) -> Optional[RAClass]:
+        """
+        Generate controller using Material Controller Registry.
+
+        Key principle: Controllers represent MATERIALS, verbs become FUNCTIONS.
+
+        Process:
+        1. Detect material from text (water, coffee, milk, etc.)
+        2. Extract function from verb (heat, pressurize, grind) - ignore implementation (heater, compressor)
+        3. Get material controller from registry
+        4. Assign function to controller
+
+        Examples:
+            "activates the water heater"
+                → Material: water
+                → Function: heat (NOT activate!)
+                → Controller: WaterLiquidManager.heat()
+
+            "starts water compressor to generate pressure"
+                → Material: water
+                → Function: pressurize (NOT start!)
+                → Controller: WaterLiquidManager.pressurize()
+
+        Args:
+            step_id: UC step identifier (e.g., 'B2a', 'B3')
+            grammatical: NLP grammatical analysis
+            line_text: Full UC step text
+
+        Returns:
+            RAClass for the material controller with the function, or None
+        """
+        if not grammatical.main_verb:
+            return None
+
+        # IMPORTANT: For transformation verbs, determine aggregation state from transformation!
+        # Example: "grind": CoffeeBeans -> GroundCoffee (solid) -> CoffeeSolidManager
+        # Example: "brew": GroundCoffee + HotWater -> Coffee (liquid) -> CoffeeLiquidManager
+        # Example: "adds milk": Coffee + Milk -> Coffee (liquid) -> MilkLiquidManager
+        is_transformation = hasattr(grammatical, 'verb_type') and grammatical.verb_type == VerbType.TRANSFORMATION_VERB
+
+        if is_transformation:
+            # Get transformation info to determine output material and state
+            transformation_info = self.verb_loader.get_transformation_for_verb(grammatical.verb_lemma, self.domain_name)
+
+            if transformation_info and '->' in transformation_info:
+                parts = transformation_info.split('->')
+                if len(parts) >= 2:
+                    output_material = parts[-1].strip()
+                    if '+' in output_material:
+                        output_material = output_material.split('+')[0].strip()
+
+                    # GENERIC: Determine aggregation state from transformation output and keywords
+                    aggregation_state = self._determine_aggregation_state_from_output(
+                        output_material,
+                        grammatical.verb_lemma,
+                        line_text
+                    )
+
+                    # Select controller with matching material AND aggregation state
+                    material_controller = self._select_controller_with_state(
+                        output_material,
+                        aggregation_state,
+                        grammatical.direct_object,
+                        line_text
+                    )
+
+                    if material_controller:
+                        print(f"[REGISTRY TRANSFORM] Using {aggregation_state} state controller: {material_controller.name} for {grammatical.verb_lemma}() -> {output_material} in {step_id}")
+                    else:
+                        material_controller = self.controller_registry.find_controller_by_text(line_text)
+                else:
+                    material_controller = self.controller_registry.find_controller_by_text(line_text)
+            else:
+                material_controller = self.controller_registry.find_controller_by_text(line_text)
+        else:
+            # Find material controller from text (normal case)
+            material_controller = self.controller_registry.find_controller_by_text(line_text)
+
+        if material_controller:
+            # Extract the actual function from the verb, ignoring implementation elements
+            function_name = extract_function_from_verb(
+                verb=grammatical.verb_lemma,
+                context=line_text
+            )
+
+            # Add function to controller's function set
+            material_controller.add_function(function_name)
+
+            # Determine parallel group from step_id
+            parallel_group = self._get_parallel_group_from_step_id(step_id)
+
+            # Create controller description with function
+            description = f"Manages {material_controller.material}"
+            if material_controller.aggregation_state:
+                description += f" ({material_controller.aggregation_state} state)"
+            description += f": {function_name}() in {step_id}"
+
+            return RAClass(
+                name=material_controller.name,
+                ra_type=RAType.CONTROLLER,
+                stereotype="<<controller>>",
+                description=description,
+                step_id=step_id,
+                parallel_group=parallel_group
+            )
+
+        return None
+
+    def _determine_aggregation_state_from_output(self, output_material: str, verb: str, line_text: str) -> Optional[str]:
+        """
+        GENERIC: Determine aggregation state from transformation output material.
+
+        Uses domain JSON aggregation_states configuration:
+        - solid: "beans", "ground", "powder", "crystals", etc.
+        - liquid: "brew", "brewing", "extraction", "pour", "flow", etc.
+        - gas: "steam", "vapor", "pressure", etc.
+
+        Args:
+            output_material: Output material name (e.g., "GroundCoffee", "Coffee")
+            verb: Verb lemma (e.g., "grind", "brew")
+            line_text: Full line text for context
+
+        Returns:
+            Aggregation state: "solid", "liquid", "gas", or None
+        """
+        output_lower = output_material.lower()
+        line_lower = line_text.lower()
+
+        # Load aggregation state info from domain JSON
+        domain_config = self.verb_loader.domain_configs.get(self.domain_name, {})
+        aggregation_states = domain_config.get('aggregation_states', {})
+        material_contexts = domain_config.get('material_specific_contexts', {})
+
+        # STEP 1: Check output material name for state keywords
+        for state, state_info in aggregation_states.items():
+            specific_keywords = state_info.get('specific_keywords', [])
+            for keyword in specific_keywords:
+                if keyword in output_lower:
+                    print(f"[AGGREGATION STATE] Detected {state} from output material '{output_material}' (keyword: {keyword})")
+                    return state
+
+        # STEP 2: Check verb operation type
+        for state, state_info in aggregation_states.items():
+            specific_operations = state_info.get('specific_operations', [])
+            if verb in specific_operations:
+                print(f"[AGGREGATION STATE] Detected {state} from verb '{verb}' operation")
+                return state
+
+        # STEP 3: Check material-specific context (e.g., coffee solid/liquid indicators)
+        # Extract base material name (e.g., "Coffee" from "GroundCoffee")
+        for material_name, context_info in material_contexts.items():
+            if material_name in output_lower:
+                # Check solid indicators
+                solid_indicators = context_info.get('solid_indicators', [])
+                for indicator in solid_indicators:
+                    if indicator in line_lower or indicator in output_lower:
+                        print(f"[AGGREGATION STATE] Detected solid from material context '{material_name}' (indicator: {indicator})")
+                        return 'solid'
+
+                # Check liquid indicators
+                liquid_indicators = context_info.get('liquid_indicators', [])
+                for indicator in liquid_indicators:
+                    if indicator in line_lower or indicator in output_lower:
+                        print(f"[AGGREGATION STATE] Detected liquid from material context '{material_name}' (indicator: {indicator})")
+                        return 'liquid'
+
+                # Check gas indicators
+                gas_indicators = context_info.get('gas_indicators', [])
+                for indicator in gas_indicators:
+                    if indicator in line_lower or indicator in output_lower:
+                        print(f"[AGGREGATION STATE] Detected gas from material context '{material_name}' (indicator: {indicator})")
+                        return 'gas'
+
+        # STEP 4: Fallback to default material states
+        default_states = domain_config.get('default_material_states', {})
+        for material, state in default_states.items():
+            if material in output_lower:
+                print(f"[AGGREGATION STATE] Using default state {state} for material '{material}'")
+                return state
+
+        print(f"[AGGREGATION STATE] Could not determine state for '{output_material}', defaulting to None")
+        return None
+
+    def _select_controller_with_state(self, material: str, aggregation_state: Optional[str],
+                                     direct_object: Optional[str], line_text: str) -> Optional['MaterialController']:
+        """
+        GENERIC: Select controller with matching material and aggregation state.
+
+        Priority:
+        1. If direct object is a material (e.g., "milk") -> use direct object's controller
+        2. Otherwise, use output material with aggregation state
+
+        Args:
+            material: Material name (e.g., "Coffee", "GroundCoffee", "HotWater")
+            aggregation_state: Aggregation state ("solid", "liquid", "gas")
+            direct_object: Direct object from grammatical analysis
+            line_text: Full line text
+
+        Returns:
+            MaterialController with matching material and state
+        """
+        # PRIORITY 1: Check if direct object is a material
+        # Example: "adds milk" -> direct object "milk" -> MilkLiquidManager
+        if direct_object:
+            material_controller = self.controller_registry.find_controller_by_text(direct_object)
+            if material_controller:
+                print(f"[CONTROLLER SELECT] Using direct object material: {material_controller.name}")
+                return material_controller
+
+        # PRIORITY 2: Use output material with aggregation state
+        # Extract base material from compound names:
+        # "GroundCoffee" -> "coffee", "HotWater" -> "water", "SteamedMilk" -> "milk"
+        base_material = self._extract_base_material_from_output(material)
+
+        # Example: "grinds coffee beans" -> output "GroundCoffee" (solid) -> base "coffee" -> CoffeeSolidManager
+        # Example: "begins brewing coffee" -> output "Coffee" (liquid) -> base "coffee" -> CoffeeLiquidManager
+        material_controller = self.controller_registry.get_controller_for_material(base_material, aggregation_state)
+
+        if material_controller:
+            print(f"[CONTROLLER SELECT] Using output material with state: {material_controller.name} (base: {base_material}, state: {aggregation_state})")
+            return material_controller
+
+        # FALLBACK: Use text-based search (no state matching)
+        print(f"[CONTROLLER SELECT] Fallback to text-based search for '{material}'")
+        return self.controller_registry.find_controller_by_text(line_text)
+
+    def _extract_base_material_from_output(self, output_material: str) -> str:
+        """
+        GENERIC: Extract base material name from compound output names.
+
+        Examples:
+            "GroundCoffee" -> "coffee"
+            "HotWater" -> "water"
+            "SteamedMilk" -> "milk"
+            "FrothedMilk" -> "milk"
+            "Coffee" -> "coffee"
+
+        Args:
+            output_material: Output material name (e.g., "GroundCoffee", "HotWater")
+
+        Returns:
+            Base material name (e.g., "coffee", "water")
+        """
+        output_lower = output_material.lower()
+
+        # Load all materials from domain JSON
+        domain_materials = self._load_domain_materials()
+
+        # Check each base material to see if it appears in the output name
+        for base_name, variants in domain_materials.items():
+            # Check base name
+            if base_name.lower() in output_lower:
+                print(f"[BASE MATERIAL] Extracted '{base_name}' from '{output_material}'")
+                return base_name
+
+            # Check variants
+            for variant in variants:
+                if variant.lower() == output_lower:
+                    print(f"[BASE MATERIAL] Found exact match '{base_name}' for '{output_material}'")
+                    return base_name
+
+        # If no match found, return the original material name
+        print(f"[BASE MATERIAL] No base material found for '{output_material}', using as-is")
+        return output_material
+
     def _determine_flow_type(self, step_id: str) -> str:
         """Determine flow type from step_id"""
         if step_id.startswith('A'):
@@ -1642,20 +1937,136 @@ class StructuredUCAnalyzer:
         else:
             return "main"
     
+    def _generate_trigger_controller(self, step_id: str, line_text: str, grammatical: GrammaticalAnalysis) -> Optional[RAClass]:
+        """
+        Generate Controller for trigger steps based on Actor/Trigger type.
+        GENERIC APPROACH: Uses Actor list from UC Context instead of hardcoded keywords.
+
+        Actor-based Controller Mapping:
+            - Actor "Time", "Clock", "Timer", "Schedule" -> SystemControlManager (scheduling)
+            - Actor "User" + interaction -> HMIManager (handled in flow generation)
+            - Actor "Sensor", "Monitor", "System" -> SystemControlManager (monitoring)
+            - Any other Actor -> SystemControlManager (generic system function)
+
+        Args:
+            step_id: Step ID (B1, E1, A1, etc.)
+            line_text: Full line text
+            grammatical: Grammatical analysis
+
+        Returns:
+            Controller RAClass or None
+        """
+        line_lower = line_text.lower()
+
+        # GENERIC APPROACH: Check which Actor from UC Context triggers this step
+        # Get actors from UC Context (e.g., ["User", "Time"])
+        actors = self.uc_context.actors if hasattr(self.uc_context, 'actors') else []
+
+        # Check each actor to see if they appear in the trigger text
+        for actor in actors:
+            actor_lower = actor.lower()
+
+            # Skip "User" actor - handled by _is_real_user_interaction
+            if actor_lower == 'user':
+                continue
+
+            # Check if this actor triggers this step
+            if actor_lower in line_lower:
+                # Actor-based controller generation
+                function_name = self._get_function_for_actor(actor_lower, line_lower)
+
+                return RAClass(
+                    name='SystemControlManager',
+                    ra_type=RAType.CONTROLLER,
+                    stereotype='<<controller>>',
+                    description=f'Manages system control operations: {function_name}() in {step_id}',
+                    step_id=step_id
+                )
+
+        # Check for User interaction triggers
+        if self._is_real_user_interaction(line_lower, grammatical):
+            # SPECIAL CASE: B1 User-Trigger needs HMIManager as controller
+            # to create flow: B1 -> HMIManager -> P2_START
+            if step_id == "B1":
+                return RAClass(
+                    name='HMIManager',
+                    ra_type=RAType.CONTROLLER,
+                    stereotype='<<controller>>',
+                    description=f'Manages hmi transactions: request() in {step_id}',
+                    step_id=step_id
+                )
+            # For other User triggers (E1, etc.): HMIManager routing in flow generation
+            return None
+
+        # Fallback: Check for system condition keywords from common_domain.json
+        # Load keywords dynamically from domain configuration
+        common_config = self.verb_loader.domain_configs.get('common_domain', {})
+        condition_keywords_config = common_config.get('system_condition_keywords', {})
+        condition_keywords = condition_keywords_config.get('keywords', [])
+
+        if condition_keywords and any(keyword in line_lower for keyword in condition_keywords):
+            return RAClass(
+                name='SystemControlManager',
+                ra_type=RAType.CONTROLLER,
+                stereotype='<<controller>>',
+                description=f'Manages system control operations: monitor() in {step_id}',
+                step_id=step_id
+            )
+
+        # Default: No controller for this trigger type
+        return None
+
+    def _get_function_for_actor(self, actor_lower: str, line_text: str) -> str:
+        """
+        Determine the function name based on actor type and context.
+        FULLY GENERIC APPROACH: Uses common_domain.json common_controllers mapping.
+
+        Args:
+            actor_lower: Lowercase actor name
+            line_text: Lowercase line text for context
+
+        Returns:
+            Function name (schedule, monitor, trigger, etc.)
+        """
+        # Load common controllers from common_domain.json
+        common_config = self.verb_loader.domain_configs.get('common_domain', {})
+        common_controllers = common_config.get('common_controllers', {}).get('controllers', {})
+
+        # Check TimeManager keywords for scheduling functions
+        time_manager = common_controllers.get('TimeManager', {})
+        time_keywords = time_manager.get('keywords', [])
+        if any(keyword in actor_lower or keyword in line_text for keyword in time_keywords):
+            return 'schedule'
+
+        # Check TriggerManager keywords for triggering functions
+        trigger_manager = common_controllers.get('TriggerManager', {})
+        trigger_keywords = trigger_manager.get('keywords', [])
+        if any(keyword in actor_lower or keyword in line_text for keyword in trigger_keywords):
+            return 'trigger'
+
+        # Check ControlManager keywords for monitoring/control functions
+        control_manager = common_controllers.get('ControlManager', {})
+        control_keywords = control_manager.get('keywords', [])
+        if any(keyword in actor_lower or keyword in line_text for keyword in control_keywords):
+            return 'monitor'
+
+        # Default: Generic trigger function (when actor is not in common patterns)
+        return 'trigger'
+
     def _is_trigger_step(self, step) -> bool:
         """Check if step is a trigger (domain-agnostic)"""
         # Main UC trigger
         if step.step_id == "B1" or "(trigger)" in step.step_text:
             return True
-        
+
         # Alternative flow condition triggers
         if step.flow_type == "alternative" and not "." in step.step_id:
             return True
-        
+
         # Extension flow triggers
         if step.flow_type == "extension" and not "." in step.step_id:
             return True
-        
+
         return False
     
     def _is_human_interaction(self, text: str) -> bool:
@@ -2088,9 +2499,13 @@ class StructuredUCAnalyzer:
                             # Example: "add milk" has "Milk" in text -> skip abstract "Additive"
                             # Example: "add sugar" has "Sugar" in text -> skip abstract "Additive"
                             if input_entity.lower() == "additive":
-                                # Check if we have concrete materials in the text
+                                # Check if we have concrete materials in the text (GENERIC from domain JSON)
                                 line_lower = line_text.lower()
-                                concrete_materials = ['milk', 'sugar', 'cream', 'syrup', 'chocolate', 'honey', 'cinnamon']
+                                domain_materials = self._load_domain_materials()
+                                concrete_materials = []
+                                for material_variants in domain_materials.values():
+                                    concrete_materials.extend([v.lower() for v in material_variants])
+
                                 has_concrete_material = any(material in line_lower for material in concrete_materials)
                                 if has_concrete_material:
                                     # Skip abstract "Additive", we have concrete material
@@ -2966,82 +3381,61 @@ class StructuredUCAnalyzer:
         return "Unknown Use Case"
     
     def _extract_uc_goal_llm(self, full_text: str) -> str:
-        """Extract UC goal using LLM-based semantic analysis"""
+        """Extract UC goal - GENERIC approach using Goal: line from UC text"""
         try:
-            doc = self.nlp(full_text)
-            
-            # Analyze the main flow to understand the goal
-            lines = full_text.lower().split('\n')
-            
-            # Look for goal indicators in the text
-            goal_indicators = []
-            
-            # Check for coffee/beverage preparation
-            if any(word in full_text.lower() for word in ['coffee', 'milk', 'espresso', 'brew', 'drink']):
-                if 'milk' in full_text.lower() and 'coffee' in full_text.lower():
-                    goal_indicators.append("Milchkaffee automatisch zubereiten")
-                elif 'espresso' in full_text.lower():
-                    goal_indicators.append("Espresso auf Anfrage zubereiten")
-                elif 'coffee' in full_text.lower():
-                    goal_indicators.append("Kaffee automatisch zubereiten")
-            
-            # Check for nuclear/reactor operations
-            if any(word in full_text.lower() for word in ['nuclear', 'reactor', 'shutdown', 'emergency']):
-                goal_indicators.append("Sicherer Reaktor-Notfall-Shutdown")
-            
-            # Check for rocket/space operations
-            if any(word in full_text.lower() for word in ['rocket', 'launch', 'satellite', 'mission']):
-                goal_indicators.append("Erfolgreicher Raketenstart")
-            
-            # Check for assembly/manufacturing
-            if any(word in full_text.lower() for word in ['assembly', 'robot', 'component', 'manufacturing']):
-                goal_indicators.append("Präzise Roboter-Montage")
-            
-            # Check timing information
-            timing_context = ""
-            if '7:00h' in full_text or '7am' in full_text:
-                timing_context = " um 7 Uhr morgens"
-            elif 'request' in full_text.lower() or 'user' in full_text.lower():
-                timing_context = " auf Benutzeranfrage"
-            elif 'emergency' in full_text.lower():
-                timing_context = " bei Notfall"
-            elif 'operator' in full_text.lower():
-                timing_context = " auf Operator-Anweisung"
-            
-            # Construct goal
-            if goal_indicators:
-                goal = goal_indicators[0] + timing_context
-                return goal
-            else:
-                # Fallback: extract from main flow
-                return self._extract_goal_from_main_flow(lines)
-                
+            # PRIORITY 1: Extract from explicit "Goal:" line (most reliable)
+            lines = full_text.split('\n')
+            for line in lines:
+                line_stripped = line.strip()
+                if line_stripped.lower().startswith('goal:'):
+                    # Extract goal text after "Goal:"
+                    goal_text = line_stripped[5:].strip()  # Remove "Goal:"
+                    if goal_text:
+                        return goal_text
+
+            # PRIORITY 2: Detect domain and create generic goal
+            # GENERIC: Check ALL loaded domain configurations for keywords
+            for domain_key, domain_config in self.verb_loader.domain_configs.items():
+                if domain_key == 'common_domain':
+                    continue  # Skip common domain
+
+                domain_keywords = domain_config.get('keywords', [])
+                domain_name = domain_config.get('domain_name', domain_key)
+
+                # Check if domain keywords match UC text
+                if any(keyword in full_text.lower() for keyword in domain_keywords):
+                    return f"Perform {domain_name} operation"
+
+            # PRIORITY 3: Fallback - extract from main flow
+            return self._extract_goal_from_main_flow(lines)
+
         except Exception as e:
-            print(f"[DEBUG] LLM goal extraction failed: {e}")
-            return "UC-Ziel nicht erkannt"
+            print(f"[DEBUG] Goal extraction failed: {e}")
+            return "UC goal not specified"
     
     def _extract_goal_from_main_flow(self, lines: List[str]) -> str:
-        """Extract goal from main flow steps as fallback"""
-        main_flow_actions = []
-        
+        """Extract goal from main flow steps as fallback (GENERIC!)"""
+        main_flow_materials = []
+
+        # Get all materials from domain JSON (GENERIC!)
+        domain_materials = self._load_domain_materials()
+        all_material_variants = []
+        for material_variants in domain_materials.values():
+            all_material_variants.extend([v.lower() for v in material_variants])
+
         for line in lines:
-            line = line.strip().lower()
+            line_lower = line.strip().lower()
             # Look for B-steps that indicate the main purpose
-            if line.startswith('b1') or line.startswith('b2') or line.startswith('b3'):
-                if 'activates' in line and 'heater' in line:
-                    main_flow_actions.append("Heizung")
-                elif 'brew' in line or 'coffee' in line:
-                    main_flow_actions.append("Kaffee")
-                elif 'milk' in line:
-                    main_flow_actions.append("Milch")
-                elif 'shutdown' in line:
-                    main_flow_actions.append("Shutdown")
-                elif 'launch' in line:
-                    main_flow_actions.append("Start")
-        
-        if main_flow_actions:
-            return f"System für {', '.join(main_flow_actions[:2])}"
-        
+            if line_lower.startswith('b1') or line_lower.startswith('b2') or line_lower.startswith('b3'):
+                # Find any material mentioned in the line
+                for material in all_material_variants:
+                    if material in line_lower and material not in main_flow_materials:
+                        main_flow_materials.append(material)
+                        break  # Only one material per line
+
+        if main_flow_materials:
+            return f"System für {', '.join(main_flow_materials[:2])}"
+
         return "Systemoperation durchführen"
     
     def _find_actors_in_step(self, line_text: str) -> List[str]:
@@ -3083,7 +3477,7 @@ class StructuredUCAnalyzer:
         # PRIORITY 2: Check for human interaction patterns (HMIManager cases)
         elif self._is_human_interaction(line_text):
             # Generate specific functional boundary based on interaction purpose
-            boundary = self._generate_functional_boundary_for_interaction(line_text, step_id)
+            boundary = self._generate_functional_boundary_for_interaction(line_text, step_id, grammatical)
             if boundary:
                 boundaries.append(boundary)
         
@@ -3187,8 +3581,8 @@ class StructuredUCAnalyzer:
             step_id=step_id
         )
     
-    def _generate_functional_boundary_for_interaction(self, line_text: str, step_id: str) -> Optional[RAClass]:
-        """Generate specific functional boundary names based on interaction purpose"""
+    def _generate_functional_boundary_for_interaction(self, line_text: str, step_id: str, grammatical: Optional['GrammaticalAnalysis'] = None) -> Optional[RAClass]:
+        """Generate specific functional boundary names based on interaction purpose - Boundaries are ALWAYS specific!"""
         line_lower = line_text.lower()
         
         # Get boundary patterns from domain JSON
@@ -3224,45 +3618,42 @@ class StructuredUCAnalyzer:
                     step_id=step_id
                 )
         elif any(verb in line_lower for verb in ['want', 'request', 'ask', 'input']):
-            # Identify specific material/additive and create specific boundary
-            if 'sugar' in line_lower:
+            # BOUNDARIES ARE ALWAYS SPECIFIC!
+            # Extract Direct Object from grammatical analysis or fallback to NLP
+            direct_object = None
+
+            if grammatical and grammatical.direct_object:
+                direct_object = grammatical.direct_object.strip()
+            else:
+                # Fallback: Extract noun from line_text using NLP
+                doc = self.nlp(line_text)
+                for token in doc:
+                    if token.pos_ == 'NOUN' and token.dep_ in ['dobj', 'obj', 'pobj']:
+                        direct_object = token.text
+                        break
+
+            # Create specific boundary based on Direct Object
+            if direct_object:
+                # Capitalize and clean the direct object
+                clean_object = self._clean_entity_name(direct_object)
+                boundary_name = f"{clean_object}RequestBoundary"
+                description = f"Boundary for user {direct_object} requests"
+
                 return RAClass(
-                    name="SugarRequestBoundary",
+                    name=boundary_name,
                     ra_type=RAType.BOUNDARY,
                     stereotype="<<boundary>>",
-                    description="Boundary for user sugar requests",
-                    step_id=step_id
-                )
-            elif 'milk' in line_lower:
-                return RAClass(
-                    name="MilkRequestBoundary",
-                    ra_type=RAType.BOUNDARY,
-                    stereotype="<<boundary>>",
-                    description="Boundary for user milk requests",
-                    step_id=step_id
-                )
-            elif 'coffee' in line_lower:
-                return RAClass(
-                    name="CoffeeRequestBoundary",
-                    ra_type=RAType.BOUNDARY,
-                    stereotype="<<boundary>>",
-                    description="Boundary for user coffee requests",
-                    step_id=step_id
-                )
-            elif any(word in line_lower for word in ['additive', 'ingredient', 'extra']):
-                return RAClass(
-                    name="AdditiveRequestBoundary",
-                    ra_type=RAType.BOUNDARY,
-                    stereotype="<<boundary>>",
-                    description="Boundary for user additive requests",
+                    description=description,
                     step_id=step_id
                 )
             else:
+                # Last resort: Use generic but warn
+                print(f"[WARNING] No Direct Object found for request boundary in: {line_text}")
                 return RAClass(
-                    name="UserRequestBoundary",
+                    name="RequestBoundary",
                     ra_type=RAType.BOUNDARY,
                     stereotype="<<boundary>>",
-                    description="Boundary for general user requests to system",
+                    description="Boundary for user request (no specific object identified)",
                     step_id=step_id
                 )
         
@@ -3506,10 +3897,15 @@ class StructuredUCAnalyzer:
                 # Skip abstract categories if we have concrete materials
                 # Example: Skip "Additive" if we already have "Milk" or "Sugar"
                 if input_entity.lower() == "additive":
-                    # Check if we have a concrete material (milk, sugar, etc.)
+                    # Check if we have a concrete material (GENERIC from domain JSON)
+                    domain_materials = self._load_domain_materials()
+                    concrete_material_names = []
+                    for material_variants in domain_materials.values():
+                        concrete_material_names.extend([v.lower() for v in material_variants])
+
                     has_concrete_material = any(
                         material in existing_entities_from_text
-                        for material in ['milk', 'sugar', 'cream', 'syrup', 'chocolate']
+                        for material in concrete_material_names
                     )
                     if has_concrete_material:
                         continue  # Skip abstract "Additive", use concrete material instead
@@ -3533,6 +3929,33 @@ class StructuredUCAnalyzer:
                 flow_type="provide",
                 description=f"{controller_name} produces {transformation_output} as result"
             ))
+
+        # STEP 5: Add ALL remaining entities from ra_classes as USE
+        # RULE: ALL entities in the step (EXCEPT output) must have USE data flows!
+        # This catches entities extracted by NLP that are not in transformation_inputs
+        # Example: "UserDefinedAmountOfCoffee" in B2c
+        existing_entity_names = set(df.entity for df in data_flows)
+
+        for ra_class in ra_classes:
+            if ra_class.ra_type == RAType.ENTITY:
+                entity_name = ra_class.name
+
+                # Skip if already has a data flow
+                if entity_name in existing_entity_names:
+                    continue
+
+                # Skip if this is the output entity
+                if is_transformation and entity_name == transformation_output:
+                    continue
+
+                # Add USE data flow for this remaining entity
+                data_flows.append(DataFlow(
+                    step_id=step_id,
+                    controller=controller_name,
+                    entity=entity_name,
+                    flow_type="use",
+                    description=f"{controller_name} uses {entity_name} as input"
+                ))
 
         return data_flows
     
@@ -3704,7 +4127,22 @@ class StructuredUCAnalyzer:
             step_boundaries = [ra for ra in line_analysis.ra_classes if ra.ra_type == RAType.BOUNDARY]
 
             if step_boundaries and actors:
-                actor_name = actors[0].name  # Usually "User"
+                # Determine correct actor based on trigger/boundary type
+                # - TimingBoundary -> Actor "Time"
+                # - User interaction boundaries -> Actor "User"
+                actor_name = "User"  # Default
+
+                for boundary in step_boundaries:
+                    if boundary.name == "TimingBoundary":
+                        # Time-based trigger uses "Time" actor if available
+                        time_actor = next((a for a in actors if a.name == "Time"), None)
+                        if time_actor:
+                            actor_name = time_actor.name
+                    elif self._is_real_user_interaction(line_text, grammatical):
+                        # User interaction uses "User" actor
+                        user_actor = next((a for a in actors if a.name == "User"), None)
+                        if user_actor:
+                            actor_name = user_actor.name
 
                 for boundary in step_boundaries:
                     boundary_name = boundary.name
@@ -3736,32 +4174,94 @@ class StructuredUCAnalyzer:
                 continue
 
             step_id = line_analysis.step_id
+            line_text = line_analysis.line_text.lower()
 
             # Find boundaries and controllers for this step
             step_boundaries = [ra for ra in line_analysis.ra_classes if ra.ra_type == RAType.BOUNDARY]
             step_controllers = [ra for ra in line_analysis.ra_classes if ra.ra_type == RAType.CONTROLLER]
 
+            # Check if this is a user interaction step
+            # TRUE user interactions:
+            #   - "presents cup to user" (to user / from user)
+            #   - "User presses button" (User as subject)
+            #   - "displays message to user" (output to user)
+            # FALSE positives to exclude:
+            #   - "user defined time" (user as adjective)
+            #   - "user preferences" (user as adjective)
+            is_user_interaction = self._is_real_user_interaction(line_text, line_analysis.grammatical)
+
             # Create Boundary -> Controller flow
             for boundary in step_boundaries:
-                for controller in step_controllers:
-                    # Check if this flow already exists
-                    existing = any(
-                        cf.source_step == boundary.name and cf.target_step == controller.name
-                        for cf in line_analysis.control_flows
-                    )
+                if is_user_interaction:
+                    # User interaction: Boundary -> HMIManager -> Material-Controller
+                    # Step 2a: Create Boundary -> HMIManager flow
+                    hmi_controller = next((c for c in controllers if c.name == 'HMIManager'), None)
 
-                    if not existing:
-                        flow = ControlFlow(
-                            source_step=boundary.name,
-                            target_step=controller.name,
-                            source_controller=boundary.name,
-                            target_controller=controller.name,
-                            flow_type='activation',
-                            rule='Boundary-Controller activation',
-                            description=f"Boundary {boundary.name} activates {controller.name}"
+                    if hmi_controller:
+                        # Check if Boundary -> HMIManager flow exists
+                        existing_hmi = any(
+                            cf.source_step == boundary.name and cf.target_step == 'HMIManager'
+                            for cf in line_analysis.control_flows
                         )
-                        line_analysis.control_flows.append(flow)
-                        print(f"[ACTOR-BOUNDARY] Created: {boundary.name} -> {controller.name} ({step_id})")
+
+                        if not existing_hmi:
+                            flow = ControlFlow(
+                                source_step=boundary.name,
+                                target_step='HMIManager',
+                                source_controller=boundary.name,
+                                target_controller='HMIManager',
+                                flow_type='activation',
+                                rule='User-Interaction Boundary to HMI',
+                                description=f"User interaction {boundary.name} ({step_id}) processed by HMIManager"
+                            )
+                            line_analysis.control_flows.append(flow)
+                            print(f"[ACTOR-BOUNDARY] Created HMI interaction: {boundary.name} ({step_id}) -> HMIManager")
+
+                    # Step 2b: Create HMIManager -> Material-Controller flows
+                    for controller in step_controllers:
+                        # Skip if it's HMI itself
+                        if controller.name == 'HMIManager':
+                            continue
+
+                        # Check if HMIManager -> Controller flow exists
+                        existing = any(
+                            cf.source_step == 'HMIManager' and cf.target_step == controller.name
+                            for cf in line_analysis.control_flows
+                        )
+
+                        if not existing:
+                            flow = ControlFlow(
+                                source_step='HMIManager',
+                                target_step=controller.name,
+                                source_controller='HMIManager',
+                                target_controller=controller.name,
+                                flow_type='activation',
+                                rule='HMI to Material-Controller',
+                                description=f"HMIManager routes user interaction to {controller.name}"
+                            )
+                            line_analysis.control_flows.append(flow)
+                            print(f"[ACTOR-BOUNDARY] Created HMI routing: HMIManager -> {controller.name} ({step_id})")
+                else:
+                    # Non-user interaction: Direct Boundary -> Controller
+                    for controller in step_controllers:
+                        # Check if this flow already exists
+                        existing = any(
+                            cf.source_step == boundary.name and cf.target_step == controller.name
+                            for cf in line_analysis.control_flows
+                        )
+
+                        if not existing:
+                            flow = ControlFlow(
+                                source_step=boundary.name,
+                                target_step=controller.name,
+                                source_controller=boundary.name,
+                                target_controller=controller.name,
+                                flow_type='activation',
+                                rule='Boundary-Controller activation',
+                                description=f"Boundary {boundary.name} activates {controller.name}"
+                            )
+                            line_analysis.control_flows.append(flow)
+                            print(f"[ACTOR-BOUNDARY] Created: {boundary.name} -> {controller.name} ({step_id})")
 
         # Step 3: Special handling for Extension/Alternative Trigger -> Action flows
         # E1 (trigger) has SugarRequestBoundary, E1.1 (action) has SugarSolidManager
@@ -3792,9 +4292,9 @@ class StructuredUCAnalyzer:
                     # Transaction verbs indicate HMI interaction
                     grammatical = line_analysis.grammatical
 
-                    # If "User" appears in trigger, it's a user interaction via HMI
+                    # Check if this is a real user interaction (not just "user" as adjective)
                     # Examples: "User wants sugar", "User requests...", "User presses..."
-                    is_user_transaction = 'user' in line_text
+                    is_user_transaction = self._is_real_user_interaction(line_text, grammatical)
 
                     if is_user_transaction:
                         # User transaction: Boundary -> HMIManager -> Material-Controller
@@ -3868,6 +4368,67 @@ class StructuredUCAnalyzer:
                             break
 
         print(f"[ACTOR-BOUNDARY] Actor-Boundary flow generation completed")
+
+    def _is_real_user_interaction(self, line_text: str, grammatical: 'GrammaticalAnalysis') -> bool:
+        """
+        Check if this is a real user interaction or just "user" as adjective.
+
+        Real user interactions:
+            - "User presses button" - User as subject
+            - "presents cup to user" - Output/interaction TO user
+            - "receives input from user" - Input FROM user
+            - "displays message to user" - Output TO user
+
+        NOT user interactions (false positives):
+            - "user defined time" - "user" is adjective modifying "time"
+            - "user preferences" - "user" is adjective
+            - "user settings" - "user" is adjective
+
+        Args:
+            line_text: Lowercase line text
+            grammatical: Grammatical analysis object (may be None)
+
+        Returns:
+            True if this is a real user interaction, False otherwise
+        """
+        # Pattern 1: "to user" or "from user" - always a real interaction
+        if 'to user' in line_text or 'from user' in line_text:
+            return True
+
+        # Pattern 2: Check if "user" appears as adjective before a noun
+        # Common adjective patterns: "user defined", "user specified", "user configured"
+        adjective_patterns = [
+            'user defined',
+            'user specified',
+            'user configured',
+            'user selected',
+            'user preferences',
+            'user settings',
+            'user options'
+        ]
+
+        for pattern in adjective_patterns:
+            if pattern in line_text:
+                return False  # "user" is adjective, not interaction
+
+        # Pattern 3: Check if "User" is at start of sentence (likely subject)
+        # Extract the actual UC step text (remove step ID prefix like "B1 (trigger)")
+        # Patterns to handle:
+        #   "b1 (trigger) user wants sugar" -> "user wants sugar"
+        #   "e1 at b3-b5 (trigger) user wants sugar" -> "user wants sugar"
+        #   "e1 b4-b5 (trigger) user wants sugar" -> "user wants sugar"  # FIX: without "at"
+        #   "b4 the system outputs..." -> "the system outputs..."
+        # NOTE: line_text is already lowercase, so pattern must be lowercase too
+        import re
+        # FIX: Make "at" optional separately from the range pattern
+        text_without_prefix = re.sub(r'^[bae]\d+(?:\.\d+)?[a-z]?\s*(?:at\s+)?(?:[bae]\d+-[bae]\d+)?\s*(\([^)]+\))?\s*', '', line_text)
+
+        if text_without_prefix.startswith('user '):
+            return True  # User is subject
+
+        # Pattern 4: If none of the above, check if "user" appears at all
+        # But be conservative - if it's not clearly an interaction, return False
+        return False
 
     def _is_in_parallel_group(self, step_id: str) -> bool:
         """Check if step is part of a parallel group (has letter suffix)
@@ -5148,29 +5709,46 @@ class StructuredUCAnalyzer:
 
     def _generate_rup_diagram(self, json_file_path: str) -> str:
         """
-        Generate RUP diagram from JSON analysis using pure RUP visualizer
-        
+        Generate RUP diagrams (both SVG and PNG) from JSON analysis
+
         Args:
             json_file_path: Path to the JSON analysis file
-            
+
         Returns:
             Path to generated diagram file
         """
+        diagram_path = ""
+
         try:
-            from pure_rup_visualizer import PureRUPVisualizer
-            
-            # Create pure RUP visualizer
-            visualizer = PureRUPVisualizer(figure_size=(20, 16))
-            
-            # Generate diagram from JSON directly to new directory
-            diagram_path = visualizer.generate_diagram(json_file_path)
-            return diagram_path
-            
+            # Generate SVG diagram using SVGRUPVisualizer
+            from svg_rup_visualizer import SVGRUPVisualizer
+            svg_visualizer = SVGRUPVisualizer()
+            svg_diagram_path = svg_visualizer.generate_svg(json_file_path)
+            print(f"[SVG RUP] SVG diagram generated: {svg_diagram_path}")
+            diagram_path = svg_diagram_path
         except Exception as e:
-            print(f"[ERROR] Failed to generate RUP diagram: {e}")
+            print(f"[ERROR] Failed to generate SVG diagram: {e}")
             import traceback
             traceback.print_exc()
-            return ""
+
+        try:
+            # Generate PNG diagram using PureRUPVisualizer
+            from pure_rup_visualizer import PureRUPVisualizer
+
+            # Create pure RUP visualizer
+            visualizer = PureRUPVisualizer(figure_size=(20, 16))
+
+            # Generate diagram from JSON directly to new directory
+            png_diagram_path = visualizer.generate_diagram(json_file_path)
+            if not diagram_path:
+                diagram_path = png_diagram_path
+
+        except Exception as e:
+            print(f"[ERROR] Failed to generate PNG diagram: {e}")
+            import traceback
+            traceback.print_exc()
+
+        return diagram_path
 
 def main():
     """Test the structured analyzer"""
@@ -5265,29 +5843,210 @@ def main():
         traceback.print_exc()
 
 
+def analyze_from_config(config_file: str = "uc_analysis_config.json") -> Dict[str, Any]:
+    """
+    Analyze multiple use cases based on configuration file.
+
+    Args:
+        config_file: Path to configuration JSON file
+
+    Returns:
+        Dictionary with analysis results for all use cases
+    """
+    print("="*70)
+    print("MULTI-UC ANALYSIS FROM CONFIG")
+    print("="*70)
+
+    # Load configuration
+    if not Path(config_file).exists():
+        raise FileNotFoundError(f"Config file not found: {config_file}")
+
+    with open(config_file, 'r', encoding='utf-8') as f:
+        config = json.load(f)
+
+    print(f"\nAnalysis: {config.get('analysis_name', 'Unnamed Analysis')}")
+    print(f"Description: {config.get('description', 'No description')}")
+    print(f"Domain: {config.get('domain', 'unknown')}")
+
+    # Get enabled use cases
+    use_cases = [uc for uc in config.get('use_cases', []) if uc.get('enabled', False)]
+    print(f"\nEnabled Use Cases: {len(use_cases)}")
+    for uc in use_cases:
+        print(f"  - {uc['id']}: {uc['name']} ({uc['file']})")
+
+    # Create output directory
+    output_dir = config.get('output', {}).get('directory', 'new/multi_uc')
+    Path(output_dir).mkdir(parents=True, exist_ok=True)
+    print(f"\nOutput Directory: {output_dir}")
+
+    # Initialize shared analyzer (shares material controller registry across UCs)
+    domain_name = config.get('domain', 'beverage_preparation')
+    analyzer = StructuredUCAnalyzer(domain_name=domain_name)
+
+    # Results storage
+    results = {
+        'config': config,
+        'analyses': {},
+        'controller_registry': {},
+        'summary': {
+            'total_use_cases': len(use_cases),
+            'completed': 0,
+            'failed': 0
+        }
+    }
+
+    # Analyze each use case
+    for uc_config in use_cases:
+        uc_id = uc_config['id']
+        uc_file = uc_config['file']
+        uc_name = uc_config.get('name', uc_id)
+
+        print(f"\n{'='*70}")
+        print(f"ANALYZING {uc_id}: {uc_name}")
+        print(f"{'='*70}")
+
+        try:
+            # Analyze UC file
+            line_analyses, json_output = analyzer.analyze_uc_file(uc_file)
+
+            # Move generated files to output directory
+            if json_output:
+                # Copy JSON to output directory
+                src_json = Path(json_output)
+                if src_json.exists():
+                    dest_json = Path(output_dir) / f"{uc_id}_Structured_RA_Analysis.json"
+                    import shutil
+                    shutil.copy(src_json, dest_json)
+                    print(f"[MOVED] JSON: {dest_json}")
+
+                    # Copy CSV if exists
+                    csv_file = src_json.with_name(src_json.name.replace('_RA_Analysis.json', '_UC_Steps_RA_Classes.csv'))
+                    if csv_file.exists():
+                        dest_csv = Path(output_dir) / f"{uc_id}_Structured_UC_Steps_RA_Classes.csv"
+                        shutil.copy(csv_file, dest_csv)
+                        print(f"[MOVED] CSV: {dest_csv}")
+
+                    # Copy SVG if exists
+                    svg_file = src_json.with_name(src_json.name.replace('_RA_Analysis.json', '_SVG_RA_Diagram.svg'))
+                    if svg_file.exists():
+                        dest_svg = Path(output_dir) / f"{uc_id}_Structured_SVG_RA_Diagram.svg"
+                        shutil.copy(svg_file, dest_svg)
+                        print(f"[MOVED] SVG: {dest_svg}")
+
+                    # Copy PNG if exists
+                    png_file = src_json.with_name(src_json.name.replace('_RA_Analysis.json', '_Pure_RA_Diagram.png'))
+                    if png_file.exists():
+                        dest_png = Path(output_dir) / f"{uc_id}_Structured_Pure_RA_Diagram.png"
+                        shutil.copy(png_file, dest_png)
+                        print(f"[MOVED] PNG: {dest_png}")
+
+            # Store results
+            results['analyses'][uc_id] = {
+                'name': uc_name,
+                'file': uc_file,
+                'status': 'completed',
+                'json_output': str(dest_json) if json_output else None,
+                'total_lines': len(line_analyses),
+                'total_steps': len([la for la in line_analyses if la.step_id])
+            }
+
+            results['summary']['completed'] += 1
+            print(f"[SUCCESS] {uc_id} analysis completed")
+
+        except Exception as e:
+            print(f"[ERROR] Failed to analyze {uc_id}: {e}")
+            import traceback
+            traceback.print_exc()
+
+            results['analyses'][uc_id] = {
+                'name': uc_name,
+                'file': uc_file,
+                'status': 'failed',
+                'error': str(e)
+            }
+            results['summary']['failed'] += 1
+
+    # Export shared controller registry
+    if config.get('options', {}).get('share_controllers', True):
+        controllers = analyzer.controller_registry.get_all_controllers()
+        results['controller_registry'] = {
+            'total_controllers': len(controllers),
+            'controllers': [
+                {
+                    'name': c.name,
+                    'material': c.material,
+                    'aggregation_state': c.aggregation_state,
+                    'functions': sorted(list(c.functions))
+                }
+                for c in controllers
+            ]
+        }
+
+    # Save summary report
+    summary_file = Path(output_dir) / "multi_uc_analysis_summary.json"
+    with open(summary_file, 'w', encoding='utf-8') as f:
+        json.dump(results, f, indent=2, ensure_ascii=False)
+
+    print(f"\n{'='*70}")
+    print("MULTI-UC ANALYSIS COMPLETED")
+    print(f"{'='*70}")
+    print(f"Completed: {results['summary']['completed']}/{results['summary']['total_use_cases']}")
+    print(f"Failed: {results['summary']['failed']}/{results['summary']['total_use_cases']}")
+    print(f"Summary saved: {summary_file}")
+
+    if results['controller_registry']:
+        print(f"\nShared Material Controllers: {results['controller_registry']['total_controllers']}")
+        for ctrl in results['controller_registry']['controllers']:
+            print(f"  - {ctrl['name']} ({ctrl['material']} {ctrl['aggregation_state'] or 'N/A'})")
+            print(f"    Functions: {', '.join(ctrl['functions'])}")
+
+    return results
+
+
 def main():
-    """Test main function"""
+    """Main function - supports both config-based and single-file analysis"""
+    import argparse
+
+    parser = argparse.ArgumentParser(description='Structured UC Analyzer')
+    parser.add_argument('--config', type=str, help='Path to config file for multi-UC analysis')
+    parser.add_argument('--uc-file', type=str, help='Single UC file to analyze')
+    parser.add_argument('--domain', type=str, default='beverage_preparation', help='Domain name')
+
+    args = parser.parse_args()
+
     try:
-        # Test analysis
-        analyzer = StructuredUCAnalyzer(domain_name="beverage_preparation")
-        line_analyses, json_output = analyzer.analyze_uc_file("Use Case/UC1.txt")
+        # Config-based multi-UC analysis
+        if args.config:
+            results = analyze_from_config(args.config)
+            return
+
+        # Single UC analysis
+        uc_file = args.uc_file or "Use Case/UC1.txt"
+        domain = args.domain
+
+        print("="*70)
+        print(f"SINGLE UC ANALYSIS: {uc_file}")
+        print("="*70)
+
+        analyzer = StructuredUCAnalyzer(domain_name=domain)
+        line_analyses, json_output = analyzer.analyze_uc_file(uc_file)
         print(f"[SUCCESS] Analysis completed. Generated: {json_output}")
-        
+
         # Generate RA diagrams using both engines
         print("[RUP] Generating RA diagrams...")
-        
+
         # SVG-basierte Visualisierung mit Wikipedia-Symbolen
         from svg_rup_visualizer import SVGRUPVisualizer
         svg_visualizer = SVGRUPVisualizer()
         svg_diagram_path = svg_visualizer.generate_svg(json_output)
         print(f"[SUCCESS] SVG RA diagram generated: {svg_diagram_path}")
-        
+
         # Original RUP engine als Backup
         from official_rup_engine import OfficialRUPEngine
         engine = OfficialRUPEngine()
         png_diagram_path = engine.create_official_rup_diagram_from_json(json_output)
         print(f"[SUCCESS] PNG RA diagram generated: {png_diagram_path}")
-        
+
     except Exception as e:
         print(f"[ERROR] Error during analysis: {e}")
         import traceback

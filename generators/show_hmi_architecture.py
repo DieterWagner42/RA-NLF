@@ -3,7 +3,7 @@
 Show HMI architecture: HMI Controller and connected boundaries
 """
 
-from generic_uc_analyzer import GenericUCAnalyzer
+from oldpy.generic_uc_analyzer import GenericUCAnalyzer
 from pathlib import Path
 
 def show_hmi_architecture():

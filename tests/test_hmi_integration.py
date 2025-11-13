@@ -3,7 +3,7 @@
 Simple test to demonstrate the integrated HMI architecture analysis
 """
 
-from generic_uc_analyzer import GenericUCAnalyzer
+from oldpy.generic_uc_analyzer import GenericUCAnalyzer
 from pathlib import Path
 
 def test_hmi_integration():

@@ -1,0 +1,157 @@
+UC_Schritt;Schritt_Text;RA_Klasse;RA_Typ;Stereotype;Beschreibung;Control_Flow_Source;Control_Flow_Type;Control_Flow_Rule;Data_Flow_Entity;Data_Flow_Type;Data_Flow_Description
+;- Coffee beans are available in the system;CoffeeBeans;Entity;<<entity>>;Precondition entity: coffee_beans;;;;;;
+;- Coffee beans are available in the system;CoffeeBeansSupplyBoundary;Boundary;<<boundary>>;Boundary for CoffeeBeans supply monitoring and alerts;;;;;;
+;- Coffee beans are available in the system;Coffee;Entity;<<entity>>;Precondition entity: coffee;;;;;;
+;- Coffee beans are available in the system;CoffeeSupplyBoundary;Boundary;<<boundary>>;Boundary for Coffee supply monitoring and alerts;;;;;;
+;- Water is available in the system;Water;Entity;<<entity>>;Precondition entity: water;;;;;;
+;- Water is available in the system;WaterSupplyBoundary;Boundary;<<boundary>>;Boundary for Water supply monitoring and alerts;;;;;;
+;- Milk is available in the system;Milk;Entity;<<entity>>;Precondition entity: milk;;;;;;
+;- Milk is available in the system;MilkSupplyBoundary;Boundary;<<boundary>>;Boundary for Milk supply monitoring and alerts;;;;;;
+;- Sugar is available in the system;Sugar;Entity;<<entity>>;Precondition entity: sugar;;;;;;
+;- Sugar is available in the system;SugarSupplyBoundary;Boundary;<<boundary>>;Boundary for Sugar supply monitoring and alerts;;;;;;
+;Actors: User, Time;User;Actor;<<actor>>;System actor: User;;;;;;
+;Actors: User, Time;Time;Actor;<<actor>>;System actor: Time;;;;;;
+B1;B1 (trigger) System clock reaches the user defined time of 7:00h (Radio clock);TimingBoundary;Boundary;<<boundary>>;Boundary for time-based system scheduling and triggers;Time;signal;Actor-Boundary interaction;;;
+B1;B1 (trigger) System clock reaches the user defined time of 7:00h (Radio clock);SystemControlManager;Controller;<<controller>>;Manages system control operations: schedule() in B1;TimingBoundary;activation;Boundary-Controller activation;;;
+P1_START;Parallel flow distribution for B2a;P1_START;ControlFlowNode;<<distribution>>;Distribution node for parallel steps B2a;;;;;;
+B2a;B2a The system heats water;WaterLiquidManager;Controller;<<controller>>;Manages water (liquid state): heat() in B2a;P2_START;parallel;Rule 3: parallel -> parallel (same step number);;;
+B2a;B2a The system heats water;WaterLiquidManager;Controller;<<controller>>;Manages water (liquid state): heat() in B2a;P2_START;parallel;Rule 3: parallel -> parallel (same step number);;;
+B2a;B2a The system heats water;WaterLiquidManager;Controller;<<controller>>;Manages water (liquid state): heat() in B2a;;;;Water;use;WaterLiquidManager uses Water as input
+B2a;B2a The system heats water;WaterLiquidManager;Controller;<<controller>>;Manages water (liquid state): heat() in B2a;;;;Water;use;WaterLiquidManager uses Water as input
+B2a;B2a The system heats water;WaterLiquidManager;Controller;<<controller>>;Manages water (liquid state): heat() in B2a;;;;HotWater;provide;WaterLiquidManager produces HotWater as result
+B2a;B2a The system heats water;Water;Entity;<<entity>>;Domain entity: water;;;;;;
+B2a;B2a The system heats water;HotWater;Entity;<<entity>>;Domain entity: hotwater;;;;;;
+B2b;B2b The system prepares filter;FilterManager;Controller;<<controller>>;Manages filter: prepare() in B2b;P2_START;parallel;Rule 3: parallel -> parallel (same step number);;;
+B2b;B2b The system prepares filter;FilterManager;Controller;<<controller>>;Manages filter: prepare() in B2b;P2_START;parallel;Rule 3: parallel -> parallel (same step number);;;
+B2b;B2b The system prepares filter;FilterManager;Controller;<<controller>>;Manages filter: prepare() in B2b;;;;FilterDepot;use;FilterManager uses FilterDepot as input
+B2b;B2b The system prepares filter;FilterManager;Controller;<<controller>>;Manages filter: prepare() in B2b;;;;Filter;provide;FilterManager produces Filter as result
+B2c;B2c The system grinds the user defined amount of coffe beens with the user defined grinding degree directly into the filter;CoffeeSolidManager;Controller;<<controller>>;Manages coffee (solid state): grind() in B2c;P2_START;parallel;Rule 3: parallel -> parallel (same step number);;;
+B2c;B2c The system grinds the user defined amount of coffe beens with the user defined grinding degree directly into the filter;CoffeeSolidManager;Controller;<<controller>>;Manages coffee (solid state): grind() in B2c;P2_START;parallel;Rule 3: parallel -> parallel (same step number);;;
+B2c;B2c The system grinds the user defined amount of coffe beens with the user defined grinding degree directly into the filter;CoffeeSolidManager;Controller;<<controller>>;Manages coffee (solid state): grind() in B2c;;;;CoffeeBeans;use;CoffeeSolidManager uses CoffeeBeans as input
+B2c;B2c The system grinds the user defined amount of coffe beens with the user defined grinding degree directly into the filter;CoffeeSolidManager;Controller;<<controller>>;Manages coffee (solid state): grind() in B2c;;;;GroundCoffee;provide;CoffeeSolidManager produces GroundCoffee as result
+B2c;B2c The system grinds the user defined amount of coffe beens with the user defined grinding degree directly into the filter;CoffeeSolidManager;Controller;<<controller>>;Manages coffee (solid state): grind() in B2c;;;;UserDefinedAmountOfCoffee;use;CoffeeSolidManager uses UserDefinedAmountOfCoffee as input
+B2c;B2c The system grinds the user defined amount of coffe beens with the user defined grinding degree directly into the filter;CoffeeBeans;Entity;<<entity>>;Domain entity: coffeebeans;;;;;;
+B2c;B2c The system grinds the user defined amount of coffe beens with the user defined grinding degree directly into the filter;GroundCoffee;Entity;<<entity>>;Domain entity: groundcoffee;;;;;;
+B2c;B2c The system grinds the user defined amount of coffe beens with the user defined grinding degree directly into the filter;UserDefinedAmountOfCoffee;Entity;<<entity>>;Domain entity: userdefinedamountofcoffee;;;;;;
+B2d;B2d The system retrieves cup from storage container and places it under the filter;CupManager;Controller;<<controller>>;Manages cup: store() in B2d;P2_START;parallel;Rule 4: parallel -> parallel (different step number);;;
+B2d;B2d The system retrieves cup from storage container and places it under the filter;CupManager;Controller;<<controller>>;Manages cup: store() in B2d;P2_START;parallel;Rule 4: parallel -> parallel (different step number);;;
+B2d;B2d The system retrieves cup from storage container and places it under the filter;CupManager;Controller;<<controller>>;Manages cup: store() in B2d;;;;StorageContainer;use;CupManager uses StorageContainer as input
+B2d;B2d The system retrieves cup from storage container and places it under the filter;CupManager;Controller;<<controller>>;Manages cup: store() in B2d;;;;Cup;provide;CupManager provides Cup as result
+B2d;B2d The system retrieves cup from storage container and places it under the filter;Cup;Entity;<<entity>>;Domain entity: cup;;;;;;
+B2d;B2d The system retrieves cup from storage container and places it under the filter;StorageContainer;Entity;<<entity>>;Domain entity: storagecontainer;;;;;;
+P2_START;Parallel flow distribution for B3a;P2_START;ControlFlowNode;<<distribution>>;Distribution node for parallel steps B3a;;;;;;
+B3a;B3a The system begins brewing coffee with the user defined amount of water into the cup;CoffeeLiquidManager;Controller;<<controller>>;Manages coffee (liquid state): brew() in B3a;P3_START;parallel;Rule 3: parallel -> parallel (same step number);;;
+B3a;B3a The system begins brewing coffee with the user defined amount of water into the cup;CoffeeLiquidManager;Controller;<<controller>>;Manages coffee (liquid state): brew() in B3a;P3_START;parallel;Rule 3: parallel -> parallel (same step number);;;
+B3a;B3a The system begins brewing coffee with the user defined amount of water into the cup;CoffeeLiquidManager;Controller;<<controller>>;Manages coffee (liquid state): brew() in B3a;;;;UserDefinedAmountOfWater;use;CoffeeLiquidManager uses UserDefinedAmountOfWater as parameter
+B3a;B3a The system begins brewing coffee with the user defined amount of water into the cup;CoffeeLiquidManager;Controller;<<controller>>;Manages coffee (liquid state): brew() in B3a;;;;Cup;use;CoffeeLiquidManager uses Cup as target
+B3a;B3a The system begins brewing coffee with the user defined amount of water into the cup;CoffeeLiquidManager;Controller;<<controller>>;Manages coffee (liquid state): brew() in B3a;;;;GroundCoffee;use;CoffeeLiquidManager uses GroundCoffee as input
+B3a;B3a The system begins brewing coffee with the user defined amount of water into the cup;CoffeeLiquidManager;Controller;<<controller>>;Manages coffee (liquid state): brew() in B3a;;;;HotWater;use;CoffeeLiquidManager uses HotWater as input
+B3a;B3a The system begins brewing coffee with the user defined amount of water into the cup;CoffeeLiquidManager;Controller;<<controller>>;Manages coffee (liquid state): brew() in B3a;;;;Filter;use;CoffeeLiquidManager uses Filter as input
+B3a;B3a The system begins brewing coffee with the user defined amount of water into the cup;CoffeeLiquidManager;Controller;<<controller>>;Manages coffee (liquid state): brew() in B3a;;;;Coffee;provide;CoffeeLiquidManager produces Coffee as result
+B3a;B3a The system begins brewing coffee with the user defined amount of water into the cup;CoffeeLiquidManager;Controller;<<controller>>;Manages coffee (liquid state): brew() in B3a;;;;Water;use;CoffeeLiquidManager uses Water as input
+B3a;B3a The system begins brewing coffee with the user defined amount of water into the cup;UserDefinedAmountOfWater;Entity;<<entity>>;Domain entity: userdefinedamountofwater;;;;;;
+B3a;B3a The system begins brewing coffee with the user defined amount of water into the cup;Water;Entity;<<entity>>;Domain entity: water;;;;;;
+B3a;B3a The system begins brewing coffee with the user defined amount of water into the cup;Cup;Entity;<<entity>>;Domain entity: cup;;;;;;
+B3a;B3a The system begins brewing coffee with the user defined amount of water into the cup;GroundCoffee;Entity;<<entity>>;Domain entity: groundcoffee;;;;;;
+B3a;B3a The system begins brewing coffee with the user defined amount of water into the cup;HotWater;Entity;<<entity>>;Domain entity: hotwater;;;;;;
+B3a;B3a The system begins brewing coffee with the user defined amount of water into the cup;Coffee;Entity;<<entity>>;Domain entity: coffee;;;;;;
+B3b;B3b The system adds milk to the cup;MilkLiquidManager;Controller;<<controller>>;Manages milk (liquid state): add() in B3b;P3_START;parallel;Rule 5: parallel -> serial;;;
+B3b;B3b The system adds milk to the cup;MilkLiquidManager;Controller;<<controller>>;Manages milk (liquid state): add() in B3b;P3_START;parallel;Rule 5: parallel -> serial;;;
+B3b;B3b The system adds milk to the cup;MilkLiquidManager;Controller;<<controller>>;Manages milk (liquid state): add() in B3b;;;;Cup;use;MilkLiquidManager uses Cup as target
+B3b;B3b The system adds milk to the cup;MilkLiquidManager;Controller;<<controller>>;Manages milk (liquid state): add() in B3b;;;;Milk;use;MilkLiquidManager uses Milk as input
+B3b;B3b The system adds milk to the cup;MilkLiquidManager;Controller;<<controller>>;Manages milk (liquid state): add() in B3b;;;;Coffee;use;MilkLiquidManager uses Coffee as input
+B3b;B3b The system adds milk to the cup;MilkLiquidManager;Controller;<<controller>>;Manages milk (liquid state): add() in B3b;;;;Coffee;provide;MilkLiquidManager produces Coffee as result
+B3b;B3b The system adds milk to the cup;Milk;Entity;<<entity>>;Domain entity: milk;;;;;;
+B3b;B3b The system adds milk to the cup;Cup;Entity;<<entity>>;Domain entity: cup;;;;;;
+B3b;B3b The system adds milk to the cup;Coffee;Entity;<<entity>>;Domain entity: coffee;;;;;;
+P2_END;Parallel flow merge for B3a;P2_END;ControlFlowNode;<<merge>>;Merge node for parallel steps B3a;;;;;;
+B4;B4 The system outputs a message to user;HMIManager;Controller;<<controller>>;Manages hmi transactions: output() in B4;P3_END;sequential;Rule 5 - Parallel to Serial Merge;;;
+B4;B4 The system outputs a message to user;HMIManager;Controller;<<controller>>;Manages hmi transactions: output() in B4;MessageDisplayBoundary;activation;User-Interaction Boundary to HMI;;;
+B4;B4 The system outputs a message to user;HMIManager;Controller;<<controller>>;Manages hmi transactions: output() in B4;P3_END;sequential;Rule 5 - Parallel to Serial Merge;;;
+B4;B4 The system outputs a message to user;HMIManager;Controller;<<controller>>;Manages hmi transactions: output() in B4;;;;Message;use;HMIManager uses Message for transaction
+B4;B4 The system outputs a message to user;Message;Entity;<<entity>>;Domain entity: message;;;;;;
+B4;B4 The system outputs a message to user;MessageDisplayBoundary;Boundary;<<boundary>>;Boundary for displaying messages to user;User;transaction;Actor-Boundary interaction;;;
+B5;B5 The system presents cup to user;CupManager;Controller;<<controller>>;Manages cup: present() in B5;HMIManager;activation;HMI to Material-Controller;;;
+B5;B5 The system presents cup to user;CupManager;Controller;<<controller>>;Manages cup: present() in B5;;;;Cup;use;CupManager uses Cup for transaction
+B5;B5 The system presents cup to user;Cup;Entity;<<entity>>;Domain entity: cup;;;;;;
+B5;B5 The system presents cup to user;ProductDeliveryBoundary;Boundary;<<boundary>>;Boundary for delivering products to user;User;transaction;Actor-Boundary interaction;;;
+A1.1;A1.1 The system switches off water heater;WaterLiquidManager;Controller;<<controller>>;Manages water (liquid state): heat() in A1.1;;;;;;
+A1.2;A1.2 The system outputs an error message to user;HMIManager;Controller;<<controller>>;Manages hmi transactions: output() in A1.2;MessageDisplayBoundary;activation;User-Interaction Boundary to HMI;;;
+A1.2;A1.2 The system outputs an error message to user;HMIManager;Controller;<<controller>>;Manages hmi transactions: output() in A1.2;;;;ErrorMessage;use;HMIManager uses ErrorMessage for transaction
+A1.2;A1.2 The system outputs an error message to user;ErrorMessage;Entity;<<entity>>;Domain entity: errormessage;;;;;;
+A1.2;A1.2 The system outputs an error message to user;MessageDisplayBoundary;Boundary;<<boundary>>;Boundary for displaying messages to user;User;transaction;Actor-Boundary interaction;;;
+A2.1;A2.1 The system stops milk addition;MilkLiquidManager;Controller;<<controller>>;Manages milk (liquid state): stop() in A2.1;;;;;;
+A2.2;A2.2 The system outputs an error message to user;HMIManager;Controller;<<controller>>;Manages hmi transactions: output() in A2.2;MessageDisplayBoundary;activation;User-Interaction Boundary to HMI;;;
+A2.2;A2.2 The system outputs an error message to user;HMIManager;Controller;<<controller>>;Manages hmi transactions: output() in A2.2;;;;ErrorMessage;use;HMIManager uses ErrorMessage for transaction
+A2.2;A2.2 The system outputs an error message to user;ErrorMessage;Entity;<<entity>>;Domain entity: errormessage;;;;;;
+A2.2;A2.2 The system outputs an error message to user;MessageDisplayBoundary;Boundary;<<boundary>>;Boundary for displaying messages to user;User;transaction;Actor-Boundary interaction;;;
+A3.1;A3.1 The system stops all actions;SystemControlManager;Controller;<<controller>>;Manages system control operations: stop() in A3.1;SystemControlManager;sequential;Rule 1 - Serial to Serial;;;
+A3.1;A3.1 The system stops all actions;SystemControlManager;Controller;<<controller>>;Manages system control operations: stop() in A3.1;SystemControlManager;sequential;Rule 1 - Serial to Serial;;;
+A3.2;A3.2 The system switches off itself;SystemControlManager;Controller;<<controller>>;Manages system control operations: switch() in A3.2;;;;;;
+E1;E1 at B3-B5 (trigger) User wants sugar in coffee;SugarRequestBoundary;Boundary;<<boundary>>;Boundary for user sugar requests;User;signal;Actor-Boundary interaction;;;
+E1.1;E1.1 The system adds user defined amount of sugar to the cup;SugarSolidManager;Controller;<<controller>>;Manages sugar (solid state): add() in E1.1;HMIManager;activation;Trigger to Action-Controller;;;
+E1.1;E1.1 The system adds user defined amount of sugar to the cup;SugarSolidManager;Controller;<<controller>>;Manages sugar (solid state): add() in E1.1;;;;Sugar;use;SugarSolidManager uses Sugar as component
+E1.1;E1.1 The system adds user defined amount of sugar to the cup;SugarSolidManager;Controller;<<controller>>;Manages sugar (solid state): add() in E1.1;;;;Cup;use;SugarSolidManager uses Cup as target
+E1.1;E1.1 The system adds user defined amount of sugar to the cup;SugarSolidManager;Controller;<<controller>>;Manages sugar (solid state): add() in E1.1;;;;UserDefinedAmountOfSugar;use;SugarSolidManager uses UserDefinedAmountOfSugar as input
+E1.1;E1.1 The system adds user defined amount of sugar to the cup;SugarSolidManager;Controller;<<controller>>;Manages sugar (solid state): add() in E1.1;;;;Coffee;use;SugarSolidManager uses Coffee as input
+E1.1;E1.1 The system adds user defined amount of sugar to the cup;SugarSolidManager;Controller;<<controller>>;Manages sugar (solid state): add() in E1.1;;;;Coffee;provide;SugarSolidManager produces Coffee as result
+E1.1;E1.1 The system adds user defined amount of sugar to the cup;UserDefinedAmountOfSugar;Entity;<<entity>>;Domain entity: userdefinedamountofsugar;;;;;;
+E1.1;E1.1 The system adds user defined amount of sugar to the cup;Sugar;Entity;<<entity>>;Domain entity: sugar;;;;;;
+E1.1;E1.1 The system adds user defined amount of sugar to the cup;Cup;Entity;<<entity>>;Domain entity: cup;;;;;;
+E1.1;E1.1 The system adds user defined amount of sugar to the cup;Coffee;Entity;<<entity>>;Domain entity: coffee;;;;;;
+;- Coffee beans are available in the system;CoffeeBeans;Entity;<<entity>>;Precondition entity: coffee_beans;;;;;;
+;- Coffee beans are available in the system;CoffeeBeansSupplyBoundary;Boundary;<<boundary>>;Boundary for CoffeeBeans supply monitoring and alerts;;;;;;
+;- Coffee beans are available in the system;Coffee;Entity;<<entity>>;Precondition entity: coffee;;;;;;
+;- Coffee beans are available in the system;CoffeeSupplyBoundary;Boundary;<<boundary>>;Boundary for Coffee supply monitoring and alerts;;;;;;
+;- Water is available in the system;Water;Entity;<<entity>>;Precondition entity: water;;;;;;
+;- Water is available in the system;WaterSupplyBoundary;Boundary;<<boundary>>;Boundary for Water supply monitoring and alerts;;;;;;
+;Actors: User;User;Actor;<<actor>>;System actor: User;;;;;;
+B1;B1 (trigger) User request a espresso;EspressoRequestBoundary;Boundary;<<boundary>>;Boundary for user espresso requests;User;signal;Actor-Boundary interaction;;;
+B1;B1 (trigger) User request a espresso;HMIManager;Controller;<<controller>>;Manages hmi transactions: request() in B1;EspressoRequestBoundary;activation;User-Interaction Boundary to HMI;;;
+B1;B1 (trigger) User request a espresso;HMIManager;Controller;<<controller>>;Manages hmi transactions: request() in B1;;;;Espresso;use;HMIManager uses Espresso for transaction
+P1_START;Parallel flow distribution for B2a;P1_START;ControlFlowNode;<<distribution>>;Distribution node for parallel steps B2a;;;;;;
+B2a;B2a The system activates the water heater;WaterLiquidManager;Controller;<<controller>>;Manages water (liquid state): heat() in B2a;P2_START;parallel;Rule 3: parallel -> parallel (same step number);;;
+B2b;B2b The system prepares filter;FilterManager;Controller;<<controller>>;Manages filter: prepare() in B2b;P2_START;parallel;Rule 3: parallel -> parallel (same step number);;;
+B2b;B2b The system prepares filter;FilterManager;Controller;<<controller>>;Manages filter: prepare() in B2b;;;;FilterDepot;use;FilterManager uses FilterDepot as input
+B2b;B2b The system prepares filter;FilterManager;Controller;<<controller>>;Manages filter: prepare() in B2b;;;;Filter;provide;FilterManager produces Filter as result
+B2c;B2c The system grinds the set amount at the set grinding degree directly into the filter;CoffeeSolidManager;Controller;<<controller>>;Manages coffee (solid state): grind() in B2c;P2_START;parallel;Rule 3: parallel -> parallel (same step number);;;
+B2c;B2c The system grinds the set amount at the set grinding degree directly into the filter;CoffeeSolidManager;Controller;<<controller>>;Manages coffee (solid state): grind() in B2c;;;;SetGrindingDegree;use;CoffeeSolidManager uses SetGrindingDegree as input
+B2c;B2c The system grinds the set amount at the set grinding degree directly into the filter;CoffeeSolidManager;Controller;<<controller>>;Manages coffee (solid state): grind() in B2c;;;;Filter;use;CoffeeSolidManager uses Filter as target
+B2c;B2c The system grinds the set amount at the set grinding degree directly into the filter;CoffeeSolidManager;Controller;<<controller>>;Manages coffee (solid state): grind() in B2c;;;;CoffeeBeans;use;CoffeeSolidManager uses CoffeeBeans as input
+B2c;B2c The system grinds the set amount at the set grinding degree directly into the filter;CoffeeSolidManager;Controller;<<controller>>;Manages coffee (solid state): grind() in B2c;;;;GroundCoffee;provide;CoffeeSolidManager produces GroundCoffee as result
+B2c;B2c The system grinds the set amount at the set grinding degree directly into the filter;CoffeeSolidManager;Controller;<<controller>>;Manages coffee (solid state): grind() in B2c;;;;SetAmount;use;CoffeeSolidManager uses SetAmount as input
+B2c;B2c The system grinds the set amount at the set grinding degree directly into the filter;SetAmount;Entity;<<entity>>;Domain entity: setamount;;;;;;
+B2c;B2c The system grinds the set amount at the set grinding degree directly into the filter;SetGrindingDegree;Entity;<<entity>>;Domain entity: setgrindingdegree;;;;;;
+B2c;B2c The system grinds the set amount at the set grinding degree directly into the filter;CoffeeBeans;Entity;<<entity>>;Domain entity: coffeebeans;;;;;;
+B2c;B2c The system grinds the set amount at the set grinding degree directly into the filter;GroundCoffee;Entity;<<entity>>;Domain entity: groundcoffee;;;;;;
+B2d;B2d The system retrieves cup from storage container and places it under the filter;CupManager;Controller;<<controller>>;Manages cup: store() in B2d;P2_START;parallel;Rule 5: parallel -> serial;;;
+B2d;B2d The system retrieves cup from storage container and places it under the filter;CupManager;Controller;<<controller>>;Manages cup: store() in B2d;;;;StorageContainer;use;CupManager uses StorageContainer as input
+B2d;B2d The system retrieves cup from storage container and places it under the filter;CupManager;Controller;<<controller>>;Manages cup: store() in B2d;;;;Cup;provide;CupManager provides Cup as result
+B2d;B2d The system retrieves cup from storage container and places it under the filter;Cup;Entity;<<entity>>;Domain entity: cup;;;;;;
+B2d;B2d The system retrieves cup from storage container and places it under the filter;StorageContainer;Entity;<<entity>>;Domain entity: storagecontainer;;;;;;
+P1_END;Parallel flow merge for B2a;P1_END;ControlFlowNode;<<merge>>;Merge node for parallel steps B2a;;;;;;
+B3;B3 The system starts water compressor to generate appropriate water pressure for espresso;WaterLiquidManager;Controller;<<controller>>;Manages water (liquid state): pressurize() in B3;P2_END;sequential;Rule 5 - Parallel to Serial Merge;;;
+B3;B3 The system starts water compressor to generate appropriate water pressure for espresso;WaterLiquidManager;Controller;<<controller>>;Manages water (liquid state): pressurize() in B3;WaterLiquidManager;sequential;Rule 1 - Serial to Serial;;;
+P2_END;Parallel flow merge for B3a;P2_END;ControlFlowNode;<<merge>>;Merge node for parallel steps B3a;;;;;;
+B4;B4 The system begins pressing hot water through the coffee grounds;WaterLiquidManager;Controller;<<controller>>;Manages water (liquid state): press() in B4;;;;CoffeeGrounds;use;WaterLiquidManager uses CoffeeGrounds as input
+B4;B4 The system begins pressing hot water through the coffee grounds;WaterLiquidManager;Controller;<<controller>>;Manages water (liquid state): press() in B4;;;;PressingHotWater;provide;WaterLiquidManager provides PressingHotWater as result
+B4;B4 The system begins pressing hot water through the coffee grounds;WaterLiquidManager;Controller;<<controller>>;Manages water (liquid state): press() in B4;;;;HotWater;use;WaterLiquidManager uses HotWater as input
+B4;B4 The system begins pressing hot water through the coffee grounds;CoffeeGrounds;Entity;<<entity>>;Domain entity: coffeegrounds;;;;;;
+B4;B4 The system begins pressing hot water through the coffee grounds;HotWater;Entity;<<entity>>;Domain entity: hotwater;;;;;;
+B5;B5 The system outputs a message to user;HMIManager;Controller;<<controller>>;Manages hmi transactions: output() in B5;MessageDisplayBoundary;activation;User-Interaction Boundary to HMI;;;
+B5;B5 The system outputs a message to user;HMIManager;Controller;<<controller>>;Manages hmi transactions: output() in B5;;;;Message;use;HMIManager uses Message for transaction
+B5;B5 The system outputs a message to user;Message;Entity;<<entity>>;Domain entity: message;;;;;;
+B5;B5 The system outputs a message to user;MessageDisplayBoundary;Boundary;<<boundary>>;Boundary for displaying messages to user;User;transaction;Actor-Boundary interaction;;;
+A1.1;A1.1 The system switches off water heater and compressor;WaterLiquidManager;Controller;<<controller>>;Manages water (liquid state): heat() in A1.1;;;;;;
+A1.2;A1.2 The system outputs an error message to user;HMIManager;Controller;<<controller>>;Manages hmi transactions: output() in A1.2;MessageDisplayBoundary;activation;User-Interaction Boundary to HMI;;;
+A1.2;A1.2 The system outputs an error message to user;HMIManager;Controller;<<controller>>;Manages hmi transactions: output() in A1.2;;;;ErrorMessage;use;HMIManager uses ErrorMessage for transaction
+A1.2;A1.2 The system outputs an error message to user;ErrorMessage;Entity;<<entity>>;Domain entity: errormessage;;;;;;
+A1.2;A1.2 The system outputs an error message to user;MessageDisplayBoundary;Boundary;<<boundary>>;Boundary for displaying messages to user;User;transaction;Actor-Boundary interaction;;;
+E1;E1 B4-B5 (trigger) User wants sugar in coffee;SugarRequestBoundary;Boundary;<<boundary>>;Boundary for user sugar requests;User;signal;Actor-Boundary interaction;;;
+E1.1;E1.1 The system adds sugar to the cup;SugarSolidManager;Controller;<<controller>>;Manages sugar (solid state): add() in E1.1;;;;Cup;use;SugarSolidManager uses Cup as target
+E1.1;E1.1 The system adds sugar to the cup;SugarSolidManager;Controller;<<controller>>;Manages sugar (solid state): add() in E1.1;;;;Sugar;use;SugarSolidManager uses Sugar as input
+E1.1;E1.1 The system adds sugar to the cup;SugarSolidManager;Controller;<<controller>>;Manages sugar (solid state): add() in E1.1;;;;Coffee;use;SugarSolidManager uses Coffee as input
+E1.1;E1.1 The system adds sugar to the cup;SugarSolidManager;Controller;<<controller>>;Manages sugar (solid state): add() in E1.1;;;;Coffee;provide;SugarSolidManager produces Coffee as result
+E1.1;E1.1 The system adds sugar to the cup;Sugar;Entity;<<entity>>;Domain entity: sugar;;;;;;
+E1.1;E1.1 The system adds sugar to the cup;Cup;Entity;<<entity>>;Domain entity: cup;;;;;;
+E1.1;E1.1 The system adds sugar to the cup;Coffee;Entity;<<entity>>;Domain entity: coffee;;;;;;

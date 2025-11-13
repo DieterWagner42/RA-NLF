@@ -16,7 +16,7 @@ from pathlib import Path
 sys.path.append('src')
 sys.path.append('visualizers')
 
-from generic_uc_analyzer import GenericUCAnalyzer
+from oldpy.generic_uc_analyzer import GenericUCAnalyzer
 from enhanced_rup_engine import EnhancedRUPEngine
 
 def main():

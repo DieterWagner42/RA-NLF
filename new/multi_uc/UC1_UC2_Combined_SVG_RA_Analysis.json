@@ -1,0 +1,1836 @@
+{
+  "meta": {
+    "use_case": "UC1+UC2",
+    "domain": "beverage_preparation",
+    "capability": "Coffee Preparation + Coffee Preparation",
+    "goal": "User can drink their milk coffee every morning at 7am AND User wants to drink an espresso",
+    "analysis_engine": "combined_svg_rup_visualizer",
+    "generated_at": "2025-11-13T20:26:19.504315",
+    "json_format_version": "2.0_combined",
+    "total_ra_classes": 44
+  },
+  "components": {
+    "actors": [
+      {
+        "name": "User",
+        "description": "System actor: User"
+      },
+      {
+        "name": "Time",
+        "description": "System actor: Time"
+      }
+    ],
+    "controllers": [
+      {
+        "name": "SystemControlManager",
+        "description": "Manages system control operations: schedule() in B1",
+        "parallel_group": 0,
+        "shared": true,
+        "use_cases": [
+          "UC1",
+          "UC2"
+        ]
+      },
+      {
+        "name": "WaterLiquidManager",
+        "description": "Manages water (liquid state): heat() in B2a",
+        "parallel_group": 2,
+        "shared": true,
+        "use_cases": [
+          "UC1",
+          "UC2"
+        ]
+      },
+      {
+        "name": "FilterManager",
+        "description": "Manages filter: prepare() in B2b",
+        "parallel_group": 2,
+        "shared": true,
+        "use_cases": [
+          "UC1",
+          "UC2"
+        ]
+      },
+      {
+        "name": "CoffeeSolidManager",
+        "description": "Manages coffee (solid state): grind() in B2c",
+        "parallel_group": 2,
+        "shared": true,
+        "use_cases": [
+          "UC1",
+          "UC2"
+        ]
+      },
+      {
+        "name": "CupManager",
+        "description": "Manages cup: store() in B2d",
+        "parallel_group": 2,
+        "shared": true,
+        "use_cases": [
+          "UC1",
+          "UC2"
+        ]
+      },
+      {
+        "name": "CoffeeLiquidManager",
+        "description": "Manages coffee (liquid state): brew() in B3a",
+        "parallel_group": 3,
+        "shared": true,
+        "use_cases": [
+          "UC1",
+          "UC2"
+        ]
+      },
+      {
+        "name": "MilkLiquidManager",
+        "description": "Manages milk (liquid state): add() in B3b",
+        "parallel_group": 3,
+        "shared": true,
+        "use_cases": [
+          "UC1",
+          "UC2"
+        ]
+      },
+      {
+        "name": "HMIManager",
+        "description": "Manages hmi transactions: output() in B4",
+        "parallel_group": 0,
+        "shared": true,
+        "use_cases": [
+          "UC1",
+          "UC2"
+        ]
+      },
+      {
+        "name": "SugarSolidManager",
+        "description": "Manages sugar (solid state): add() in E1.1",
+        "parallel_group": 0,
+        "shared": true,
+        "use_cases": [
+          "UC1",
+          "UC2"
+        ]
+      }
+    ],
+    "boundaries": [
+      {
+        "name": "CoffeeBeansSupplyBoundary",
+        "description": "Boundary for CoffeeBeans supply monitoring and alerts"
+      },
+      {
+        "name": "CoffeeSupplyBoundary",
+        "description": "Boundary for Coffee supply monitoring and alerts"
+      },
+      {
+        "name": "WaterSupplyBoundary",
+        "description": "Boundary for Water supply monitoring and alerts"
+      },
+      {
+        "name": "MilkSupplyBoundary",
+        "description": "Boundary for Milk supply monitoring and alerts"
+      },
+      {
+        "name": "SugarSupplyBoundary",
+        "description": "Boundary for Sugar supply monitoring and alerts"
+      },
+      {
+        "name": "TimingBoundary",
+        "description": "Boundary for time-based system scheduling and triggers"
+      },
+      {
+        "name": "MessageDisplayBoundary",
+        "description": "Boundary for displaying messages to user"
+      },
+      {
+        "name": "ProductDeliveryBoundary",
+        "description": "Boundary for delivering products to user"
+      },
+      {
+        "name": "SugarRequestBoundary",
+        "description": "Boundary for user sugar requests"
+      },
+      {
+        "name": "EspressoRequestBoundary",
+        "description": "Boundary for user espresso requests"
+      }
+    ],
+    "entities": [
+      {
+        "name": "CoffeeBeans",
+        "description": "Precondition entity: coffee_beans"
+      },
+      {
+        "name": "Coffee",
+        "description": "Precondition entity: coffee"
+      },
+      {
+        "name": "Water",
+        "description": "Precondition entity: water"
+      },
+      {
+        "name": "Milk",
+        "description": "Precondition entity: milk"
+      },
+      {
+        "name": "Sugar",
+        "description": "Precondition entity: sugar"
+      },
+      {
+        "name": "HotWater",
+        "description": "Domain entity: hotwater"
+      },
+      {
+        "name": "GroundCoffee",
+        "description": "Domain entity: groundcoffee"
+      },
+      {
+        "name": "UserDefinedAmountOfCoffee",
+        "description": "Domain entity: userdefinedamountofcoffee"
+      },
+      {
+        "name": "Cup",
+        "description": "Domain entity: cup"
+      },
+      {
+        "name": "StorageContainer",
+        "description": "Domain entity: storagecontainer"
+      },
+      {
+        "name": "UserDefinedAmountOfWater",
+        "description": "Domain entity: userdefinedamountofwater"
+      },
+      {
+        "name": "Message",
+        "description": "Domain entity: message"
+      },
+      {
+        "name": "ErrorMessage",
+        "description": "Domain entity: errormessage"
+      },
+      {
+        "name": "UserDefinedAmountOfSugar",
+        "description": "Domain entity: userdefinedamountofsugar"
+      },
+      {
+        "name": "SetAmount",
+        "description": "Domain entity: setamount"
+      },
+      {
+        "name": "SetGrindingDegree",
+        "description": "Domain entity: setgrindingdegree"
+      },
+      {
+        "name": "CoffeeGrounds",
+        "description": "Domain entity: coffeegrounds"
+      }
+    ],
+    "control_flow_nodes": [
+      {
+        "name": "P2_START",
+        "description": "Distribution node for parallel flow P2",
+        "type": "distribution"
+      },
+      {
+        "name": "P2_END",
+        "description": "Merge node for parallel flow P2",
+        "type": "merge"
+      },
+      {
+        "name": "P3_START",
+        "description": "Distribution node for parallel flow P3",
+        "type": "distribution"
+      },
+      {
+        "name": "P3_END",
+        "description": "Merge node for parallel flow P3",
+        "type": "merge"
+      },
+      {
+        "name": "P4_START",
+        "description": "Distribution node for parallel flow P4",
+        "type": "distribution"
+      },
+      {
+        "name": "P4_END",
+        "description": "Merge node for parallel flow P4",
+        "type": "merge"
+      }
+    ]
+  },
+  "layout": {
+    "controller_groups": {},
+    "flow_node_groups": {}
+  },
+  "relationships": {
+    "control_flows": [
+      {
+        "source": "SystemControlManager",
+        "destination": "P2_START",
+        "source_step": "B1",
+        "target_step": "P2_START",
+        "rule": "Rule 2 - Serial to Parallel Distribution",
+        "description": "Flow from B1 to parallel P2_START"
+      },
+      {
+        "source": "P2_END",
+        "destination": "P3_START",
+        "source_step": "P2_END",
+        "target_step": "P3_START",
+        "rule": "Rule 4 - Parallel Group Transition",
+        "description": "Flow between parallel nodes P2_END -> P3_START"
+      },
+      {
+        "source": "Time",
+        "destination": "TimingBoundary",
+        "source_step": "Time",
+        "target_step": "TimingBoundary",
+        "rule": "Actor-Boundary interaction",
+        "description": "Actor Time signals TimingBoundary"
+      },
+      {
+        "source": "TimingBoundary",
+        "destination": "SystemControlManager",
+        "source_step": "TimingBoundary",
+        "target_step": "SystemControlManager",
+        "rule": "Boundary-Controller activation",
+        "description": "Boundary TimingBoundary activates SystemControlManager"
+      },
+      {
+        "source": "P2_START",
+        "destination": "WaterLiquidManager",
+        "source_step": "P2_START",
+        "target_step": "B2a",
+        "rule": "Rule 3: parallel -> parallel (same step number)",
+        "description": "Flow from parallel P2_START to B2a"
+      },
+      {
+        "source": "WaterLiquidManager",
+        "destination": "P2_END",
+        "source_step": "B2a",
+        "target_step": "P2_END",
+        "rule": "Rule 3: parallel -> parallel (same step number)",
+        "description": "Flow from B2a to parallel P2_END"
+      },
+      {
+        "source": "P2_START",
+        "destination": "FilterManager",
+        "source_step": "P2_START",
+        "target_step": "B2b",
+        "rule": "Rule 3: parallel -> parallel (same step number)",
+        "description": "Flow from parallel P2_START to B2b"
+      },
+      {
+        "source": "FilterManager",
+        "destination": "P2_END",
+        "source_step": "B2b",
+        "target_step": "P2_END",
+        "rule": "Rule 3: parallel -> parallel (same step number)",
+        "description": "Flow from B2b to parallel P2_END"
+      },
+      {
+        "source": "P2_START",
+        "destination": "CoffeeSolidManager",
+        "source_step": "P2_START",
+        "target_step": "B2c",
+        "rule": "Rule 3: parallel -> parallel (same step number)",
+        "description": "Flow from parallel P2_START to B2c"
+      },
+      {
+        "source": "CoffeeSolidManager",
+        "destination": "P2_END",
+        "source_step": "B2c",
+        "target_step": "P2_END",
+        "rule": "Rule 3: parallel -> parallel (same step number)",
+        "description": "Flow from B2c to parallel P2_END"
+      },
+      {
+        "source": "P2_START",
+        "destination": "CupManager",
+        "source_step": "P2_START",
+        "target_step": "B2d",
+        "rule": "Rule 4: parallel -> parallel (different step number)",
+        "description": "Flow from parallel P2_START to B2d"
+      },
+      {
+        "source": "CupManager",
+        "destination": "P2_END",
+        "source_step": "B2d",
+        "target_step": "P2_END",
+        "rule": "Rule 4: parallel -> parallel (different step number)",
+        "description": "Flow from B2d to parallel P2_END"
+      },
+      {
+        "source": "P3_START",
+        "destination": "CoffeeLiquidManager",
+        "source_step": "P3_START",
+        "target_step": "B3a",
+        "rule": "Rule 3: parallel -> parallel (same step number)",
+        "description": "Flow from parallel P3_START to B3a"
+      },
+      {
+        "source": "CoffeeLiquidManager",
+        "destination": "P3_END",
+        "source_step": "B3a",
+        "target_step": "P3_END",
+        "rule": "Rule 3: parallel -> parallel (same step number)",
+        "description": "Flow from B3a to parallel P3_END"
+      },
+      {
+        "source": "P3_START",
+        "destination": "MilkLiquidManager",
+        "source_step": "P3_START",
+        "target_step": "B3b",
+        "rule": "Rule 5: parallel -> serial",
+        "description": "Flow from parallel P3_START to B3b"
+      },
+      {
+        "source": "MilkLiquidManager",
+        "destination": "P3_END",
+        "source_step": "B3b",
+        "target_step": "P3_END",
+        "rule": "Rule 5: parallel -> serial",
+        "description": "Flow from B3b to parallel P3_END"
+      },
+      {
+        "source": "P3_END",
+        "destination": "HMIManager",
+        "source_step": "P3_END",
+        "target_step": "B4",
+        "rule": "Rule 5 - Parallel to Serial Merge",
+        "description": "Flow from parallel P3_END to B4"
+      },
+      {
+        "source": "HMIManager",
+        "destination": "CupManager",
+        "source_step": "B4",
+        "target_step": "B5",
+        "rule": "Rule 1 - Serial to Serial",
+        "description": "Sequential flow from B4 to B5"
+      },
+      {
+        "source": "User",
+        "destination": "MessageDisplayBoundary",
+        "source_step": "User",
+        "target_step": "MessageDisplayBoundary",
+        "rule": "Actor-Boundary interaction",
+        "description": "Actor User interacts with MessageDisplayBoundary"
+      },
+      {
+        "source": "MessageDisplayBoundary",
+        "destination": "HMIManager",
+        "source_step": "MessageDisplayBoundary",
+        "target_step": "HMIManager",
+        "rule": "User-Interaction Boundary to HMI",
+        "description": "User interaction MessageDisplayBoundary (B4) processed by HMIManager"
+      },
+      {
+        "source": "User",
+        "destination": "ProductDeliveryBoundary",
+        "source_step": "User",
+        "target_step": "ProductDeliveryBoundary",
+        "rule": "Actor-Boundary interaction",
+        "description": "Actor User interacts with ProductDeliveryBoundary"
+      },
+      {
+        "source": "ProductDeliveryBoundary",
+        "destination": "HMIManager",
+        "source_step": "ProductDeliveryBoundary",
+        "target_step": "HMIManager",
+        "rule": "User-Interaction Boundary to HMI",
+        "description": "User interaction ProductDeliveryBoundary (B5) processed by HMIManager"
+      },
+      {
+        "source": "HMIManager",
+        "destination": "CupManager",
+        "source_step": "HMIManager",
+        "target_step": "CupManager",
+        "rule": "HMI to Material-Controller",
+        "description": "HMIManager routes user interaction to CupManager"
+      },
+      {
+        "source": "WaterLiquidManager",
+        "destination": "HMIManager",
+        "source_step": "A1.1",
+        "target_step": "A1.2",
+        "rule": "Rule 1 - Serial to Serial",
+        "description": "Sequential flow from A1.1 to A1.2"
+      },
+      {
+        "source": "User",
+        "destination": "MessageDisplayBoundary",
+        "source_step": "User",
+        "target_step": "MessageDisplayBoundary",
+        "rule": "Actor-Boundary interaction",
+        "description": "Actor User interacts with MessageDisplayBoundary"
+      },
+      {
+        "source": "MessageDisplayBoundary",
+        "destination": "HMIManager",
+        "source_step": "MessageDisplayBoundary",
+        "target_step": "HMIManager",
+        "rule": "User-Interaction Boundary to HMI",
+        "description": "User interaction MessageDisplayBoundary (A1.2) processed by HMIManager"
+      },
+      {
+        "source": "MilkLiquidManager",
+        "destination": "HMIManager",
+        "source_step": "A2.1",
+        "target_step": "A2.2",
+        "rule": "Rule 1 - Serial to Serial",
+        "description": "Sequential flow from A2.1 to A2.2"
+      },
+      {
+        "source": "User",
+        "destination": "MessageDisplayBoundary",
+        "source_step": "User",
+        "target_step": "MessageDisplayBoundary",
+        "rule": "Actor-Boundary interaction",
+        "description": "Actor User interacts with MessageDisplayBoundary"
+      },
+      {
+        "source": "MessageDisplayBoundary",
+        "destination": "HMIManager",
+        "source_step": "MessageDisplayBoundary",
+        "target_step": "HMIManager",
+        "rule": "User-Interaction Boundary to HMI",
+        "description": "User interaction MessageDisplayBoundary (A2.2) processed by HMIManager"
+      },
+      {
+        "source": "SystemControlManager",
+        "destination": "SystemControlManager",
+        "source_step": "A3.1",
+        "target_step": "A3.2",
+        "rule": "Rule 1 - Serial to Serial",
+        "description": "Sequential flow from A3.1 to A3.2"
+      },
+      {
+        "source": "User",
+        "destination": "SugarRequestBoundary",
+        "source_step": "User",
+        "target_step": "SugarRequestBoundary",
+        "rule": "Actor-Boundary interaction",
+        "description": "Actor User signals SugarRequestBoundary"
+      },
+      {
+        "source": "SugarRequestBoundary",
+        "destination": "HMIManager",
+        "source_step": "SugarRequestBoundary",
+        "target_step": "HMIManager",
+        "rule": "User-Interaction Boundary to HMI",
+        "description": "User interaction SugarRequestBoundary (E1) processed by HMIManager"
+      },
+      {
+        "source": "HMIManager",
+        "destination": "SugarSolidManager",
+        "source_step": "HMIManager",
+        "target_step": "SugarSolidManager",
+        "rule": "Trigger to Action-Controller",
+        "description": "HMIManager (E1) activates SugarSolidManager (E1.1)"
+      },
+      {
+        "source": "SystemControlManager",
+        "destination": "P2_START",
+        "source_step": "B1",
+        "target_step": "P2_START",
+        "rule": "Rule 2 - Serial to Parallel Distribution",
+        "description": "Flow from B1 to parallel P2_START"
+      },
+      {
+        "source": "P2_END",
+        "destination": "P3_START",
+        "source_step": "P2_END",
+        "target_step": "P3_START",
+        "rule": "Rule 4 - Parallel Group Transition",
+        "description": "Flow between parallel nodes P2_END -> P3_START"
+      },
+      {
+        "source": "Time",
+        "destination": "TimingBoundary",
+        "source_step": "Time",
+        "target_step": "TimingBoundary",
+        "rule": "Actor-Boundary interaction",
+        "description": "Actor Time signals TimingBoundary"
+      },
+      {
+        "source": "TimingBoundary",
+        "destination": "SystemControlManager",
+        "source_step": "TimingBoundary",
+        "target_step": "SystemControlManager",
+        "rule": "Boundary-Controller activation",
+        "description": "Boundary TimingBoundary activates SystemControlManager"
+      },
+      {
+        "source": "SystemControlManager",
+        "destination": "P2_START",
+        "source_step": "B1",
+        "target_step": "P2_START",
+        "rule": "Rule 2 - Serial to Parallel Distribution",
+        "description": "Flow from B1 to parallel P2_START"
+      },
+      {
+        "source": "P2_END",
+        "destination": "P3_START",
+        "source_step": "P2_END",
+        "target_step": "P3_START",
+        "rule": "Rule 4 - Parallel Group Transition",
+        "description": "Flow between parallel nodes P2_END -> P3_START"
+      },
+      {
+        "source": "P2_START",
+        "destination": "WaterLiquidManager",
+        "source_step": "P2_START",
+        "target_step": "B2a",
+        "rule": "Rule 3: parallel -> parallel (same step number)",
+        "description": "Flow from parallel P2_START to B2a"
+      },
+      {
+        "source": "WaterLiquidManager",
+        "destination": "P2_END",
+        "source_step": "B2a",
+        "target_step": "P2_END",
+        "rule": "Rule 3: parallel -> parallel (same step number)",
+        "description": "Flow from B2a to parallel P2_END"
+      },
+      {
+        "source": "P2_START",
+        "destination": "WaterLiquidManager",
+        "source_step": "P2_START",
+        "target_step": "B2a",
+        "rule": "Rule 3: parallel -> parallel (same step number)",
+        "description": "Flow from parallel P2_START to B2a"
+      },
+      {
+        "source": "WaterLiquidManager",
+        "destination": "P2_END",
+        "source_step": "B2a",
+        "target_step": "P2_END",
+        "rule": "Rule 3: parallel -> parallel (same step number)",
+        "description": "Flow from B2a to parallel P2_END"
+      },
+      {
+        "source": "P2_START",
+        "destination": "FilterManager",
+        "source_step": "P2_START",
+        "target_step": "B2b",
+        "rule": "Rule 3: parallel -> parallel (same step number)",
+        "description": "Flow from parallel P2_START to B2b"
+      },
+      {
+        "source": "FilterManager",
+        "destination": "P2_END",
+        "source_step": "B2b",
+        "target_step": "P2_END",
+        "rule": "Rule 3: parallel -> parallel (same step number)",
+        "description": "Flow from B2b to parallel P2_END"
+      },
+      {
+        "source": "P2_START",
+        "destination": "FilterManager",
+        "source_step": "P2_START",
+        "target_step": "B2b",
+        "rule": "Rule 3: parallel -> parallel (same step number)",
+        "description": "Flow from parallel P2_START to B2b"
+      },
+      {
+        "source": "FilterManager",
+        "destination": "P2_END",
+        "source_step": "B2b",
+        "target_step": "P2_END",
+        "rule": "Rule 3: parallel -> parallel (same step number)",
+        "description": "Flow from B2b to parallel P2_END"
+      },
+      {
+        "source": "P2_START",
+        "destination": "CoffeeSolidManager",
+        "source_step": "P2_START",
+        "target_step": "B2c",
+        "rule": "Rule 3: parallel -> parallel (same step number)",
+        "description": "Flow from parallel P2_START to B2c"
+      },
+      {
+        "source": "CoffeeSolidManager",
+        "destination": "P2_END",
+        "source_step": "B2c",
+        "target_step": "P2_END",
+        "rule": "Rule 3: parallel -> parallel (same step number)",
+        "description": "Flow from B2c to parallel P2_END"
+      },
+      {
+        "source": "P2_START",
+        "destination": "CoffeeSolidManager",
+        "source_step": "P2_START",
+        "target_step": "B2c",
+        "rule": "Rule 3: parallel -> parallel (same step number)",
+        "description": "Flow from parallel P2_START to B2c"
+      },
+      {
+        "source": "CoffeeSolidManager",
+        "destination": "P2_END",
+        "source_step": "B2c",
+        "target_step": "P2_END",
+        "rule": "Rule 3: parallel -> parallel (same step number)",
+        "description": "Flow from B2c to parallel P2_END"
+      },
+      {
+        "source": "P2_START",
+        "destination": "CupManager",
+        "source_step": "P2_START",
+        "target_step": "B2d",
+        "rule": "Rule 4: parallel -> parallel (different step number)",
+        "description": "Flow from parallel P2_START to B2d"
+      },
+      {
+        "source": "CupManager",
+        "destination": "P2_END",
+        "source_step": "B2d",
+        "target_step": "P2_END",
+        "rule": "Rule 4: parallel -> parallel (different step number)",
+        "description": "Flow from B2d to parallel P2_END"
+      },
+      {
+        "source": "P2_START",
+        "destination": "CupManager",
+        "source_step": "P2_START",
+        "target_step": "B2d",
+        "rule": "Rule 4: parallel -> parallel (different step number)",
+        "description": "Flow from parallel P2_START to B2d"
+      },
+      {
+        "source": "CupManager",
+        "destination": "P2_END",
+        "source_step": "B2d",
+        "target_step": "P2_END",
+        "rule": "Rule 4: parallel -> parallel (different step number)",
+        "description": "Flow from B2d to parallel P2_END"
+      },
+      {
+        "source": "P3_START",
+        "destination": "CoffeeLiquidManager",
+        "source_step": "P3_START",
+        "target_step": "B3a",
+        "rule": "Rule 3: parallel -> parallel (same step number)",
+        "description": "Flow from parallel P3_START to B3a"
+      },
+      {
+        "source": "CoffeeLiquidManager",
+        "destination": "P3_END",
+        "source_step": "B3a",
+        "target_step": "P3_END",
+        "rule": "Rule 3: parallel -> parallel (same step number)",
+        "description": "Flow from B3a to parallel P3_END"
+      },
+      {
+        "source": "P3_START",
+        "destination": "CoffeeLiquidManager",
+        "source_step": "P3_START",
+        "target_step": "B3a",
+        "rule": "Rule 3: parallel -> parallel (same step number)",
+        "description": "Flow from parallel P3_START to B3a"
+      },
+      {
+        "source": "CoffeeLiquidManager",
+        "destination": "P3_END",
+        "source_step": "B3a",
+        "target_step": "P3_END",
+        "rule": "Rule 3: parallel -> parallel (same step number)",
+        "description": "Flow from B3a to parallel P3_END"
+      },
+      {
+        "source": "P3_START",
+        "destination": "MilkLiquidManager",
+        "source_step": "P3_START",
+        "target_step": "B3b",
+        "rule": "Rule 5: parallel -> serial",
+        "description": "Flow from parallel P3_START to B3b"
+      },
+      {
+        "source": "MilkLiquidManager",
+        "destination": "P3_END",
+        "source_step": "B3b",
+        "target_step": "P3_END",
+        "rule": "Rule 5: parallel -> serial",
+        "description": "Flow from B3b to parallel P3_END"
+      },
+      {
+        "source": "P3_START",
+        "destination": "MilkLiquidManager",
+        "source_step": "P3_START",
+        "target_step": "B3b",
+        "rule": "Rule 5: parallel -> serial",
+        "description": "Flow from parallel P3_START to B3b"
+      },
+      {
+        "source": "MilkLiquidManager",
+        "destination": "P3_END",
+        "source_step": "B3b",
+        "target_step": "P3_END",
+        "rule": "Rule 5: parallel -> serial",
+        "description": "Flow from B3b to parallel P3_END"
+      },
+      {
+        "source": "P3_END",
+        "destination": "HMIManager",
+        "source_step": "P3_END",
+        "target_step": "B4",
+        "rule": "Rule 5 - Parallel to Serial Merge",
+        "description": "Flow from parallel P3_END to B4"
+      },
+      {
+        "source": "HMIManager",
+        "destination": "CupManager",
+        "source_step": "B4",
+        "target_step": "B5",
+        "rule": "Rule 1 - Serial to Serial",
+        "description": "Sequential flow from B4 to B5"
+      },
+      {
+        "source": "User",
+        "destination": "MessageDisplayBoundary",
+        "source_step": "User",
+        "target_step": "MessageDisplayBoundary",
+        "rule": "Actor-Boundary interaction",
+        "description": "Actor User interacts with MessageDisplayBoundary"
+      },
+      {
+        "source": "MessageDisplayBoundary",
+        "destination": "HMIManager",
+        "source_step": "MessageDisplayBoundary",
+        "target_step": "HMIManager",
+        "rule": "User-Interaction Boundary to HMI",
+        "description": "User interaction MessageDisplayBoundary (B4) processed by HMIManager"
+      },
+      {
+        "source": "P3_END",
+        "destination": "HMIManager",
+        "source_step": "P3_END",
+        "target_step": "B4",
+        "rule": "Rule 5 - Parallel to Serial Merge",
+        "description": "Flow from parallel P3_END to B4"
+      },
+      {
+        "source": "HMIManager",
+        "destination": "CupManager",
+        "source_step": "B4",
+        "target_step": "B5",
+        "rule": "Rule 1 - Serial to Serial",
+        "description": "Sequential flow from B4 to B5"
+      },
+      {
+        "source": "User",
+        "destination": "ProductDeliveryBoundary",
+        "source_step": "User",
+        "target_step": "ProductDeliveryBoundary",
+        "rule": "Actor-Boundary interaction",
+        "description": "Actor User interacts with ProductDeliveryBoundary"
+      },
+      {
+        "source": "ProductDeliveryBoundary",
+        "destination": "HMIManager",
+        "source_step": "ProductDeliveryBoundary",
+        "target_step": "HMIManager",
+        "rule": "User-Interaction Boundary to HMI",
+        "description": "User interaction ProductDeliveryBoundary (B5) processed by HMIManager"
+      },
+      {
+        "source": "HMIManager",
+        "destination": "CupManager",
+        "source_step": "HMIManager",
+        "target_step": "CupManager",
+        "rule": "HMI to Material-Controller",
+        "description": "HMIManager routes user interaction to CupManager"
+      },
+      {
+        "source": "WaterLiquidManager",
+        "destination": "HMIManager",
+        "source_step": "A1.1",
+        "target_step": "A1.2",
+        "rule": "Rule 1 - Serial to Serial",
+        "description": "Sequential flow from A1.1 to A1.2"
+      },
+      {
+        "source": "WaterLiquidManager",
+        "destination": "HMIManager",
+        "source_step": "A1.1",
+        "target_step": "A1.2",
+        "rule": "Rule 1 - Serial to Serial",
+        "description": "Sequential flow from A1.1 to A1.2"
+      },
+      {
+        "source": "User",
+        "destination": "MessageDisplayBoundary",
+        "source_step": "User",
+        "target_step": "MessageDisplayBoundary",
+        "rule": "Actor-Boundary interaction",
+        "description": "Actor User interacts with MessageDisplayBoundary"
+      },
+      {
+        "source": "MessageDisplayBoundary",
+        "destination": "HMIManager",
+        "source_step": "MessageDisplayBoundary",
+        "target_step": "HMIManager",
+        "rule": "User-Interaction Boundary to HMI",
+        "description": "User interaction MessageDisplayBoundary (A1.2) processed by HMIManager"
+      },
+      {
+        "source": "MilkLiquidManager",
+        "destination": "HMIManager",
+        "source_step": "A2.1",
+        "target_step": "A2.2",
+        "rule": "Rule 1 - Serial to Serial",
+        "description": "Sequential flow from A2.1 to A2.2"
+      },
+      {
+        "source": "MilkLiquidManager",
+        "destination": "HMIManager",
+        "source_step": "A2.1",
+        "target_step": "A2.2",
+        "rule": "Rule 1 - Serial to Serial",
+        "description": "Sequential flow from A2.1 to A2.2"
+      },
+      {
+        "source": "User",
+        "destination": "MessageDisplayBoundary",
+        "source_step": "User",
+        "target_step": "MessageDisplayBoundary",
+        "rule": "Actor-Boundary interaction",
+        "description": "Actor User interacts with MessageDisplayBoundary"
+      },
+      {
+        "source": "MessageDisplayBoundary",
+        "destination": "HMIManager",
+        "source_step": "MessageDisplayBoundary",
+        "target_step": "HMIManager",
+        "rule": "User-Interaction Boundary to HMI",
+        "description": "User interaction MessageDisplayBoundary (A2.2) processed by HMIManager"
+      },
+      {
+        "source": "SystemControlManager",
+        "destination": "SystemControlManager",
+        "source_step": "A3.1",
+        "target_step": "A3.2",
+        "rule": "Rule 1 - Serial to Serial",
+        "description": "Sequential flow from A3.1 to A3.2"
+      },
+      {
+        "source": "SystemControlManager",
+        "destination": "SystemControlManager",
+        "source_step": "A3.1",
+        "target_step": "A3.2",
+        "rule": "Rule 1 - Serial to Serial",
+        "description": "Sequential flow from A3.1 to A3.2"
+      },
+      {
+        "source": "User",
+        "destination": "SugarRequestBoundary",
+        "source_step": "User",
+        "target_step": "SugarRequestBoundary",
+        "rule": "Actor-Boundary interaction",
+        "description": "Actor User signals SugarRequestBoundary"
+      },
+      {
+        "source": "SugarRequestBoundary",
+        "destination": "HMIManager",
+        "source_step": "SugarRequestBoundary",
+        "target_step": "HMIManager",
+        "rule": "User-Interaction Boundary to HMI",
+        "description": "User interaction SugarRequestBoundary (E1) processed by HMIManager"
+      },
+      {
+        "source": "HMIManager",
+        "destination": "SugarSolidManager",
+        "source_step": "HMIManager",
+        "target_step": "SugarSolidManager",
+        "rule": "Trigger to Action-Controller",
+        "description": "HMIManager (E1) activates SugarSolidManager (E1.1)"
+      },
+      {
+        "source": "HMIManager",
+        "destination": "P2_START",
+        "source_step": "B1",
+        "target_step": "P2_START",
+        "rule": "Rule 2 - Serial to Parallel Distribution",
+        "description": "Flow from B1 to parallel P2_START"
+      },
+      {
+        "source": "User",
+        "destination": "EspressoRequestBoundary",
+        "source_step": "User",
+        "target_step": "EspressoRequestBoundary",
+        "rule": "Actor-Boundary interaction",
+        "description": "Actor User signals EspressoRequestBoundary"
+      },
+      {
+        "source": "EspressoRequestBoundary",
+        "destination": "HMIManager",
+        "source_step": "EspressoRequestBoundary",
+        "target_step": "HMIManager",
+        "rule": "User-Interaction Boundary to HMI",
+        "description": "User interaction EspressoRequestBoundary (B1) processed by HMIManager"
+      },
+      {
+        "source": "P2_START",
+        "destination": "WaterLiquidManager",
+        "source_step": "P2_START",
+        "target_step": "B2a",
+        "rule": "Rule 3: parallel -> parallel (same step number)",
+        "description": "Flow from parallel P2_START to B2a"
+      },
+      {
+        "source": "WaterLiquidManager",
+        "destination": "P2_END",
+        "source_step": "B2a",
+        "target_step": "P2_END",
+        "rule": "Rule 3: parallel -> parallel (same step number)",
+        "description": "Flow from B2a to parallel P2_END"
+      },
+      {
+        "source": "P2_START",
+        "destination": "FilterManager",
+        "source_step": "P2_START",
+        "target_step": "B2b",
+        "rule": "Rule 3: parallel -> parallel (same step number)",
+        "description": "Flow from parallel P2_START to B2b"
+      },
+      {
+        "source": "FilterManager",
+        "destination": "P2_END",
+        "source_step": "B2b",
+        "target_step": "P2_END",
+        "rule": "Rule 3: parallel -> parallel (same step number)",
+        "description": "Flow from B2b to parallel P2_END"
+      },
+      {
+        "source": "P2_START",
+        "destination": "CoffeeSolidManager",
+        "source_step": "P2_START",
+        "target_step": "B2c",
+        "rule": "Rule 3: parallel -> parallel (same step number)",
+        "description": "Flow from parallel P2_START to B2c"
+      },
+      {
+        "source": "CoffeeSolidManager",
+        "destination": "P2_END",
+        "source_step": "B2c",
+        "target_step": "P2_END",
+        "rule": "Rule 3: parallel -> parallel (same step number)",
+        "description": "Flow from B2c to parallel P2_END"
+      },
+      {
+        "source": "P2_START",
+        "destination": "CupManager",
+        "source_step": "P2_START",
+        "target_step": "B2d",
+        "rule": "Rule 5: parallel -> serial",
+        "description": "Flow from parallel P2_START to B2d"
+      },
+      {
+        "source": "CupManager",
+        "destination": "P2_END",
+        "source_step": "B2d",
+        "target_step": "P2_END",
+        "rule": "Rule 5: parallel -> serial",
+        "description": "Flow from B2d to parallel P2_END"
+      },
+      {
+        "source": "P2_END",
+        "destination": "WaterLiquidManager",
+        "source_step": "P2_END",
+        "target_step": "B3",
+        "rule": "Rule 5 - Parallel to Serial Merge",
+        "description": "Flow from parallel P2_END to B3"
+      },
+      {
+        "source": "WaterLiquidManager",
+        "destination": "WaterLiquidManager",
+        "source_step": "B3",
+        "target_step": "B4",
+        "rule": "Rule 1 - Serial to Serial",
+        "description": "Sequential flow from B3 to B4"
+      },
+      {
+        "source": "WaterLiquidManager",
+        "destination": "HMIManager",
+        "source_step": "B4",
+        "target_step": "B5",
+        "rule": "Rule 1 - Serial to Serial",
+        "description": "Sequential flow from B4 to B5"
+      },
+      {
+        "source": "User",
+        "destination": "MessageDisplayBoundary",
+        "source_step": "User",
+        "target_step": "MessageDisplayBoundary",
+        "rule": "Actor-Boundary interaction",
+        "description": "Actor User interacts with MessageDisplayBoundary"
+      },
+      {
+        "source": "MessageDisplayBoundary",
+        "destination": "HMIManager",
+        "source_step": "MessageDisplayBoundary",
+        "target_step": "HMIManager",
+        "rule": "User-Interaction Boundary to HMI",
+        "description": "User interaction MessageDisplayBoundary (B5) processed by HMIManager"
+      },
+      {
+        "source": "WaterLiquidManager",
+        "destination": "HMIManager",
+        "source_step": "A1.1",
+        "target_step": "A1.2",
+        "rule": "Rule 1 - Serial to Serial",
+        "description": "Sequential flow from A1.1 to A1.2"
+      },
+      {
+        "source": "User",
+        "destination": "MessageDisplayBoundary",
+        "source_step": "User",
+        "target_step": "MessageDisplayBoundary",
+        "rule": "Actor-Boundary interaction",
+        "description": "Actor User interacts with MessageDisplayBoundary"
+      },
+      {
+        "source": "MessageDisplayBoundary",
+        "destination": "HMIManager",
+        "source_step": "MessageDisplayBoundary",
+        "target_step": "HMIManager",
+        "rule": "User-Interaction Boundary to HMI",
+        "description": "User interaction MessageDisplayBoundary (A1.2) processed by HMIManager"
+      },
+      {
+        "source": "User",
+        "destination": "SugarRequestBoundary",
+        "source_step": "User",
+        "target_step": "SugarRequestBoundary",
+        "rule": "Actor-Boundary interaction",
+        "description": "Actor User signals SugarRequestBoundary"
+      },
+      {
+        "source": "SugarRequestBoundary",
+        "destination": "HMIManager",
+        "source_step": "SugarRequestBoundary",
+        "target_step": "HMIManager",
+        "rule": "User-Interaction Boundary to HMI",
+        "description": "User interaction SugarRequestBoundary (E1) processed by HMIManager"
+      }
+    ],
+    "data_flows": [
+      {
+        "controller": "WaterLiquidManager",
+        "entity": "Water",
+        "step_id": "B2a",
+        "type": "use",
+        "preposition": "",
+        "description": "WaterLiquidManager uses Water as input"
+      },
+      {
+        "controller": "WaterLiquidManager",
+        "entity": "Water",
+        "step_id": "B2a",
+        "type": "use",
+        "preposition": "",
+        "description": "WaterLiquidManager uses Water as input"
+      },
+      {
+        "controller": "WaterLiquidManager",
+        "entity": "HotWater",
+        "step_id": "B2a",
+        "type": "provide",
+        "preposition": "",
+        "description": "WaterLiquidManager produces HotWater as result"
+      },
+      {
+        "controller": "FilterManager",
+        "entity": "FilterDepot",
+        "step_id": "B2b",
+        "type": "use",
+        "preposition": "",
+        "description": "FilterManager uses FilterDepot as input"
+      },
+      {
+        "controller": "FilterManager",
+        "entity": "Filter",
+        "step_id": "B2b",
+        "type": "provide",
+        "preposition": "",
+        "description": "FilterManager produces Filter as result"
+      },
+      {
+        "controller": "CoffeeSolidManager",
+        "entity": "CoffeeBeans",
+        "step_id": "B2c",
+        "type": "use",
+        "preposition": "",
+        "description": "CoffeeSolidManager uses CoffeeBeans as input"
+      },
+      {
+        "controller": "CoffeeSolidManager",
+        "entity": "GroundCoffee",
+        "step_id": "B2c",
+        "type": "provide",
+        "preposition": "",
+        "description": "CoffeeSolidManager produces GroundCoffee as result"
+      },
+      {
+        "controller": "CoffeeSolidManager",
+        "entity": "UserDefinedAmountOfCoffee",
+        "step_id": "B2c",
+        "type": "use",
+        "preposition": "",
+        "description": "CoffeeSolidManager uses UserDefinedAmountOfCoffee as input"
+      },
+      {
+        "controller": "CupManager",
+        "entity": "StorageContainer",
+        "step_id": "B2d",
+        "type": "use",
+        "preposition": "from",
+        "description": "CupManager uses StorageContainer as input"
+      },
+      {
+        "controller": "CupManager",
+        "entity": "Cup",
+        "step_id": "B2d",
+        "type": "provide",
+        "preposition": "",
+        "description": "CupManager provides Cup as result"
+      },
+      {
+        "controller": "CoffeeLiquidManager",
+        "entity": "UserDefinedAmountOfWater",
+        "step_id": "B3a",
+        "type": "use",
+        "preposition": "with",
+        "description": "CoffeeLiquidManager uses UserDefinedAmountOfWater as parameter"
+      },
+      {
+        "controller": "CoffeeLiquidManager",
+        "entity": "Cup",
+        "step_id": "B3a",
+        "type": "use",
+        "preposition": "into",
+        "description": "CoffeeLiquidManager uses Cup as target"
+      },
+      {
+        "controller": "CoffeeLiquidManager",
+        "entity": "GroundCoffee",
+        "step_id": "B3a",
+        "type": "use",
+        "preposition": "",
+        "description": "CoffeeLiquidManager uses GroundCoffee as input"
+      },
+      {
+        "controller": "CoffeeLiquidManager",
+        "entity": "HotWater",
+        "step_id": "B3a",
+        "type": "use",
+        "preposition": "",
+        "description": "CoffeeLiquidManager uses HotWater as input"
+      },
+      {
+        "controller": "CoffeeLiquidManager",
+        "entity": "Filter",
+        "step_id": "B3a",
+        "type": "use",
+        "preposition": "",
+        "description": "CoffeeLiquidManager uses Filter as input"
+      },
+      {
+        "controller": "CoffeeLiquidManager",
+        "entity": "Coffee",
+        "step_id": "B3a",
+        "type": "provide",
+        "preposition": "",
+        "description": "CoffeeLiquidManager produces Coffee as result"
+      },
+      {
+        "controller": "CoffeeLiquidManager",
+        "entity": "Water",
+        "step_id": "B3a",
+        "type": "use",
+        "preposition": "",
+        "description": "CoffeeLiquidManager uses Water as input"
+      },
+      {
+        "controller": "MilkLiquidManager",
+        "entity": "Cup",
+        "step_id": "B3b",
+        "type": "use",
+        "preposition": "to",
+        "description": "MilkLiquidManager uses Cup as target"
+      },
+      {
+        "controller": "MilkLiquidManager",
+        "entity": "Milk",
+        "step_id": "B3b",
+        "type": "use",
+        "preposition": "",
+        "description": "MilkLiquidManager uses Milk as input"
+      },
+      {
+        "controller": "MilkLiquidManager",
+        "entity": "Coffee",
+        "step_id": "B3b",
+        "type": "use",
+        "preposition": "",
+        "description": "MilkLiquidManager uses Coffee as input"
+      },
+      {
+        "controller": "MilkLiquidManager",
+        "entity": "Coffee",
+        "step_id": "B3b",
+        "type": "provide",
+        "preposition": "",
+        "description": "MilkLiquidManager produces Coffee as result"
+      },
+      {
+        "controller": "HMIManager",
+        "entity": "Message",
+        "step_id": "B4",
+        "type": "use",
+        "preposition": "",
+        "description": "HMIManager uses Message for transaction"
+      },
+      {
+        "controller": "CupManager",
+        "entity": "Cup",
+        "step_id": "B5",
+        "type": "use",
+        "preposition": "",
+        "description": "CupManager uses Cup for transaction"
+      },
+      {
+        "controller": "HMIManager",
+        "entity": "ErrorMessage",
+        "step_id": "A1.2",
+        "type": "use",
+        "preposition": "",
+        "description": "HMIManager uses ErrorMessage for transaction"
+      },
+      {
+        "controller": "HMIManager",
+        "entity": "ErrorMessage",
+        "step_id": "A2.2",
+        "type": "use",
+        "preposition": "",
+        "description": "HMIManager uses ErrorMessage for transaction"
+      },
+      {
+        "controller": "SugarSolidManager",
+        "entity": "Sugar",
+        "step_id": "E1.1",
+        "type": "use",
+        "preposition": "of",
+        "description": "SugarSolidManager uses Sugar as component"
+      },
+      {
+        "controller": "SugarSolidManager",
+        "entity": "Cup",
+        "step_id": "E1.1",
+        "type": "use",
+        "preposition": "to",
+        "description": "SugarSolidManager uses Cup as target"
+      },
+      {
+        "controller": "SugarSolidManager",
+        "entity": "UserDefinedAmountOfSugar",
+        "step_id": "E1.1",
+        "type": "use",
+        "preposition": "",
+        "description": "SugarSolidManager uses UserDefinedAmountOfSugar as input"
+      },
+      {
+        "controller": "SugarSolidManager",
+        "entity": "Coffee",
+        "step_id": "E1.1",
+        "type": "use",
+        "preposition": "",
+        "description": "SugarSolidManager uses Coffee as input"
+      },
+      {
+        "controller": "SugarSolidManager",
+        "entity": "Coffee",
+        "step_id": "E1.1",
+        "type": "provide",
+        "preposition": "",
+        "description": "SugarSolidManager produces Coffee as result"
+      },
+      {
+        "controller": "WaterLiquidManager",
+        "entity": "Water",
+        "step_id": "B2a",
+        "type": "use",
+        "preposition": "",
+        "description": "WaterLiquidManager uses Water as input"
+      },
+      {
+        "controller": "WaterLiquidManager",
+        "entity": "Water",
+        "step_id": "B2a",
+        "type": "use",
+        "preposition": "",
+        "description": "WaterLiquidManager uses Water as input"
+      },
+      {
+        "controller": "WaterLiquidManager",
+        "entity": "HotWater",
+        "step_id": "B2a",
+        "type": "provide",
+        "preposition": "",
+        "description": "WaterLiquidManager produces HotWater as result"
+      },
+      {
+        "controller": "FilterManager",
+        "entity": "FilterDepot",
+        "step_id": "B2b",
+        "type": "use",
+        "preposition": "",
+        "description": "FilterManager uses FilterDepot as input"
+      },
+      {
+        "controller": "FilterManager",
+        "entity": "Filter",
+        "step_id": "B2b",
+        "type": "provide",
+        "preposition": "",
+        "description": "FilterManager produces Filter as result"
+      },
+      {
+        "controller": "CoffeeSolidManager",
+        "entity": "CoffeeBeans",
+        "step_id": "B2c",
+        "type": "use",
+        "preposition": "",
+        "description": "CoffeeSolidManager uses CoffeeBeans as input"
+      },
+      {
+        "controller": "CoffeeSolidManager",
+        "entity": "GroundCoffee",
+        "step_id": "B2c",
+        "type": "provide",
+        "preposition": "",
+        "description": "CoffeeSolidManager produces GroundCoffee as result"
+      },
+      {
+        "controller": "CoffeeSolidManager",
+        "entity": "UserDefinedAmountOfCoffee",
+        "step_id": "B2c",
+        "type": "use",
+        "preposition": "",
+        "description": "CoffeeSolidManager uses UserDefinedAmountOfCoffee as input"
+      },
+      {
+        "controller": "CupManager",
+        "entity": "StorageContainer",
+        "step_id": "B2d",
+        "type": "use",
+        "preposition": "from",
+        "description": "CupManager uses StorageContainer as input"
+      },
+      {
+        "controller": "CupManager",
+        "entity": "Cup",
+        "step_id": "B2d",
+        "type": "provide",
+        "preposition": "",
+        "description": "CupManager provides Cup as result"
+      },
+      {
+        "controller": "CoffeeLiquidManager",
+        "entity": "UserDefinedAmountOfWater",
+        "step_id": "B3a",
+        "type": "use",
+        "preposition": "with",
+        "description": "CoffeeLiquidManager uses UserDefinedAmountOfWater as parameter"
+      },
+      {
+        "controller": "CoffeeLiquidManager",
+        "entity": "Cup",
+        "step_id": "B3a",
+        "type": "use",
+        "preposition": "into",
+        "description": "CoffeeLiquidManager uses Cup as target"
+      },
+      {
+        "controller": "CoffeeLiquidManager",
+        "entity": "GroundCoffee",
+        "step_id": "B3a",
+        "type": "use",
+        "preposition": "",
+        "description": "CoffeeLiquidManager uses GroundCoffee as input"
+      },
+      {
+        "controller": "CoffeeLiquidManager",
+        "entity": "HotWater",
+        "step_id": "B3a",
+        "type": "use",
+        "preposition": "",
+        "description": "CoffeeLiquidManager uses HotWater as input"
+      },
+      {
+        "controller": "CoffeeLiquidManager",
+        "entity": "Filter",
+        "step_id": "B3a",
+        "type": "use",
+        "preposition": "",
+        "description": "CoffeeLiquidManager uses Filter as input"
+      },
+      {
+        "controller": "CoffeeLiquidManager",
+        "entity": "Coffee",
+        "step_id": "B3a",
+        "type": "provide",
+        "preposition": "",
+        "description": "CoffeeLiquidManager produces Coffee as result"
+      },
+      {
+        "controller": "CoffeeLiquidManager",
+        "entity": "Water",
+        "step_id": "B3a",
+        "type": "use",
+        "preposition": "",
+        "description": "CoffeeLiquidManager uses Water as input"
+      },
+      {
+        "controller": "MilkLiquidManager",
+        "entity": "Cup",
+        "step_id": "B3b",
+        "type": "use",
+        "preposition": "to",
+        "description": "MilkLiquidManager uses Cup as target"
+      },
+      {
+        "controller": "MilkLiquidManager",
+        "entity": "Milk",
+        "step_id": "B3b",
+        "type": "use",
+        "preposition": "",
+        "description": "MilkLiquidManager uses Milk as input"
+      },
+      {
+        "controller": "MilkLiquidManager",
+        "entity": "Coffee",
+        "step_id": "B3b",
+        "type": "use",
+        "preposition": "",
+        "description": "MilkLiquidManager uses Coffee as input"
+      },
+      {
+        "controller": "MilkLiquidManager",
+        "entity": "Coffee",
+        "step_id": "B3b",
+        "type": "provide",
+        "preposition": "",
+        "description": "MilkLiquidManager produces Coffee as result"
+      },
+      {
+        "controller": "HMIManager",
+        "entity": "Message",
+        "step_id": "B4",
+        "type": "use",
+        "preposition": "",
+        "description": "HMIManager uses Message for transaction"
+      },
+      {
+        "controller": "CupManager",
+        "entity": "Cup",
+        "step_id": "B5",
+        "type": "use",
+        "preposition": "",
+        "description": "CupManager uses Cup for transaction"
+      },
+      {
+        "controller": "HMIManager",
+        "entity": "ErrorMessage",
+        "step_id": "A1.2",
+        "type": "use",
+        "preposition": "",
+        "description": "HMIManager uses ErrorMessage for transaction"
+      },
+      {
+        "controller": "HMIManager",
+        "entity": "ErrorMessage",
+        "step_id": "A2.2",
+        "type": "use",
+        "preposition": "",
+        "description": "HMIManager uses ErrorMessage for transaction"
+      },
+      {
+        "controller": "SugarSolidManager",
+        "entity": "Sugar",
+        "step_id": "E1.1",
+        "type": "use",
+        "preposition": "of",
+        "description": "SugarSolidManager uses Sugar as component"
+      },
+      {
+        "controller": "SugarSolidManager",
+        "entity": "Cup",
+        "step_id": "E1.1",
+        "type": "use",
+        "preposition": "to",
+        "description": "SugarSolidManager uses Cup as target"
+      },
+      {
+        "controller": "SugarSolidManager",
+        "entity": "UserDefinedAmountOfSugar",
+        "step_id": "E1.1",
+        "type": "use",
+        "preposition": "",
+        "description": "SugarSolidManager uses UserDefinedAmountOfSugar as input"
+      },
+      {
+        "controller": "SugarSolidManager",
+        "entity": "Coffee",
+        "step_id": "E1.1",
+        "type": "use",
+        "preposition": "",
+        "description": "SugarSolidManager uses Coffee as input"
+      },
+      {
+        "controller": "SugarSolidManager",
+        "entity": "Coffee",
+        "step_id": "E1.1",
+        "type": "provide",
+        "preposition": "",
+        "description": "SugarSolidManager produces Coffee as result"
+      },
+      {
+        "controller": "HMIManager",
+        "entity": "Espresso",
+        "step_id": "B1",
+        "type": "use",
+        "preposition": "",
+        "description": "HMIManager uses Espresso for transaction"
+      },
+      {
+        "controller": "FilterManager",
+        "entity": "FilterDepot",
+        "step_id": "B2b",
+        "type": "use",
+        "preposition": "",
+        "description": "FilterManager uses FilterDepot as input"
+      },
+      {
+        "controller": "FilterManager",
+        "entity": "Filter",
+        "step_id": "B2b",
+        "type": "provide",
+        "preposition": "",
+        "description": "FilterManager produces Filter as result"
+      },
+      {
+        "controller": "CoffeeSolidManager",
+        "entity": "SetGrindingDegree",
+        "step_id": "B2c",
+        "type": "use",
+        "preposition": "at",
+        "description": "CoffeeSolidManager uses SetGrindingDegree as input"
+      },
+      {
+        "controller": "CoffeeSolidManager",
+        "entity": "Filter",
+        "step_id": "B2c",
+        "type": "use",
+        "preposition": "into",
+        "description": "CoffeeSolidManager uses Filter as target"
+      },
+      {
+        "controller": "CoffeeSolidManager",
+        "entity": "CoffeeBeans",
+        "step_id": "B2c",
+        "type": "use",
+        "preposition": "",
+        "description": "CoffeeSolidManager uses CoffeeBeans as input"
+      },
+      {
+        "controller": "CoffeeSolidManager",
+        "entity": "GroundCoffee",
+        "step_id": "B2c",
+        "type": "provide",
+        "preposition": "",
+        "description": "CoffeeSolidManager produces GroundCoffee as result"
+      },
+      {
+        "controller": "CoffeeSolidManager",
+        "entity": "SetAmount",
+        "step_id": "B2c",
+        "type": "use",
+        "preposition": "",
+        "description": "CoffeeSolidManager uses SetAmount as input"
+      },
+      {
+        "controller": "CupManager",
+        "entity": "StorageContainer",
+        "step_id": "B2d",
+        "type": "use",
+        "preposition": "from",
+        "description": "CupManager uses StorageContainer as input"
+      },
+      {
+        "controller": "CupManager",
+        "entity": "Cup",
+        "step_id": "B2d",
+        "type": "provide",
+        "preposition": "",
+        "description": "CupManager provides Cup as result"
+      },
+      {
+        "controller": "WaterLiquidManager",
+        "entity": "CoffeeGrounds",
+        "step_id": "B4",
+        "type": "use",
+        "preposition": "through",
+        "description": "WaterLiquidManager uses CoffeeGrounds as input"
+      },
+      {
+        "controller": "WaterLiquidManager",
+        "entity": "PressingHotWater",
+        "step_id": "B4",
+        "type": "provide",
+        "preposition": "",
+        "description": "WaterLiquidManager provides PressingHotWater as result"
+      },
+      {
+        "controller": "WaterLiquidManager",
+        "entity": "HotWater",
+        "step_id": "B4",
+        "type": "use",
+        "preposition": "",
+        "description": "WaterLiquidManager uses HotWater as input"
+      },
+      {
+        "controller": "HMIManager",
+        "entity": "Message",
+        "step_id": "B5",
+        "type": "use",
+        "preposition": "",
+        "description": "HMIManager uses Message for transaction"
+      },
+      {
+        "controller": "HMIManager",
+        "entity": "ErrorMessage",
+        "step_id": "A1.2",
+        "type": "use",
+        "preposition": "",
+        "description": "HMIManager uses ErrorMessage for transaction"
+      },
+      {
+        "controller": "SugarSolidManager",
+        "entity": "Cup",
+        "step_id": "E1.1",
+        "type": "use",
+        "preposition": "to",
+        "description": "SugarSolidManager uses Cup as target"
+      },
+      {
+        "controller": "SugarSolidManager",
+        "entity": "Sugar",
+        "step_id": "E1.1",
+        "type": "use",
+        "preposition": "",
+        "description": "SugarSolidManager uses Sugar as input"
+      },
+      {
+        "controller": "SugarSolidManager",
+        "entity": "Coffee",
+        "step_id": "E1.1",
+        "type": "use",
+        "preposition": "",
+        "description": "SugarSolidManager uses Coffee as input"
+      },
+      {
+        "controller": "SugarSolidManager",
+        "entity": "Coffee",
+        "step_id": "E1.1",
+        "type": "provide",
+        "preposition": "",
+        "description": "SugarSolidManager produces Coffee as result"
+      }
+    ],
+    "parallel_nodes": [
+      {
+        "node_id": "P2_START",
+        "node_type": "distribution",
+        "step_range": "",
+        "parallel_steps": [],
+        "description": "Distribution node for parallel flow P2"
+      },
+      {
+        "node_id": "P2_END",
+        "node_type": "merge",
+        "step_range": "",
+        "parallel_steps": [],
+        "description": "Merge node for parallel flow P2"
+      },
+      {
+        "node_id": "P3_START",
+        "node_type": "distribution",
+        "step_range": "",
+        "parallel_steps": [],
+        "description": "Distribution node for parallel flow P3"
+      },
+      {
+        "node_id": "P3_END",
+        "node_type": "merge",
+        "step_range": "",
+        "parallel_steps": [],
+        "description": "Merge node for parallel flow P3"
+      },
+      {
+        "node_id": "P2_START",
+        "node_type": "distribution",
+        "step_range": "",
+        "parallel_steps": [],
+        "description": "Distribution node for parallel flow P2"
+      },
+      {
+        "node_id": "P2_END",
+        "node_type": "merge",
+        "step_range": "",
+        "parallel_steps": [],
+        "description": "Merge node for parallel flow P2"
+      },
+      {
+        "node_id": "P3_START",
+        "node_type": "distribution",
+        "step_range": "",
+        "parallel_steps": [],
+        "description": "Distribution node for parallel flow P3"
+      },
+      {
+        "node_id": "P3_END",
+        "node_type": "merge",
+        "step_range": "",
+        "parallel_steps": [],
+        "description": "Merge node for parallel flow P3"
+      },
+      {
+        "node_id": "P4_START",
+        "node_type": "distribution",
+        "step_range": "",
+        "parallel_steps": [],
+        "description": "Distribution node for parallel flow P4"
+      },
+      {
+        "node_id": "P4_END",
+        "node_type": "merge",
+        "step_range": "",
+        "parallel_steps": [],
+        "description": "Merge node for parallel flow P4"
+      }
+    ]
+  },
+  "context": {},
+  "summary": {
+    "total_components": 44,
+    "total_actors": 2,
+    "total_controllers": 9,
+    "total_boundaries": 10,
+    "total_entities": 17,
+    "total_control_flow_nodes": 6,
+    "shared_controllers": 9,
+    "uc1_only_controllers": 0,
+    "uc2_only_controllers": 0,
+    "total_control_flows": 106,
+    "total_data_flows": 79
+  }
+}

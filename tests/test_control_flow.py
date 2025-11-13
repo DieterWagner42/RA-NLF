@@ -3,7 +3,7 @@
 Test script for Kontrollfluss analysis in generic UC analyzer
 """
 
-from generic_uc_analyzer import GenericUCAnalyzer
+from oldpy.generic_uc_analyzer import GenericUCAnalyzer
 from pathlib import Path
 
 def test_control_flow_analysis():

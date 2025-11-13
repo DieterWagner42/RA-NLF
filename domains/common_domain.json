@@ -183,5 +183,112 @@
         "transformation": "Input -> Output"
       }
     }
+  },
+  "common_controllers": {
+    "description": "Domain-independent controllers for common system functions",
+    "controllers": {
+      "HMIManager": {
+        "description": "Manages human-machine interface transactions",
+        "keywords": ["output", "display", "present", "show", "message", "inform", "notify", "user", "hmi", "interface"],
+        "verbs": ["output", "display", "present", "show", "notify", "inform", "alert", "report"],
+        "priority": 100
+      },
+      "TriggerManager": {
+        "description": "Manages system triggers and events",
+        "keywords": ["trigger", "event", "signal"],
+        "verbs": ["trigger", "signal", "event"],
+        "priority": 90
+      },
+      "TimeManager": {
+        "description": "Manages time-based system control",
+        "keywords": ["time", "clock", "timer", "schedule", "reaches", "7:00h", "defined time"],
+        "verbs": ["reach", "reaches", "schedule", "wait"],
+        "priority": 95
+      },
+      "CommunicationManager": {
+        "description": "Manages system communication",
+        "keywords": ["send", "receive", "transmit", "communicate", "message", "signal"],
+        "verbs": ["send", "receive", "transmit", "communicate"],
+        "priority": 85
+      },
+      "StorageManager": {
+        "description": "Manages data/item storage operations",
+        "keywords": ["store", "retrieve", "save", "archive", "backup"],
+        "verbs": ["store", "retrieve", "save", "archive", "backup", "restore"],
+        "priority": 80
+      },
+      "ControlManager": {
+        "description": "Manages general system control operations",
+        "keywords": ["control", "manage", "coordinate", "synchronize"],
+        "verbs": ["control", "manage", "coordinate", "synchronize"],
+        "priority": 70
+      }
+    }
+  },
+  "control_action_verbs": {
+    "description": "Verbs that represent internal state changes without data/entity production",
+    "verbs": {
+      "stop": "stops a function or process - no entity output",
+      "halt": "halts a function or process - no entity output",
+      "pause": "pauses a function or process - no entity output",
+      "resume": "resumes a function or process - no entity output",
+      "switch": "switches on/off a function - no entity output",
+      "activate": "activates a function - no entity output",
+      "deactivate": "deactivates a function - no entity output",
+      "enable": "enables a function - no entity output",
+      "disable": "disables a function - no entity output",
+      "start": "starts a function - no entity output",
+      "cease": "ceases a function - no entity output",
+      "terminate": "terminates a function - no entity output",
+      "abort": "aborts a function - no entity output"
+    }
+  },
+  "boundary_patterns": {
+    "input_verbs": ["want", "request", "ask", "input", "trigger"],
+    "output_verbs": ["output", "display", "present", "show", "notify"],
+    "transaction_input_verbs": ["receive", "request", "ask", "input"],
+    "transaction_output_verbs": ["send", "transmit", "deliver", "provide"],
+    "time_control_verbs": ["reach", "reaches", "clock", "timer", "system clock", "radio clock", "time", "7:00h", "defined time"],
+    "supply_control_verbs": ["available", "supply", "monitor", "track"],
+    "communication_verbs": ["communicate", "interface", "message", "signal"],
+    "trigger_patterns": ["(trigger)", "trigger", "wants", "request"],
+    "boundary_types": {
+      "time_control": "TimingBoundary",
+      "supply_monitoring": "{Material}SupplyBoundary",
+      "user_communication": "UserCommunicationBoundary",
+      "user_input": "UserInputBoundary",
+      "system_output": "SystemOutputBoundary",
+      "external_system": "ExternalSystemBoundary",
+      "product_delivery": "ProductDeliveryBoundary"
+    }
+  },
+  "system_condition_keywords": {
+    "description": "Keywords indicating system conditions/failures that trigger alternative flows",
+    "keywords": [
+      "detected",
+      "defective",
+      "failure",
+      "error",
+      "alarm",
+      "level",
+      "too little",
+      "too much",
+      "overheat",
+      "underheat",
+      "missing",
+      "unavailable",
+      "malfunction",
+      "fault",
+      "broken",
+      "damaged",
+      "insufficient",
+      "excess",
+      "exceeded",
+      "below threshold",
+      "above threshold",
+      "critical",
+      "warning",
+      "abnormal"
+    ]
   }
 }

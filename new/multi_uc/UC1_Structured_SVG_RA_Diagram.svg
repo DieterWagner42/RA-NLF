@@ -1,0 +1,786 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1400" height="2000" 
+     viewBox="0 0 1400 2000"
+     xmlns="http://www.w3.org/2000/svg"
+     style="background: white;">
+
+    <!-- Marker für Pfeile -->
+    <defs>
+        <!-- Control Flow Marker (blau) -->
+        <marker id="arrowhead" markerWidth="10" markerHeight="7" 
+                refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="blue"/>
+        </marker>
+        <!-- Data Flow USE Marker (orange: Entity -> Controller) -->
+        <marker id="orangearrowhead" markerWidth="10" markerHeight="7" 
+                refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="orange"/>
+        </marker>
+        <!-- Data Flow PROVIDE Marker (grün: Controller -> Entity) -->
+        <marker id="greenarrowhead" markerWidth="10" markerHeight="7" 
+                refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="green"/>
+        </marker>
+    </defs>
+
+    <!-- Titel -->
+    <text x="700.0" y="30" text-anchor="middle" 
+          font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="black">
+        RUP Robustness Analysis - UC1
+    </text>
+
+
+        <g transform="translate(18.0, 4.0) scale(0.8)">
+            <g class="wikipedia-symbol"><g transform="translate(-287,-467)" style="fill:none;stroke:#000000;stroke-width:1px">
+		<path d="m 91.166271,19.719835 a 13.195118,13.068849 0 1 1 -26.390236,0 13.195118,13.068849 0 1 1 26.390236,0 z" transform="matrix(1.131591,0,0,1.1425243,281.27172,471.26198)"/>
+		<path d="m 77.497641,34.903691 0,46.056642 M 77.497641,80.392123 58.052204,96.933371 M 77.529208,80.392123 98.868681,95.860084 M 57.073619,47.49903 98.931815,47.46746" transform="translate(292,474.36218)"/>
+	</g></g>
+        </g>
+        
+        <text x="84" y="104.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            User
+        </text>
+        
+
+        <g transform="translate(18.0, 74.0) scale(0.8)">
+            <g class="wikipedia-symbol"><g transform="translate(-287,-467)" style="fill:none;stroke:#000000;stroke-width:1px">
+		<path d="m 91.166271,19.719835 a 13.195118,13.068849 0 1 1 -26.390236,0 13.195118,13.068849 0 1 1 26.390236,0 z" transform="matrix(1.131591,0,0,1.1425243,281.27172,471.26198)"/>
+		<path d="m 77.497641,34.903691 0,46.056642 M 77.497641,80.392123 58.052204,96.933371 M 77.529208,80.392123 98.868681,95.860084 M 57.073619,47.49903 98.931815,47.46746" transform="translate(292,474.36218)"/>
+	</g></g>
+        </g>
+        
+        <text x="84" y="174.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            Time
+        </text>
+        
+
+        <g transform="translate(746.0, 34.0) scale(0.8)">
+            <g class="wikipedia-symbol"><g transform="translate(-311,-471)" style="fill:none;stroke:#000000;stroke-width:1.6">
+		<path d="M 125.71429,31 A 56.07143,58.57143 0 1 1 13.57143,31 56.07143,58.57143 0 1 1 125.71429,31 z" transform="matrix(0.63648498,0,0,0.60931794,349.70591,514.92159)"/>
+		<path d="m 110.53571,14.303571 -10,9.196429 10,9.196429" transform="translate(292,474.7)" style="stroke-width:1px"/>
+	</g></g>
+        </g>
+        
+        <text x="812" y="134.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            SystemControlManager
+        </text>
+        
+
+        <g transform="translate(596.0, 256.0) scale(0.8)">
+            <g class="wikipedia-symbol"><g transform="translate(-311,-471)" style="fill:none;stroke:#000000;stroke-width:1.6">
+		<path d="M 125.71429,31 A 56.07143,58.57143 0 1 1 13.57143,31 56.07143,58.57143 0 1 1 125.71429,31 z" transform="matrix(0.63648498,0,0,0.60931794,349.70591,514.92159)"/>
+		<path d="m 110.53571,14.303571 -10,9.196429 10,9.196429" transform="translate(292,474.7)" style="stroke-width:1px"/>
+	</g></g>
+        </g>
+        
+        <text x="662.0" y="356.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            WaterLiquidManager
+        </text>
+        
+
+        <g transform="translate(696.0, 256.0) scale(0.8)">
+            <g class="wikipedia-symbol"><g transform="translate(-311,-471)" style="fill:none;stroke:#000000;stroke-width:1.6">
+		<path d="M 125.71429,31 A 56.07143,58.57143 0 1 1 13.57143,31 56.07143,58.57143 0 1 1 125.71429,31 z" transform="matrix(0.63648498,0,0,0.60931794,349.70591,514.92159)"/>
+		<path d="m 110.53571,14.303571 -10,9.196429 10,9.196429" transform="translate(292,474.7)" style="stroke-width:1px"/>
+	</g></g>
+        </g>
+        
+        <text x="762.0" y="356.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            FilterManager
+        </text>
+        
+
+        <g transform="translate(796.0, 256.0) scale(0.8)">
+            <g class="wikipedia-symbol"><g transform="translate(-311,-471)" style="fill:none;stroke:#000000;stroke-width:1.6">
+		<path d="M 125.71429,31 A 56.07143,58.57143 0 1 1 13.57143,31 56.07143,58.57143 0 1 1 125.71429,31 z" transform="matrix(0.63648498,0,0,0.60931794,349.70591,514.92159)"/>
+		<path d="m 110.53571,14.303571 -10,9.196429 10,9.196429" transform="translate(292,474.7)" style="stroke-width:1px"/>
+	</g></g>
+        </g>
+        
+        <text x="862.0" y="356.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            CoffeeSolidManager
+        </text>
+        
+
+        <g transform="translate(896.0, 256.0) scale(0.8)">
+            <g class="wikipedia-symbol"><g transform="translate(-311,-471)" style="fill:none;stroke:#000000;stroke-width:1.6">
+		<path d="M 125.71429,31 A 56.07143,58.57143 0 1 1 13.57143,31 56.07143,58.57143 0 1 1 125.71429,31 z" transform="matrix(0.63648498,0,0,0.60931794,349.70591,514.92159)"/>
+		<path d="m 110.53571,14.303571 -10,9.196429 10,9.196429" transform="translate(292,474.7)" style="stroke-width:1px"/>
+	</g></g>
+        </g>
+        
+        <text x="962.0" y="356.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            CupManager
+        </text>
+        
+
+        <g transform="translate(696.0, 578.0) scale(0.8)">
+            <g class="wikipedia-symbol"><g transform="translate(-311,-471)" style="fill:none;stroke:#000000;stroke-width:1.6">
+		<path d="M 125.71429,31 A 56.07143,58.57143 0 1 1 13.57143,31 56.07143,58.57143 0 1 1 125.71429,31 z" transform="matrix(0.63648498,0,0,0.60931794,349.70591,514.92159)"/>
+		<path d="m 110.53571,14.303571 -10,9.196429 10,9.196429" transform="translate(292,474.7)" style="stroke-width:1px"/>
+	</g></g>
+        </g>
+        
+        <text x="762.0" y="678.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            CoffeeLiquidManager
+        </text>
+        
+
+        <g transform="translate(796.0, 578.0) scale(0.8)">
+            <g class="wikipedia-symbol"><g transform="translate(-311,-471)" style="fill:none;stroke:#000000;stroke-width:1.6">
+		<path d="M 125.71429,31 A 56.07143,58.57143 0 1 1 13.57143,31 56.07143,58.57143 0 1 1 125.71429,31 z" transform="matrix(0.63648498,0,0,0.60931794,349.70591,514.92159)"/>
+		<path d="m 110.53571,14.303571 -10,9.196429 10,9.196429" transform="translate(292,474.7)" style="stroke-width:1px"/>
+	</g></g>
+        </g>
+        
+        <text x="862.0" y="678.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            MilkLiquidManager
+        </text>
+        
+
+        <g transform="translate(746.0, 800.0) scale(0.8)">
+            <g class="wikipedia-symbol"><g transform="translate(-311,-471)" style="fill:none;stroke:#000000;stroke-width:1.6">
+		<path d="M 125.71429,31 A 56.07143,58.57143 0 1 1 13.57143,31 56.07143,58.57143 0 1 1 125.71429,31 z" transform="matrix(0.63648498,0,0,0.60931794,349.70591,514.92159)"/>
+		<path d="m 110.53571,14.303571 -10,9.196429 10,9.196429" transform="translate(292,474.7)" style="stroke-width:1px"/>
+	</g></g>
+        </g>
+        
+        <text x="812" y="900.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            HMIManager
+        </text>
+        
+
+        <g transform="translate(746.0, 922.0) scale(0.8)">
+            <g class="wikipedia-symbol"><g transform="translate(-311,-471)" style="fill:none;stroke:#000000;stroke-width:1.6">
+		<path d="M 125.71429,31 A 56.07143,58.57143 0 1 1 13.57143,31 56.07143,58.57143 0 1 1 125.71429,31 z" transform="matrix(0.63648498,0,0,0.60931794,349.70591,514.92159)"/>
+		<path d="m 110.53571,14.303571 -10,9.196429 10,9.196429" transform="translate(292,474.7)" style="stroke-width:1px"/>
+	</g></g>
+        </g>
+        
+        <text x="812" y="1022.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            SugarSolidManager
+        </text>
+        
+
+        <g transform="translate(382.0, 54.0) scale(0.8)">
+            <g class="wikipedia-symbol"><g transform="translate(-292,-474.36218)" style="stroke:#000000;stroke-width:2px;fill:none">
+		<path d="m 60,36 a 40,35 0 1 1 -80,0 40,36 0 1 1 80,0 z" transform="matrix(0.89497716,0,0,0.97999997,377.52875,498.47344)" />
+		<path d="m 360,534 -24,0"/>
+		<path d="m 337,498 0,72"/>
+	</g></g>
+        </g>
+        
+        <text x="448" y="154.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            CoffeeBeansSupplyBoundary
+        </text>
+        
+
+        <g transform="translate(382.0, 154.0) scale(0.8)">
+            <g class="wikipedia-symbol"><g transform="translate(-292,-474.36218)" style="stroke:#000000;stroke-width:2px;fill:none">
+		<path d="m 60,36 a 40,35 0 1 1 -80,0 40,36 0 1 1 80,0 z" transform="matrix(0.89497716,0,0,0.97999997,377.52875,498.47344)" />
+		<path d="m 360,534 -24,0"/>
+		<path d="m 337,498 0,72"/>
+	</g></g>
+        </g>
+        
+        <text x="448" y="254.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            CoffeeSupplyBoundary
+        </text>
+        
+
+        <g transform="translate(382.0, 254.0) scale(0.8)">
+            <g class="wikipedia-symbol"><g transform="translate(-292,-474.36218)" style="stroke:#000000;stroke-width:2px;fill:none">
+		<path d="m 60,36 a 40,35 0 1 1 -80,0 40,36 0 1 1 80,0 z" transform="matrix(0.89497716,0,0,0.97999997,377.52875,498.47344)" />
+		<path d="m 360,534 -24,0"/>
+		<path d="m 337,498 0,72"/>
+	</g></g>
+        </g>
+        
+        <text x="448" y="354.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            WaterSupplyBoundary
+        </text>
+        
+
+        <g transform="translate(382.0, 354.0) scale(0.8)">
+            <g class="wikipedia-symbol"><g transform="translate(-292,-474.36218)" style="stroke:#000000;stroke-width:2px;fill:none">
+		<path d="m 60,36 a 40,35 0 1 1 -80,0 40,36 0 1 1 80,0 z" transform="matrix(0.89497716,0,0,0.97999997,377.52875,498.47344)" />
+		<path d="m 360,534 -24,0"/>
+		<path d="m 337,498 0,72"/>
+	</g></g>
+        </g>
+        
+        <text x="448" y="454.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            MilkSupplyBoundary
+        </text>
+        
+
+        <g transform="translate(382.0, 454.0) scale(0.8)">
+            <g class="wikipedia-symbol"><g transform="translate(-292,-474.36218)" style="stroke:#000000;stroke-width:2px;fill:none">
+		<path d="m 60,36 a 40,35 0 1 1 -80,0 40,36 0 1 1 80,0 z" transform="matrix(0.89497716,0,0,0.97999997,377.52875,498.47344)" />
+		<path d="m 360,534 -24,0"/>
+		<path d="m 337,498 0,72"/>
+	</g></g>
+        </g>
+        
+        <text x="448" y="554.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            SugarSupplyBoundary
+        </text>
+        
+
+        <g transform="translate(382.0, 554.0) scale(0.8)">
+            <g class="wikipedia-symbol"><g transform="translate(-292,-474.36218)" style="stroke:#000000;stroke-width:2px;fill:none">
+		<path d="m 60,36 a 40,35 0 1 1 -80,0 40,36 0 1 1 80,0 z" transform="matrix(0.89497716,0,0,0.97999997,377.52875,498.47344)" />
+		<path d="m 360,534 -24,0"/>
+		<path d="m 337,498 0,72"/>
+	</g></g>
+        </g>
+        
+        <text x="448" y="654.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            TimingBoundary
+        </text>
+        
+
+        <g transform="translate(382.0, 654.0) scale(0.8)">
+            <g class="wikipedia-symbol"><g transform="translate(-292,-474.36218)" style="stroke:#000000;stroke-width:2px;fill:none">
+		<path d="m 60,36 a 40,35 0 1 1 -80,0 40,36 0 1 1 80,0 z" transform="matrix(0.89497716,0,0,0.97999997,377.52875,498.47344)" />
+		<path d="m 360,534 -24,0"/>
+		<path d="m 337,498 0,72"/>
+	</g></g>
+        </g>
+        
+        <text x="448" y="754.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            MessageDisplayBoundary
+        </text>
+        
+
+        <g transform="translate(382.0, 754.0) scale(0.8)">
+            <g class="wikipedia-symbol"><g transform="translate(-292,-474.36218)" style="stroke:#000000;stroke-width:2px;fill:none">
+		<path d="m 60,36 a 40,35 0 1 1 -80,0 40,36 0 1 1 80,0 z" transform="matrix(0.89497716,0,0,0.97999997,377.52875,498.47344)" />
+		<path d="m 360,534 -24,0"/>
+		<path d="m 337,498 0,72"/>
+	</g></g>
+        </g>
+        
+        <text x="448" y="854.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            ProductDeliveryBoundary
+        </text>
+        
+
+        <g transform="translate(382.0, 854.0) scale(0.8)">
+            <g class="wikipedia-symbol"><g transform="translate(-292,-474.36218)" style="stroke:#000000;stroke-width:2px;fill:none">
+		<path d="m 60,36 a 40,35 0 1 1 -80,0 40,36 0 1 1 80,0 z" transform="matrix(0.89497716,0,0,0.97999997,377.52875,498.47344)" />
+		<path d="m 360,534 -24,0"/>
+		<path d="m 337,498 0,72"/>
+	</g></g>
+        </g>
+        
+        <text x="448" y="954.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            SugarRequestBoundary
+        </text>
+        
+
+        <g transform="translate(1110.0, 4.0) scale(0.8)">
+            <g class="wikipedia-symbol"><g transform="translate(-144,907)" style="fill:none;stroke:#000000;stroke-width:1.6">
+		<path d="M 125.71429,31 A 56.07143,58.57143 0 1 1 13.57143,31 56.07143,58.57143 0 1 1 125.71429,31 z" transform="matrix(0.63648498,0,0,0.60931794,180.56024,-868.23207)" />
+		<path d="m 68.7,95.472521 73,0.04277" transform="translate(119.71429,-908.49493)" style="stroke-width:1px"/>
+	</g></g>
+        </g>
+        
+        <text x="1176" y="104.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            CoffeeBeans
+        </text>
+        
+
+        <g transform="translate(1110.0, 94.0) scale(0.8)">
+            <g class="wikipedia-symbol"><g transform="translate(-144,907)" style="fill:none;stroke:#000000;stroke-width:1.6">
+		<path d="M 125.71429,31 A 56.07143,58.57143 0 1 1 13.57143,31 56.07143,58.57143 0 1 1 125.71429,31 z" transform="matrix(0.63648498,0,0,0.60931794,180.56024,-868.23207)" />
+		<path d="m 68.7,95.472521 73,0.04277" transform="translate(119.71429,-908.49493)" style="stroke-width:1px"/>
+	</g></g>
+        </g>
+        
+        <text x="1176" y="194.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            Coffee
+        </text>
+        
+
+        <g transform="translate(1110.0, 184.0) scale(0.8)">
+            <g class="wikipedia-symbol"><g transform="translate(-144,907)" style="fill:none;stroke:#000000;stroke-width:1.6">
+		<path d="M 125.71429,31 A 56.07143,58.57143 0 1 1 13.57143,31 56.07143,58.57143 0 1 1 125.71429,31 z" transform="matrix(0.63648498,0,0,0.60931794,180.56024,-868.23207)" />
+		<path d="m 68.7,95.472521 73,0.04277" transform="translate(119.71429,-908.49493)" style="stroke-width:1px"/>
+	</g></g>
+        </g>
+        
+        <text x="1176" y="284.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            Water
+        </text>
+        
+
+        <g transform="translate(1110.0, 274.0) scale(0.8)">
+            <g class="wikipedia-symbol"><g transform="translate(-144,907)" style="fill:none;stroke:#000000;stroke-width:1.6">
+		<path d="M 125.71429,31 A 56.07143,58.57143 0 1 1 13.57143,31 56.07143,58.57143 0 1 1 125.71429,31 z" transform="matrix(0.63648498,0,0,0.60931794,180.56024,-868.23207)" />
+		<path d="m 68.7,95.472521 73,0.04277" transform="translate(119.71429,-908.49493)" style="stroke-width:1px"/>
+	</g></g>
+        </g>
+        
+        <text x="1176" y="374.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            Milk
+        </text>
+        
+
+        <g transform="translate(1110.0, 364.0) scale(0.8)">
+            <g class="wikipedia-symbol"><g transform="translate(-144,907)" style="fill:none;stroke:#000000;stroke-width:1.6">
+		<path d="M 125.71429,31 A 56.07143,58.57143 0 1 1 13.57143,31 56.07143,58.57143 0 1 1 125.71429,31 z" transform="matrix(0.63648498,0,0,0.60931794,180.56024,-868.23207)" />
+		<path d="m 68.7,95.472521 73,0.04277" transform="translate(119.71429,-908.49493)" style="stroke-width:1px"/>
+	</g></g>
+        </g>
+        
+        <text x="1176" y="464.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            Sugar
+        </text>
+        
+
+        <g transform="translate(1110.0, 454.0) scale(0.8)">
+            <g class="wikipedia-symbol"><g transform="translate(-144,907)" style="fill:none;stroke:#000000;stroke-width:1.6">
+		<path d="M 125.71429,31 A 56.07143,58.57143 0 1 1 13.57143,31 56.07143,58.57143 0 1 1 125.71429,31 z" transform="matrix(0.63648498,0,0,0.60931794,180.56024,-868.23207)" />
+		<path d="m 68.7,95.472521 73,0.04277" transform="translate(119.71429,-908.49493)" style="stroke-width:1px"/>
+	</g></g>
+        </g>
+        
+        <text x="1176" y="554.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            HotWater
+        </text>
+        
+
+        <g transform="translate(1110.0, 544.0) scale(0.8)">
+            <g class="wikipedia-symbol"><g transform="translate(-144,907)" style="fill:none;stroke:#000000;stroke-width:1.6">
+		<path d="M 125.71429,31 A 56.07143,58.57143 0 1 1 13.57143,31 56.07143,58.57143 0 1 1 125.71429,31 z" transform="matrix(0.63648498,0,0,0.60931794,180.56024,-868.23207)" />
+		<path d="m 68.7,95.472521 73,0.04277" transform="translate(119.71429,-908.49493)" style="stroke-width:1px"/>
+	</g></g>
+        </g>
+        
+        <text x="1176" y="644.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            GroundCoffee
+        </text>
+        
+
+        <g transform="translate(1110.0, 634.0) scale(0.8)">
+            <g class="wikipedia-symbol"><g transform="translate(-144,907)" style="fill:none;stroke:#000000;stroke-width:1.6">
+		<path d="M 125.71429,31 A 56.07143,58.57143 0 1 1 13.57143,31 56.07143,58.57143 0 1 1 125.71429,31 z" transform="matrix(0.63648498,0,0,0.60931794,180.56024,-868.23207)" />
+		<path d="m 68.7,95.472521 73,0.04277" transform="translate(119.71429,-908.49493)" style="stroke-width:1px"/>
+	</g></g>
+        </g>
+        
+        <text x="1176" y="734.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            UserDefinedAmountOfCoffee
+        </text>
+        
+
+        <g transform="translate(1110.0, 724.0) scale(0.8)">
+            <g class="wikipedia-symbol"><g transform="translate(-144,907)" style="fill:none;stroke:#000000;stroke-width:1.6">
+		<path d="M 125.71429,31 A 56.07143,58.57143 0 1 1 13.57143,31 56.07143,58.57143 0 1 1 125.71429,31 z" transform="matrix(0.63648498,0,0,0.60931794,180.56024,-868.23207)" />
+		<path d="m 68.7,95.472521 73,0.04277" transform="translate(119.71429,-908.49493)" style="stroke-width:1px"/>
+	</g></g>
+        </g>
+        
+        <text x="1176" y="824.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            Cup
+        </text>
+        
+
+        <g transform="translate(1110.0, 814.0) scale(0.8)">
+            <g class="wikipedia-symbol"><g transform="translate(-144,907)" style="fill:none;stroke:#000000;stroke-width:1.6">
+		<path d="M 125.71429,31 A 56.07143,58.57143 0 1 1 13.57143,31 56.07143,58.57143 0 1 1 125.71429,31 z" transform="matrix(0.63648498,0,0,0.60931794,180.56024,-868.23207)" />
+		<path d="m 68.7,95.472521 73,0.04277" transform="translate(119.71429,-908.49493)" style="stroke-width:1px"/>
+	</g></g>
+        </g>
+        
+        <text x="1176" y="914.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            StorageContainer
+        </text>
+        
+
+        <g transform="translate(1110.0, 904.0) scale(0.8)">
+            <g class="wikipedia-symbol"><g transform="translate(-144,907)" style="fill:none;stroke:#000000;stroke-width:1.6">
+		<path d="M 125.71429,31 A 56.07143,58.57143 0 1 1 13.57143,31 56.07143,58.57143 0 1 1 125.71429,31 z" transform="matrix(0.63648498,0,0,0.60931794,180.56024,-868.23207)" />
+		<path d="m 68.7,95.472521 73,0.04277" transform="translate(119.71429,-908.49493)" style="stroke-width:1px"/>
+	</g></g>
+        </g>
+        
+        <text x="1176" y="1004.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            UserDefinedAmountOfWater
+        </text>
+        
+
+        <g transform="translate(1110.0, 994.0) scale(0.8)">
+            <g class="wikipedia-symbol"><g transform="translate(-144,907)" style="fill:none;stroke:#000000;stroke-width:1.6">
+		<path d="M 125.71429,31 A 56.07143,58.57143 0 1 1 13.57143,31 56.07143,58.57143 0 1 1 125.71429,31 z" transform="matrix(0.63648498,0,0,0.60931794,180.56024,-868.23207)" />
+		<path d="m 68.7,95.472521 73,0.04277" transform="translate(119.71429,-908.49493)" style="stroke-width:1px"/>
+	</g></g>
+        </g>
+        
+        <text x="1176" y="1094.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            Message
+        </text>
+        
+
+        <g transform="translate(1110.0, 1084.0) scale(0.8)">
+            <g class="wikipedia-symbol"><g transform="translate(-144,907)" style="fill:none;stroke:#000000;stroke-width:1.6">
+		<path d="M 125.71429,31 A 56.07143,58.57143 0 1 1 13.57143,31 56.07143,58.57143 0 1 1 125.71429,31 z" transform="matrix(0.63648498,0,0,0.60931794,180.56024,-868.23207)" />
+		<path d="m 68.7,95.472521 73,0.04277" transform="translate(119.71429,-908.49493)" style="stroke-width:1px"/>
+	</g></g>
+        </g>
+        
+        <text x="1176" y="1184.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            ErrorMessage
+        </text>
+        
+
+        <g transform="translate(1110.0, 1174.0) scale(0.8)">
+            <g class="wikipedia-symbol"><g transform="translate(-144,907)" style="fill:none;stroke:#000000;stroke-width:1.6">
+		<path d="M 125.71429,31 A 56.07143,58.57143 0 1 1 13.57143,31 56.07143,58.57143 0 1 1 125.71429,31 z" transform="matrix(0.63648498,0,0,0.60931794,180.56024,-868.23207)" />
+		<path d="m 68.7,95.472521 73,0.04277" transform="translate(119.71429,-908.49493)" style="stroke-width:1px"/>
+	</g></g>
+        </g>
+        
+        <text x="1176" y="1274.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            UserDefinedAmountOfSugar
+        </text>
+        
+
+        <g transform="translate(797.0, 187.0) scale(0.8)">
+            
+        <g class="diamond-symbol">
+            <path d="M 15 5 L 25 15 L 15 25 L 5 15 Z" 
+                  fill="none" stroke="purple" stroke-width="2"/>
+        </g>
+        
+        </g>
+        
+        <text x="812" y="225.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            P2_START
+        </text>
+        
+
+        <g transform="translate(797.0, 409.0) scale(0.8)">
+            
+        <g class="diamond-symbol">
+            <path d="M 15 5 L 25 15 L 15 25 L 5 15 Z" 
+                  fill="none" stroke="purple" stroke-width="2"/>
+        </g>
+        
+        </g>
+        
+        <text x="812" y="447.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            P2_END
+        </text>
+        
+
+        <g transform="translate(797.0, 509.0) scale(0.8)">
+            
+        <g class="diamond-symbol">
+            <path d="M 15 5 L 25 15 L 15 25 L 5 15 Z" 
+                  fill="none" stroke="purple" stroke-width="2"/>
+        </g>
+        
+        </g>
+        
+        <text x="812" y="547.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            P3_START
+        </text>
+        
+
+        <g transform="translate(797.0, 731.0) scale(0.8)">
+            
+        <g class="diamond-symbol">
+            <path d="M 15 5 L 25 15 L 15 25 L 5 15 Z" 
+                  fill="none" stroke="purple" stroke-width="2"/>
+        </g>
+        
+        </g>
+        
+        <text x="812" y="769.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            P3_END
+        </text>
+        
+
+        <line x1="812.0" y1="126.0" x2="812.0" y2="187.0" 
+              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
+        
+
+        <line x1="812.0" y1="439.0" x2="812.0" y2="509.0" 
+              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
+        
+
+        <line x1="111.79509256612877" y1="156.652869317972" x2="420.20490743387126" y2="563.347130682028" 
+              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
+        
+
+        <line x1="474.3792678407131" y1="562.3153316561242" x2="785.620732159287" y2="117.68466834387587" 
+              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
+        
+
+        <line x1="799.5192455849324" y1="210.32050294337844" x2="700.2743135395408" y2="276.48379097363943" 
+              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
+        
+
+        <line x1="697.6866849417453" y1="331.0251704192862" x2="800.3630375189961" y2="414.5352705154502" 
+              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
+        
+
+        <line x1="805.2917960675006" y1="215.41640786499875" x2="782.5718253929981" y2="260.8563492140039" 
+              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
+        
+
+        <line x1="779.4442772042586" y1="344.56403637839094" x2="806.3116487377417" y2="410.12042292008994" 
+              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
+        
+
+        <line x1="818.7082039324994" y1="215.41640786499875" x2="841.4281746070019" y2="260.8563492140039" 
+              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
+        
+
+        <line x1="844.5557227957414" y1="344.56403637839094" x2="817.6883512622583" y2="410.12042292008994" 
+              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
+        
+
+        <line x1="824.4807544150676" y1="210.32050294337844" x2="923.7256864604592" y2="276.48379097363943" 
+              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
+        
+
+        <line x1="926.3133150582547" y1="331.0251704192862" x2="823.6369624810039" y2="414.5352705154502" 
+              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
+        
+
+        <line x1="805.2917960675006" y1="537.4164078649987" x2="782.5718253929981" y2="582.8563492140039" 
+              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
+        
+
+        <line x1="779.4442772042586" y1="666.5640363783909" x2="806.3116487377417" y2="732.1204229200899" 
+              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
+        
+
+        <line x1="818.7082039324994" y1="537.4164078649987" x2="841.4281746070019" y2="582.8563492140039" 
+              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
+        
+
+        <line x1="844.5557227957414" y1="666.5640363783909" x2="817.6883512622583" y2="732.1204229200899" 
+              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
+        
+
+        <line x1="812.0" y1="761.0" x2="812.0" y2="800.0" 
+              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
+        
+
+        <line x1="824.2275095522511" y1="801.6548986905024" x2="949.7724904477489" y2="346.34510130949764" 
+              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
+        
+
+        <line x1="106.47575497086478" y1="90.13527673368712" x2="425.5242450291352" y2="659.8647232663129" 
+              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
+        
+
+        <line x1="490.6937306349432" y1="717.1244084414882" x2="769.3062693650568" y2="828.8755915585118" 
+              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
+        
+
+        <line x1="104.08482549720155" y1="91.38356901895924" x2="427.91517450279844" y2="758.6164309810408" 
+              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
+        
+
+        <line x1="493.6370251219945" y1="805.7673163615707" x2="766.3629748780055" y2="840.2326836384293" 
+              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
+        
+
+        <line x1="824.2275095522511" y1="801.6548986905024" x2="949.7724904477489" y2="346.34510130949764" 
+              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
+        
+
+        <line x1="674.2275095522511" y1="346.34510130949764" x2="799.7724904477489" y2="801.6548986905024" 
+              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
+        
+
+        <line x1="106.47575497086478" y1="90.13527673368712" x2="425.5242450291352" y2="659.8647232663129" 
+              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
+        
+
+        <line x1="490.6937306349432" y1="717.1244084414882" x2="769.3062693650568" y2="828.8755915585118" 
+              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
+        
+
+        <line x1="851.8928190960984" y1="668.875883213323" x2="822.1071809039016" y2="801.124116786677" 
+              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
+        
+
+        <line x1="106.47575497086478" y1="90.13527673368712" x2="425.5242450291352" y2="659.8647232663129" 
+              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
+        
+
+        <line x1="490.6937306349432" y1="717.1244084414882" x2="769.3062693650568" y2="828.8755915585118" 
+              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
+        
+
+        <line x1="812" y1="80" x2="812" y2="80" 
+              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
+        
+
+        <line x1="102.10827886135317" y1="92.28581602239065" x2="429.89172113864686" y2="857.7141839776093" 
+              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
+        
+
+        <line x1="493.5020160248136" y1="893.2497009193958" x2="766.4979839751863" y2="852.7502990806042" 
+              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
+        
+
+        <line x1="812.0" y1="892.0" x2="812.0" y2="922.0" 
+              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
+        
+
+        <line x1="1130.4447665663781" y1="236.38127783505988" x2="707.5552334336218" y2="295.61872216494015" 
+              stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
+        
+
+        <line x1="1130.4447665663781" y1="236.38127783505988" x2="707.5552334336218" y2="295.61872216494015" 
+              stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
+        
+
+        <line x1="704.9252825423987" y1="318.53542012333645" x2="1133.0747174576013" y2="483.46457987666355" 
+              stroke="green" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#greenarrowhead)"/>
+        
+
+
+
+        <line x1="1140.1246644073328" y1="78.79167060303223" x2="897.8753355926672" y2="273.20832939696777" 
+              stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
+        
+
+        <line x1="895.9001261411393" y1="333.09310932690477" x2="1142.0998738588607" y2="558.9068906730953" 
+              stroke="green" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#greenarrowhead)"/>
+        
+
+        <line x1="1146.6067982109305" y1="644.6158271456426" x2="891.3932017890694" y2="337.3841728543574" 
+              stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
+        
+
+        <line x1="1159.5282327152681" y1="817.0502516594377" x2="978.4717672847318" y2="344.94974834056234" 
+              stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
+        
+
+        <line x1="981.1291738622349" y1="343.83389424077546" x2="1156.870826137765" y2="728.1661057592245" 
+              stroke="green" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#greenarrowhead)"/>
+        
+
+        <line x1="1139.8596687695785" y1="921.5416715431946" x2="798.1403312304216" y2="652.4583284568054" 
+              stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
+        
+
+        <line x1="1132.6185770171253" y1="754.7012373055562" x2="805.3814229828748" y2="639.2987626944438" 
+              stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
+        
+
+        <line x1="1130.1543458256265" y1="593.7651020336442" x2="807.8456541743735" y2="620.2348979663558" 
+              stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
+        
+
+        <line x1="1131.934136165126" y1="513.1984712935372" x2="806.0658638348742" y2="610.8015287064628" 
+              stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
+        
+
+
+        <line x1="791.9007004406078" y1="589.0436255718498" x2="1146.0992995593922" y2="174.9563744281502" 
+              stroke="green" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#greenarrowhead)"/>
+        
+
+        <line x1="1142.6781728121625" y1="261.71207708214484" x2="795.3218271878375" y2="592.2879229178552" 
+              stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
+        
+
+        <line x1="1134.2884665252138" y1="750.6054653270103" x2="903.711533474786" y2="643.3945346729897" 
+              stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
+        
+
+        <line x1="1142.9510889808982" y1="351.9963979293215" x2="895.0489110191019" y2="592.0036020706785" 
+              stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
+        
+
+        <line x1="1150.9641757402567" y1="178.59025140673805" x2="887.0358242597433" y2="585.409748593262" 
+              stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
+        
+
+        <line x1="887.0358242597433" y1="585.409748593262" x2="1150.9641757402567" y2="178.59025140673805" 
+              stroke="green" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#greenarrowhead)"/>
+        
+
+        <line x1="1135.4055920676774" y1="1018.3645188492566" x2="852.5944079323227" y2="867.6354811507434" 
+              stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
+        
+
+        <line x1="1156.870826137765" y1="728.1661057592245" x2="981.1291738622349" y2="343.83389424077546" 
+              stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
+        
+
+        <line x1="1139.7327597436965" y1="1101.703581778049" x2="848.2672402563035" y2="874.2964182219511" 
+              stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
+        
+
+        <line x1="1139.7327597436965" y1="1101.703581778049" x2="848.2672402563035" y2="874.2964182219511" 
+              stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
+        
+
+        <line x1="1150.8674699254263" y1="448.527340059374" x2="837.1325300745738" y2="929.4726599406259" 
+              stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
+        
+
+        <line x1="1135.5913754686308" y1="791.9805155417888" x2="852.4086245313694" y2="946.0194844582112" 
+              stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
+        
+
+        <line x1="1138.1791591843862" y1="1193.8163409738058" x2="849.8208408156138" y2="994.1836590261942" 
+              stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
+        
+
+        <line x1="1157.4876595886324" y1="182.11048862805612" x2="830.5123404113676" y2="925.8895113719439" 
+              stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
+        
+
+        <line x1="830.5123404113676" y1="925.8895113719439" x2="1157.4876595886324" y2="182.11048862805612" 
+              stroke="green" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#greenarrowhead)"/>
+        
+</svg>

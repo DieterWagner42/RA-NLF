@@ -4,7 +4,7 @@ Test UC1 + UC2 multi-UC analysis with generic analyzer
 """
 
 from pathlib import Path
-from generic_uc_analyzer import GenericUCAnalyzer
+from oldpy.generic_uc_analyzer import GenericUCAnalyzer
 
 def test_uc1_uc2_analysis():
     """Test UC1 + UC2 multi-UC analysis"""

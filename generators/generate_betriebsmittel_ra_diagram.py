@@ -11,7 +11,7 @@ from pathlib import Path
 # Add src directory to path
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
 
-from generic_uc_analyzer import GenericUCAnalyzer
+from oldpy.generic_uc_analyzer import GenericUCAnalyzer
 import subprocess
 
 def generate_betriebsmittel_ra_diagram():
