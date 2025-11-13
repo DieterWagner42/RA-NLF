@@ -236,7 +236,116 @@ class StructuredUCAnalyzer:
         
         # Generated contexts tracking
         self.generated_contexts: Dict[str, List[GeneratedContext]] = {}
-        
+
+    def _load_domain_materials(self) -> Dict[str, List[str]]:
+        """
+        Load domain materials from domain configuration (GENERIC!)
+
+        Returns:
+            Dictionary mapping base_name -> list of variants
+            Example: {'coffee': ['coffee', 'espresso', 'latte'], ...}
+        """
+        # Get domain config
+        domain_config = self.verb_loader.domain_configs.get(self.domain_name, {})
+        domain_materials_config = domain_config.get('domain_materials', {})
+
+        # Build material dictionary
+        materials = {}
+        for material_key, material_data in domain_materials_config.items():
+            base_name = material_data.get('base_name', material_key)
+            variants = material_data.get('variants', [material_key])
+            materials[base_name] = variants
+
+        return materials
+
+    def _load_common_controllers(self) -> List[dict]:
+        """
+        Load common controllers from common_domain.json (GENERIC!)
+
+        Returns:
+            List of controller definitions sorted by priority
+            Example: [{'name': 'HMIManager', 'keywords': [...], 'verbs': [...], 'priority': 100}, ...]
+        """
+        # Get common domain config
+        common_config = self.verb_loader.domain_configs.get('common_domain', {})
+        common_controllers_config = common_config.get('common_controllers', {}).get('controllers', {})
+
+        # Build controller list
+        controllers = []
+        for controller_name, controller_data in common_controllers_config.items():
+            controllers.append({
+                'name': controller_name,
+                'description': controller_data.get('description', ''),
+                'keywords': controller_data.get('keywords', []),
+                'verbs': controller_data.get('verbs', []),
+                'priority': controller_data.get('priority', 0)
+            })
+
+        # Sort by priority (highest first)
+        controllers.sort(key=lambda x: x['priority'], reverse=True)
+
+        return controllers
+
+    def _is_control_action_verb(self, verb_lemma: str) -> bool:
+        """
+        Check if verb is a control action verb (stop, switch, pause, etc.)
+        These verbs represent internal state changes and do NOT produce entities.
+
+        Args:
+            verb_lemma: Lemmatized verb (e.g., "stop", "switch")
+
+        Returns:
+            True if verb is a control action verb, False otherwise
+        """
+        # Get common domain config
+        common_config = self.verb_loader.domain_configs.get('common_domain', {})
+        control_action_verbs = common_config.get('control_action_verbs', {}).get('verbs', {})
+
+        return verb_lemma in control_action_verbs
+
+    def _is_gerund_action_phrase(self, entity_name: str, original_phrase: str) -> bool:
+        """
+        Check if entity name is a gerund action phrase (verb-ing + noun).
+        These describe actions, not entities.
+
+        Examples:
+            "brewing coffee" -> True (action, not entity)
+            "heating water" -> True (action, not entity)
+            "ground coffee" -> False (entity, not action)
+
+        Args:
+            entity_name: Cleaned entity name (e.g., "BrewingCoffee")
+            original_phrase: Original phrase (e.g., "brewing coffee")
+
+        Returns:
+            True if this is a gerund action phrase, False otherwise
+        """
+        if not original_phrase or not self.nlp:
+            return False
+
+        # Parse the original phrase
+        doc = self.nlp(original_phrase.lower())
+
+        # Check if first token is a gerund (VBG) that represents a function/transformation
+        if len(doc) >= 2:
+            first_token = doc[0]
+            # Check if first word is a verb in gerund form (VBG)
+            if first_token.tag_ == 'VBG' or (first_token.pos_ == 'VERB' and first_token.text.endswith('ing')):
+                # Check if this verb is a known transformation or function verb
+                verb_lemma = first_token.lemma_
+
+                # Check if it's a transformation verb
+                transformation = self.verb_loader.get_transformation_for_verb(verb_lemma, self.domain_name)
+                if transformation:
+                    return True  # It's a transformation action, not an entity
+
+                # Check if it's a known function verb
+                verb_type = self._classify_verb(verb_lemma)
+                if verb_type in [VerbType.TRANSFORMATION_VERB, VerbType.FUNCTION_VERB]:
+                    return True  # It's a function action, not an entity
+
+        return False
+
     def _load_spacy(self):
         """Load spaCy model"""
         try:
@@ -335,17 +444,12 @@ class StructuredUCAnalyzer:
             return (state_name, warnings)
     
     def _get_default_material_state(self, material_name: str) -> Optional[str]:
-        """Get default physical state for materials when context is unclear"""
-        defaults = {
-            'water': 'liquid',
-            'milk': 'liquid', 
-            'coffee': 'liquid',  # Default to liquid coffee unless grinding context
-            'sugar': 'solid',
-            'salt': 'solid',
-            'oil': 'liquid',
-            'steam': 'gas',
-            'air': 'gas'
-        }
+        """Get default physical state for materials from domain JSON configuration"""
+        if self.domain_name not in self.verb_loader.domain_configs:
+            return None
+            
+        domain_config = self.verb_loader.domain_configs[self.domain_name]
+        defaults = domain_config.get('default_material_states', {})
         return defaults.get(material_name)
     
     def _generate_aggregation_controller_name(self, material_name: str, aggregation_state: str) -> str:
@@ -361,82 +465,69 @@ class StructuredUCAnalyzer:
     
     def _spell_correct_text(self, text: str) -> str:
         """
-        Apply spell correction to text using domain-specific vocabulary
-        
+        Apply GENERIC spell correction using pyspellchecker (NO domain-specific hard-coding!)
+
         Args:
             text: Text to correct
-            
+
         Returns:
             Spell-corrected text
         """
-        # Get domain-specific vocabulary
-        domain_config = self.verb_loader.domain_configs[self.domain_name]
-        material_contexts = domain_config.get('material_specific_contexts', {})
-        aggregation_states = domain_config.get('aggregation_states', {})
-        
-        # Build correction vocabulary
-        correction_vocabulary = {}
-        
-        # Add materials and their common variations
-        for material_name, context in material_contexts.items():
-            # Common misspellings for materials
-            if material_name == "coffee":
-                correction_vocabulary.update({
-                    "coffe": "coffee",
-                    "cofee": "coffee", 
-                    "cofffe": "coffee",
-                    "coffie": "coffee"
-                })
-            elif material_name == "milk":
-                correction_vocabulary.update({
-                    "melk": "milk",
-                    "milc": "milk"
-                })
-            elif material_name == "water":
-                correction_vocabulary.update({
-                    "watter": "water",
-                    "watr": "water"
-                })
-            
-            # Add indicators with common misspellings
-            solid_indicators = context.get('solid_indicators', [])
-            for indicator in solid_indicators:
-                if indicator == "beans":
-                    correction_vocabulary.update({
-                        "beens": "beans",
-                        "bens": "beans",
-                        "bean": "beans"  # plural correction
-                    })
-                elif indicator == "grind":
-                    correction_vocabulary.update({
-                        "grind": "grind",
-                        "grinding": "grinding",
-                        "grinds": "grind"
-                    })
-        
-        # Add aggregation state keywords
-        for state_name, state_config in aggregation_states.items():
-            keywords = state_config.get('specific_keywords', [])
-            for keyword in keywords:
-                if keyword == "powder":
-                    correction_vocabulary.update({
-                        "powdr": "powder",
-                        "poweder": "powder"
-                    })
-        
-        # Apply corrections
-        corrected_text = text
-        for misspelling, correction in correction_vocabulary.items():
-            # Use word boundary matching to avoid partial replacements
+        try:
+            from spellchecker import SpellChecker
+
+            # Initialize English spell checker (generic!)
+            spell = SpellChecker()
+
+            # Split text into words while preserving structure
             import re
-            pattern = r'\b' + re.escape(misspelling) + r'\b'
-            corrected_text = re.sub(pattern, correction, corrected_text, flags=re.IGNORECASE)
-        
-        # Log corrections if any were made
-        if corrected_text != text:
-            print(f"[SPELL CORRECTION] '{text}' -> '{corrected_text}'")
-        
-        return corrected_text
+            words = re.findall(r'\b\w+\b', text)
+
+            # Check and correct each word (with context awareness)
+            corrections_made = {}
+            for i, word in enumerate(words):
+                # Skip short words, numbers, and capitalized words (likely proper nouns)
+                if len(word) < 3 or word.isdigit() or word[0].isupper():
+                    continue
+
+                # CONTEXT-AWARE CORRECTION: Check for common patterns
+                # Pattern: "coffee beens" should become "coffee beans" (not "coffee been")
+                if word.lower() == "beens" and i > 0:
+                    # Get previous word
+                    prev_word = words[i - 1].lower()
+                    # Common materials that pair with "beans" (include common misspellings!)
+                    material_terms = ['coffee', 'coffe', 'cofee', 'cocoa', 'cacao', 'soy', 'vanilla']
+                    if prev_word in material_terms:
+                        # Force correction to "beans" instead of "been"
+                        corrections_made[word] = "beans"
+                        continue
+
+                # Get standard correction if word is misspelled
+                corrected = spell.correction(word.lower())
+                if corrected and corrected != word.lower():
+                    corrections_made[word] = corrected
+
+            # Apply corrections to text
+            corrected_text = text
+            for misspelling, correction in corrections_made.items():
+                # Use word boundary matching to avoid partial replacements
+                pattern = r'\b' + re.escape(misspelling) + r'\b'
+                corrected_text = re.sub(pattern, correction, corrected_text, flags=re.IGNORECASE)
+
+            # Log corrections if any were made
+            if corrections_made:
+                print(f"[SPELL CORRECTION] '{text}' -> '{corrected_text}'")
+
+            return corrected_text
+
+        except ImportError:
+            # If pyspellchecker not installed, return text unchanged
+            # User can install: pip install pyspellchecker
+            return text
+        except Exception as e:
+            # If spell check fails, return original text
+            print(f"[SPELL CHECK ERROR] {e}")
+            return text
     
     def _detect_material_state_controller(self, text_lower: str, verb_lemma: str) -> Optional[str]:
         """
@@ -541,10 +632,13 @@ class StructuredUCAnalyzer:
         
         # Post-processing: Generate control flows
         self._generate_control_flows()
-        
+
+        # Post-processing: Generate Actor-Boundary and Boundary-Controller flows
+        self._generate_actor_boundary_flows()
+
         # Post-processing: Parallel flows are now detected inline during analysis
         # self._detect_parallel_flows()  # No longer needed
-        
+
         # Post-processing: Error detection and suggestions
         self._detect_errors_and_suggestions()
         
@@ -806,6 +900,11 @@ class StructuredUCAnalyzer:
         clean_text = re.sub(r'^[BAEF]\d+[a-z]?\s*', '', line_text)
         clean_text = re.sub(r'^\(.*?\)\s*', '', clean_text)  # Remove (trigger) etc.
         
+        # Remove alternative/extension flow trigger patterns
+        clean_text = re.sub(r'^at\s+[BAEF]\d+[a-z]?\s*', '', clean_text)  # Remove "at B2a"
+        clean_text = re.sub(r'^at\s+any\s+time\s*', '', clean_text)      # Remove "at any time"
+        clean_text = re.sub(r'^[BAEF]\d+[a-z]?-[BAEF]\d+[a-z]?\s*', '', clean_text)  # Remove "B3-B5"
+        
         # Process with spaCy
         doc = self.nlp(clean_text)
         
@@ -858,7 +957,21 @@ class StructuredUCAnalyzer:
             analysis.direct_object = ""
         
         # Find prepositional objects
-        analysis.prepositional_objects = self._find_prepositional_objects(main_verb_token) if main_verb_token else []
+        # IMPORTANT: Also search in xcomp/ccomp verbs (e.g., "begins brewing")
+        analysis.prepositional_objects = []
+        if main_verb_token:
+            # Get prep objects from main verb
+            analysis.prepositional_objects = self._find_prepositional_objects(main_verb_token)
+
+            # Also search in complement verbs (xcomp, ccomp)
+            for child in main_verb_token.children:
+                if child.dep_ in ['xcomp', 'ccomp'] and child.pos_ == 'VERB':
+                    # Get prep objects from complement verb
+                    complement_preps = self._find_prepositional_objects(child)
+                    # Merge with main verb preps (avoid duplicates)
+                    for prep in complement_preps:
+                        if prep not in analysis.prepositional_objects:
+                            analysis.prepositional_objects.append(prep)
         
         return analysis
     
@@ -915,16 +1028,29 @@ class StructuredUCAnalyzer:
                 if pattern.lower() not in {'the system', 'all subsystems'} and len(pattern.split()) == 2:
                     technical_patterns.append(pattern)
             
-            # Pattern: Noun + "defined" + Noun (like "user defined time")
-            # Priority: Use the SECOND noun as the main entity, not the first
-            if (i + 2 < len(doc) and 
-                token.pos_ == "NOUN" and 
-                doc[i + 1].lemma_.lower() == "define" and 
+            # Pattern: [Modifier] + "defined" + Noun (like "user defined", "pre defined", "system defined")
+            # IMPORTANT: Check for "of" phrases after the noun (e.g., "amount of coffee beans")
+            # Supports: NOUN (user, system, factory), ADJ (pre), ADV (automatically)
+            if (i + 2 < len(doc) and
+                token.pos_ in ["NOUN", "ADJ", "ADV"] and
+                doc[i + 1].lemma_.lower() == "define" and
                 doc[i + 2].pos_ == "NOUN"):
-                # For "user defined time", we want "time" as the main entity
-                main_entity = doc[i + 2].text  # "time"
+                # Build the full phrase including modifiers and "of" phrases
+                # Start with "user defined amount"
                 modifier = token.text  # "user"
-                compound_with_priority = f"{modifier} {doc[i + 1].text} {main_entity}"
+                main_entity = doc[i + 2].text  # "amount"
+                phrase_parts = [modifier, doc[i + 1].text, main_entity]
+
+                # Check if there's an "of" phrase following (e.g., "of coffee beans")
+                if i + 3 < len(doc) and doc[i + 3].text.lower() == "of" and doc[i + 3].pos_ == "ADP":
+                    phrase_parts.append("of")
+                    # Add all nouns after "of" (handles compound nouns like "coffee beans")
+                    j = i + 4
+                    while j < len(doc) and doc[j].pos_ in ['NOUN', 'PROPN']:
+                        phrase_parts.append(doc[j].text)
+                        j += 1
+
+                compound_with_priority = " ".join(phrase_parts)
                 technical_patterns.append(compound_with_priority)
                 # Also add just the main entity to ensure it gets priority
                 technical_patterns.append(main_entity)
@@ -1011,15 +1137,17 @@ class StructuredUCAnalyzer:
             return direct_objects[0][1]
         
         # Multiple direct objects: prioritize based on semantic importance
-        # Priority 1: Look for compound phrases containing domain-relevant terms
-        domain_terms = ["time", "temperature", "pressure", "amount", "level", "degree", "coffee", "water", "milk"]
+        # Priority 1: Look for compound phrases containing domain-relevant terms from JSON
+        domain_config = self.verb_loader.domain_configs.get(self.domain_name, {})
+        priority_terms = domain_config.get('priority_terms', [])
+        
         for token, expanded in direct_objects:
-            if any(term in expanded.lower() for term in domain_terms):
+            if any(term in expanded.lower() for term in priority_terms):
                 # Clean up compound terms: extract the core noun from phrases like "user defined time"
                 expanded_lower = expanded.lower()
-                for term in domain_terms:
+                for term in priority_terms:
                     if term in expanded_lower:
-                        # If we find a domain term, use just that term (e.g., "time" from "user defined time")
+                        # If we find a priority term, use just that term (e.g., "time" from "user defined time")
                         return term
                 return expanded
         
@@ -1029,29 +1157,188 @@ class StructuredUCAnalyzer:
         return rightmost_obj[1]
     
     def _find_prepositional_objects(self, verb_token) -> List[Tuple[str, str]]:
-        """Find prepositional objects (preposition, object)"""
+        """Find prepositional objects (preposition, object) - searches recursively"""
         if not verb_token:
             return []
-        
+
         prep_objects = []
-        for child in verb_token.children:
-            if child.dep_ == "prep":
-                prep = child.text
-                # Find the object of the preposition
-                for prep_child in child.children:
-                    if prep_child.dep_ == "pobj":
-                        obj = self._expand_noun_phrase(prep_child)
-                        prep_objects.append((prep, obj))
-        
+
+        # Helper function for recursive search
+        def extract_preps(token, depth=0):
+            """Recursively extract prepositional phrases from token and its children"""
+            if depth > 3:  # Limit recursion depth
+                return
+
+            for child in token.children:
+                if child.dep_ == "prep":
+                    prep = child.text
+                    # Find the object of the preposition
+                    for prep_child in child.children:
+                        if prep_child.dep_ == "pobj":
+                            obj = self._expand_noun_phrase(prep_child)
+                            prep_objects.append((prep, obj))
+                            # Recursively search in the prepositional object
+                            extract_preps(prep_child, depth + 1)
+
+                # Also search in direct/indirect objects for nested prepositions
+                elif child.dep_ in ["dobj", "pobj", "attr", "compound"]:
+                    extract_preps(child, depth + 1)
+
+        # Start recursive search from verb
+        extract_preps(verb_token)
+
         return prep_objects
     
     def _expand_noun_phrase(self, token) -> str:
-        """Expand a token to its full noun phrase"""
-        # Get the noun chunk that contains this token
+        """Expand a token to its full noun phrase, including modifiers and complements"""
+        # Strategy 1: Try span-based extraction for prepositional objects and direct objects
+        # This handles complex phrases like "the user defined amount of water"
+
+        doc = token.doc
+
+        # FILTER: Skip actor subjects like "system", "user" when they are subjects of the main verb
+        # Example: "The system grinds..." -> "system" should NOT be an entity
+        if token.dep_ == 'nsubj' and token.head.dep_ == 'ROOT':
+            # Check if this is a known actor/system term
+            actor_terms = ['system', 'user', 'actor', 'operator', 'administrator', 'developer']
+            if token.text.lower() in actor_terms:
+                return ""  # Don't expand actor subjects
+
+        # IMPORTANT: First, expand BACKWARDS to capture modifiers BEFORE the noun
+        # This captures "user defined" before "amount"
+        start_idx = token.i
+
+        # Look backwards for modifiers - continue until we hit a clear boundary
+        # IMPORTANT: We want to capture "user defined" before "amount"
+        i = token.i - 1
+
+        while i >= 0:
+            t = doc[i]
+
+            # Always include: DET, ADJ, NOUN (they're part of noun phrases)
+            if t.pos_ in ['DET', 'ADJ', 'NOUN']:
+                start_idx = i
+                i -= 1
+                continue
+
+            # IMPORTANT: Check for ROOT verbs FIRST (before including other verbs)
+            # Stop at main clause verbs (ROOT) - these are the main action, not modifiers
+            # Example: "grinds" in "grinds the user defined amount" is ROOT - STOP
+            if t.pos_ == 'VERB' and t.dep_ == 'ROOT':
+                break
+
+            # Include VERBs that act as modifiers (past participles, etc.)
+            # This includes "defined" in "user defined amount" (defined is NOT ROOT)
+            if t.pos_ == 'VERB':
+                start_idx = i
+                i -= 1
+                continue
+
+            # Stop at clear boundaries: prepositions, punctuation, conjunctions
+            if t.pos_ in ['ADP', 'PUNCT', 'CCONJ', 'SCONJ']:
+                break
+
+            # Default: stop
+            break
+
+        # Check if this token is a prepositional/direct object, or subject (for "of" phrases)
+        # IMPORTANT: Include "nsubj" to handle cases like "amount of water" where spaCy
+        # misparsed "amount" as subject due to spelling errors in following words
+        if token.dep_ in ["pobj", "dobj", "nsubj"]:
+            end_idx = token.i + 1   # At least include the token
+
+            # Extend span to include following modifiers/complements
+            # IMPORTANT: Include "of" phrases (e.g., "amount of water")
+            i = token.i + 1
+            while i < len(doc):
+                t = doc[i]
+
+                # Special handling for "of" - include the FULL prepositional phrase
+                # Example: "amount of coffee beans" should include ALL of "of coffee beans"
+                if t.text.lower() == "of" and t.pos_ == "ADP":
+                    # Include "of"
+                    end_idx = i + 1
+                    i += 1
+
+                    # Skip determiners after "of"
+                    while i < len(doc) and doc[i].pos_ == 'DET':
+                        end_idx = i + 1
+                        i += 1
+
+                    # Include ALL compound nouns + final noun
+                    # Example: "coffee beans" where "coffee" (compound) + "beans" (pobj)
+                    # Keep including NOUNs until we hit a non-noun
+                    while i < len(doc) and doc[i].pos_ in ['NOUN', 'PROPN']:
+                        end_idx = i + 1
+                        i += 1
+
+                    continue
+
+                # Stop at other prepositions (except "of"), punctuation, or main verb
+                if t.pos_ in ['ADP', 'PUNCT'] or (t.pos_ == 'VERB' and t.dep_ == 'ROOT'):
+                    break
+                # Stop at adverbs that typically mark boundaries (directly, then, etc.)
+                if t.pos_ == 'ADV' and t.dep_ == 'advmod':
+                    break
+                # Include if it's part of a noun phrase, adjective, or participle
+                if t.pos_ in ['NOUN', 'PROPN', 'ADJ', 'DET', 'VERB']:
+                    end_idx = i + 1
+                    i += 1
+                else:
+                    break
+
+            # Extract the span
+            span_text = doc[start_idx:end_idx].text
+            if span_text and len(span_text) > len(token.text):
+                return span_text
+
+        # Strategy 2: Use noun chunks as fallback
+        base_phrase = None
         for chunk in token.doc.noun_chunks:
             if token in chunk:
-                return chunk.text
-        return token.text
+                base_phrase = chunk.text
+                break
+
+        if not base_phrase:
+            base_phrase = token.text
+
+        # Strategy 3: Dependency-based expansion for complex structures
+        collected_tokens = []
+
+        def collect_subtree(t, visited=None):
+            """Recursively collect tokens that form a coherent noun phrase"""
+            if visited is None:
+                visited = set()
+            if t.i in visited:
+                return
+            visited.add(t.i)
+
+            collected_tokens.append((t.i, t.text))
+
+            # Include modifiers: amod (adjectives), compound, nmod, etc.
+            for child in t.children:
+                if child.dep_ in ['amod', 'compound', 'nmod', 'nummod', 'det', 'poss', 'advmod']:
+                    collect_subtree(child, visited)
+                # Include complements: "grinding" in "grinding degree"
+                elif child.dep_ in ['acomp', 'xcomp', 'acl', 'advcl']:
+                    collect_subtree(child, visited)
+
+            # Include head if it's part of the phrase
+            if t.head and t.dep_ in ['amod', 'compound', 'nmod', 'poss']:
+                if t.head.pos_ in ['NOUN', 'PROPN']:
+                    collect_subtree(t.head, visited)
+
+        collect_subtree(token)
+
+        # Sort by position and reconstruct phrase
+        if collected_tokens:
+            collected_tokens.sort(key=lambda x: x[0])
+            expanded = ' '.join([t[1] for t in collected_tokens])
+            # Return expanded version if it's longer and meaningful
+            if len(expanded) > len(base_phrase):
+                return expanded
+
+        return base_phrase
     
     # Placeholder methods - will implement in next steps
     def _generate_ra_classes_for_line(self, line_text: str, line_type: LineType, step_id: str, grammatical: GrammaticalAnalysis, step_context: StepContext = None) -> List[RAClass]:
@@ -1078,16 +1365,26 @@ class StructuredUCAnalyzer:
         if not step_id:
             return ra_classes
         
-        # 3. Generate Controller (always for steps with verbs) - now with context
+        # Check if this is a TRIGGER step (B1 or contains "(trigger)")
+        # Triggers have ONLY Boundary - NO Controller, NO Entities, NO Data Flows
+        is_trigger = step_id == "B1" or "(trigger)" in line_text.lower()
+
+        if is_trigger:
+            # TRIGGER: Only generate Boundary (Actor -> Boundary signal)
+            boundaries = self._generate_boundaries_for_step(step_id, grammatical, line_text)
+            ra_classes.extend(boundaries)
+            return ra_classes  # Return early - no controller, no entities for triggers
+
+        # 3. Generate Controller (only for NON-trigger steps with verbs)
         if grammatical.main_verb:
             controller = self._generate_controller_for_step(step_id, grammatical, step_context, line_text)
             if controller:
                 ra_classes.append(controller)
-        
+
         # 4. Generate Entities from objects and compound nouns
         entities = self._generate_entities_for_step(step_id, grammatical, line_text)
         ra_classes.extend(entities)
-        
+
         # 5. Generate Boundaries based on Actor + Transaction Verb rule
         boundaries = self._generate_boundaries_for_step(step_id, grammatical, line_text)
         ra_classes.extend(boundaries)
@@ -1207,22 +1504,88 @@ class StructuredUCAnalyzer:
         """Generate Controller using domain-agnostic approach from generic_uc_analyzer.py"""
         if not grammatical.main_verb:
             return None
-        
+
+        # SPECIAL HANDLING: Control action verbs (stop, switch, pause, etc.)
+        # GENERIC RULE: Search ENTIRE line text for material references
+        # - "switch off water heater" -> contains "water" -> WaterLiquidManager
+        # - "stop milk addition" -> contains "milk" -> MilkLiquidManager
+        # - "stop all actions" -> contains "all" (system-level) -> SystemControlManager
+        # - "switch off itself" -> contains "itself" (system-level) -> SystemControlManager
+
+        if grammatical.verb_lemma and self._is_control_action_verb(grammatical.verb_lemma):
+            line_lower = line_text.lower()
+
+            # Step 1: Check if it's system-level (acting on "all", "itself", "everything")
+            # NOTE: Do NOT use "system" as keyword - all UC steps say "The system does X"
+            # We need to check what the system is acting UPON, not that it's "the system"
+            system_level_keywords = ['all', 'itself', 'everything']
+            is_system_level = any(keyword in line_lower for keyword in system_level_keywords)
+
+            if not is_system_level:
+                # Step 2: GENERIC material search in ENTIRE line text
+                # Get all known materials (generic approach)
+                material_names = ['water', 'milk', 'coffee', 'sugar', 'tea', 'filter', 'cup',
+                                 'bean', 'cream', 'syrup', 'chocolate', 'powder']
+
+                # Search for ANY material in the line text
+                found_material = None
+                for material in material_names:
+                    if material in line_lower:
+                        found_material = material
+                        break  # Use first material found
+
+                if found_material:
+                    # Material found -> use material-specific controller
+                    # Detect aggregation state from context
+                    state_result = self._detect_aggregation_state(
+                        line_lower, grammatical.verb_lemma, found_material
+                    )
+
+                    if state_result:
+                        aggregation_state, warnings = state_result
+                        state_suffix = aggregation_state.capitalize()
+                        controller_name = f"{found_material.capitalize()}{state_suffix}Manager"
+                    else:
+                        controller_name = f"{found_material.capitalize()}Manager"
+
+                    description = f"Manages {found_material} control: {grammatical.verb_lemma}() in {step_id}"
+
+                    return RAClass(
+                        name=controller_name,
+                        ra_type=RAType.CONTROLLER,
+                        stereotype="<<controller>>",
+                        description=description,
+                        step_id=step_id
+                    )
+
+            # No specific material found OR system-level action -> SystemControlManager
+            controller_name = "SystemControlManager"
+            description = f"Manages system control operations: {grammatical.verb_lemma}() in {step_id}"
+
+            return RAClass(
+                name=controller_name,
+                ra_type=RAType.CONTROLLER,
+                stereotype="<<controller>>",
+                description=description,
+                step_id=step_id
+            )
+
         # Create a step-like object for the generic logic
         step_info = type('StepInfo', (), {
             'step_id': step_id,
             'step_text': line_text,
             'flow_type': self._determine_flow_type(step_id)
         })()
-        
+
         # Create verb analysis object for the generic logic
         verb_analysis = type('VerbAnalysis', (), {
             'original_text': line_text,
             'verb_lemma': grammatical.main_verb,
             'direct_object': grammatical.direct_object,
+            'verb_type': grammatical.verb_type,  # Include verb type for transformation detection
             'suggested_functional_activity': None  # We don't use this in structured analyzer
         })()
-        
+
         # Use the proven generic controller naming logic
         controller_name = self._derive_generic_controller_name(verb_analysis, step_info)
         
@@ -1230,8 +1593,33 @@ class StructuredUCAnalyzer:
             # Fallback to verb-based naming
             controller_name = f"{grammatical.main_verb.capitalize()}Manager"
         
-        # Generate description
-        description = f"Manages {controller_name.replace('Manager', '').lower()} operations in {step_id}"
+        # Generate description based on verb type
+        # Extract domain object and state from controller name for better description
+        controller_base = controller_name.replace('Manager', '')
+
+        # Check if controller has aggregation state suffix (Solid, Liquid, Gas)
+        aggregation_suffixes = ['Solid', 'Liquid', 'Gas']
+        has_state = any(controller_base.endswith(suffix) for suffix in aggregation_suffixes)
+
+        if has_state:
+            # Extract domain object and state
+            for suffix in aggregation_suffixes:
+                if controller_base.endswith(suffix):
+                    domain_obj = controller_base.replace(suffix, '')
+                    state = suffix
+                    description_base = f"{domain_obj} ({state.lower()} state)"
+                    break
+        else:
+            # No state suffix, use controller base as-is
+            description_base = controller_base.lower()
+
+        if grammatical.verb_type == VerbType.TRANSFORMATION_VERB:
+            description = f"Manages {description_base} transformations: {grammatical.verb_lemma}() in {step_id}"
+        elif grammatical.verb_type == VerbType.TRANSACTION_VERB:
+            description = f"Manages {description_base} transactions: {grammatical.verb_lemma}() in {step_id}"
+        else:
+            # Function verb or unknown
+            description = f"Manages {grammatical.verb_lemma} function in {step_id}"
         
         # Determine parallel group from step_id
         parallel_group = self._get_parallel_group_from_step_id(step_id)
@@ -1270,15 +1658,107 @@ class StructuredUCAnalyzer:
         
         return False
     
+    def _is_human_interaction(self, text: str) -> bool:
+        """
+        Detect if this step involves interaction with a human actor using NLP
+        Returns True if the system interacts with a human, False otherwise
+        """
+        text_lower = text.lower()
+        
+        # EXCLUDE ENTITY REFERENCES - not interactions
+        entity_patterns = [
+            "user defined", "user-defined", "user specified", "user input", 
+            "user preference", "user setting", "user configuration"
+        ]
+        
+        # Check for entity patterns first - if found, this is NOT an interaction
+        for pattern in entity_patterns:
+            if pattern in text_lower:
+                return False
+        
+        # DIRECT HUMAN REFERENCES (only for actual interactions)
+        human_keywords = [
+            "user", "person", "operator", "customer", "client", "passenger", 
+            "driver", "pilot", "technician", "worker", "staff", "employee",
+            "human", "people", "individual", "someone", "anybody", "anyone"
+        ]
+        
+        # Check for direct human references (but not entity references)
+        for keyword in human_keywords:
+            if keyword in text_lower:
+                return True
+        
+        # HUMAN INTERACTION PATTERNS
+        # Pattern: "wants" - typically indicates human desire/request
+        if "want" in text_lower or "request" in text_lower or "ask" in text_lower:
+            return True
+            
+        # Pattern: Communication TO humans
+        communication_patterns = [
+            "output.*message", "display.*message", "show.*message", "present.*to",
+            "communicate.*with", "inform.*about", "notify.*user", "alert.*user"
+        ]
+        
+        import re
+        for pattern in communication_patterns:
+            if re.search(pattern, text_lower):
+                return True
+        
+        # Pattern: Receiving input FROM humans (using spaCy for deeper analysis)
+        doc = self.nlp(text)
+        
+        # Look for human-like subjects performing actions
+        for token in doc:
+            # Check if token is likely a human subject
+            if (token.dep_ in ["nsubj", "nsubjpass"] and 
+                token.pos_ in ["NOUN", "PROPN"] and
+                any(human_word in token.text.lower() for human_word in human_keywords)):
+                return True
+                
+            # Check for pronouns that could refer to humans in context
+            if (token.dep_ in ["nsubj", "nsubjpass"] and 
+                token.pos_ == "PRON" and 
+                token.text.lower() in ["he", "she", "they", "who"]):
+                return True
+        
+        return False
+    
     def _derive_generic_controller_name(self, verb_analysis, step) -> Optional[str]:
-        """Generate domain-agnostic controller names (from generic_uc_analyzer.py)"""
-        # Pattern-based controller naming
+        """Generate domain-agnostic controller names (GENERIC from common_domain.json)"""
+
+        text_lower = verb_analysis.original_text.lower()
+        verb_lemma = verb_analysis.verb_lemma
+
+        # PRIORITY 1: Common Controllers (from common_domain.json)
+        # Load common controllers sorted by priority
+        common_controllers = self._load_common_controllers()
+
+        # Check each common controller
+        for controller_def in common_controllers:
+            # Check if verb matches
+            if verb_lemma in controller_def['verbs']:
+                # Additional check for HMIManager: verify human interaction
+                if controller_def['name'] == 'HMIManager':
+                    if self._is_human_interaction(verb_analysis.original_text):
+                        return controller_def['name']
+                else:
+                    return controller_def['name']
+
+            # Check if keywords match
+            keyword_matches = sum(1 for keyword in controller_def['keywords'] if keyword in text_lower)
+            if keyword_matches >= 2:  # At least 2 keywords match
+                return controller_def['name']
+
+        # PRIORITY 2: Trigger detection (B1 or trigger patterns)
         if step.step_id == "B1" or self._is_trigger_step(step):
-            if "time" in verb_analysis.original_text.lower() or "clock" in verb_analysis.original_text.lower():
-                return "TimeManager"
-            elif "user" in verb_analysis.original_text.lower():
-                return "UserRequestManager"
-            elif step.flow_type == "alternative":
+            # Try to find TimeManager or TriggerManager from common controllers
+            for controller_def in common_controllers:
+                if controller_def['name'] in ['TimeManager', 'TriggerManager']:
+                    for keyword in controller_def['keywords']:
+                        if keyword in text_lower:
+                            return controller_def['name']
+            # Fallback
+            if step.flow_type == "alternative":
                 return f"{step.step_id.split('.')[0]}ConditionManager"
             else:
                 return "TriggerManager"
@@ -1297,27 +1777,19 @@ class StructuredUCAnalyzer:
         material_controller = self._detect_material_state_controller(text_lower, verb_analysis.verb_lemma)
         if material_controller:
             return material_controller
-        
-        # Specific domain mappings for expected controllers 
-        
-        # Water-related operations
-        if ("water" in text_lower or "heater" in text_lower) and ("activate" in text_lower or "heat" in text_lower):
-            return "WaterManager"
-        
-        # Filter-related operations  
-        if "filter" in text_lower and ("prepare" in text_lower or "ready" in text_lower):
-            return "FilterManager"
-            
-        # Cup/Container operations
-        if "cup" in text_lower and ("retrieve" in text_lower or "place" in text_lower or "present" in text_lower):
-            if "present" in text_lower and "user" in text_lower:
-                return "UserManager"  # B5: present to user
-            return "CupManager"
-            
-        # Message/Communication operations
-        if "message" in text_lower and ("output" in text_lower or "display" in text_lower):
-            return "MessageManager"
-        
+
+        # PRIORITY: Transformation verb detection (NLP-based, domain-agnostic)
+        # Transformation verbs should use verb-based naming, not object-based naming
+        if hasattr(verb_analysis, 'verb_type') and verb_analysis.verb_type == VerbType.TRANSFORMATION_VERB:
+            # Use NLP to extract context for better naming
+            controller_name = self._derive_transformation_controller_name(
+                verb_analysis.verb_lemma,
+                verb_analysis.direct_object,
+                text_lower
+            )
+            if controller_name:
+                return controller_name
+
         # Object-based controller naming (check for implementation elements first)
         if verb_analysis.direct_object:
             # Check if direct object contains implementation elements
@@ -1327,13 +1799,14 @@ class StructuredUCAnalyzer:
                 if impl_info:
                     # Use verb-based naming instead for implementation elements
                     verb_action = verb_analysis.verb_lemma.capitalize()
-                    # Try to extract the actual target from context
-                    if "water" in verb_analysis.direct_object.lower():
-                        return f"Water{verb_action}ingManager"
-                    elif "coffee" in verb_analysis.direct_object.lower():
-                        return f"Coffee{verb_action}ingManager"
-                    else:
-                        return f"{verb_action}Manager"
+                    # GENERIC: Try to extract the actual target from domain materials
+                    domain_materials = self._load_domain_materials()
+                    for base_material, variants in domain_materials.items():
+                        for variant in variants:
+                            if variant in verb_analysis.direct_object.lower():
+                                return f"{base_material.capitalize()}{verb_action}ingManager"
+                    # Fallback to verb-only naming
+                    return f"{verb_action}Manager"
             
             # No implementation elements - use object-based naming
             main_object = verb_analysis.direct_object.split()[-1].capitalize()
@@ -1343,6 +1816,183 @@ class StructuredUCAnalyzer:
         verb_action = verb_analysis.verb_lemma.capitalize()
         return f"{verb_action}Manager"
     
+    def _derive_transformation_controller_name(self, verb_lemma: str, direct_object: str, text: str) -> Optional[str]:
+        """
+        Derive controller name for transformation verbs using domain configuration and NLP context extraction.
+
+        IMPORTANT: Controller aggregation principle
+        - Controller represents a DOMAIN OBJECT (Coffee, Water, Milk), NOT a verb/action
+        - Verbs become FUNCTIONS of the controller
+        - One controller handles multiple related functions across UC steps and UCs
+
+        Examples:
+        - "grinds coffee beans" → CoffeeManager (function: grind())
+        - "brews coffee" → CoffeeManager (function: brew())
+        - "heats water" → WaterManager (function: heat())
+        - "steams milk" → MilkManager (function: steam())
+
+        Strategy:
+        1. Get transformation from domain config (e.g., "grind": "CoffeeBeans -> GroundCoffee")
+        2. Extract the PRIMARY DOMAIN OBJECT (Coffee, Water, Milk, etc.)
+        3. Verify with NLP that the material is mentioned in the text
+        4. Build controller name: {DomainObject}Manager (NOT {Object}{Verb}ingManager)
+
+        Args:
+            verb_lemma: The lemmatized verb (e.g., "grind")
+            direct_object: The direct object from NLP (e.g., "set amount")
+            text: The full text for context extraction
+
+        Returns:
+            Controller name string (e.g., "CoffeeManager", "WaterManager")
+        """
+        if not verb_lemma:
+            return None
+
+        # Parse text with NLP for semantic understanding
+        doc = self.nlp(text)
+
+        # Step 1: Get transformation definition from domain configuration
+        transformation_info = self.verb_loader.get_transformation_for_verb(verb_lemma, self.domain_name)
+
+        transformation_input = None
+        if transformation_info:
+            # Parse transformation string: "CoffeeBeans -> GroundCoffee" or "Water -> HotWater"
+            if '->' in transformation_info:
+                input_part = transformation_info.split('->')[0].strip()
+                # Handle multiple inputs: "GroundCoffee + HotWater + Filter"
+                if '+' in input_part:
+                    # Take the first (primary) input
+                    transformation_input = input_part.split('+')[0].strip()
+                else:
+                    transformation_input = input_part
+
+        # Step 2: Extract material/target context from text using NLP
+        text_materials = []
+
+        # Load materials from domain configuration (GENERIC!)
+        priority_materials = self._load_domain_materials()
+
+        # Extract nouns and noun chunks from text
+        for chunk in doc.noun_chunks:
+            chunk_lower = chunk.text.lower()
+            # Check against domain materials
+            for base_material, variants in priority_materials.items():
+                for variant in variants:
+                    if variant in chunk_lower:
+                        text_materials.append(base_material)
+                        break
+
+        # Remove duplicates while preserving order
+        seen = set()
+        text_materials = [x for x in text_materials if not (x in seen or seen.add(x))]
+
+        # Step 3: Extract PRIMARY DOMAIN OBJECT from transformation or text
+        domain_object = None
+
+        if transformation_input:
+            # Extract base material from transformation input
+            # Examples:
+            # - "CoffeeBeans" -> "Coffee"
+            # - "GroundCoffee" -> "Coffee"
+            # - "HotWater" -> "Water"
+            # - "SteamedMilk" -> "Milk"
+
+            transformation_lower = transformation_input.lower()
+
+            # Check which material is in the transformation
+            for material in text_materials:
+                if material in transformation_lower:
+                    domain_object = material
+                    break
+
+            # If no direct match, try to infer from transformation name
+            if not domain_object:
+                # Extract base material from compound words (GENERIC - from domain materials!)
+                domain_materials = self._load_domain_materials()
+
+                for base_name, variants in domain_materials.items():
+                    # Check if any variant is in the transformation string
+                    for variant in variants:
+                        if variant.lower() in transformation_lower:
+                            domain_object = base_name
+                            break
+                    if domain_object:
+                        break
+
+        # Step 4: Fallback to NLP-extracted materials if no transformation match
+        if not domain_object and text_materials:
+            # Use first material found in text as domain object
+            domain_object = text_materials[0]
+
+        # Step 5: Detect aggregation state for the domain object
+        aggregation_state = None
+        if domain_object:
+            # Use existing aggregation state detection
+            state_result = self._detect_aggregation_state(text.lower(), verb_lemma, domain_object)
+            if state_result:
+                aggregation_state, warnings = state_result
+                # Add warnings to global tracking
+                self.aggregation_warnings.extend(warnings)
+                print(f"[DEBUG TRANSFORMATION] {domain_object} detected as {aggregation_state} state")
+
+        # Step 6: Build controller name based on DOMAIN OBJECT + AGGREGATION STATE
+        if domain_object:
+            if aggregation_state:
+                # Use aggregation-aware controller naming
+                # Examples: CoffeeSolidManager, CoffeeLiquidManager, WaterLiquidManager
+                controller_name = self._generate_aggregation_controller_name(domain_object, aggregation_state)
+                print(f"[DEBUG TRANSFORMATION] Controller: {controller_name} (domain: {domain_object}, state: {aggregation_state})")
+                return controller_name
+            else:
+                # No aggregation state detected, use simple domain object naming
+                domain_object_cap = domain_object.capitalize()
+                return f"{domain_object_cap}Manager"
+        else:
+            # Fallback: Pure verb-based naming as last resort
+            verb_gerund = self._convert_to_gerund(verb_lemma)
+            return f"{verb_gerund}Manager"
+
+    def _convert_to_gerund(self, verb_lemma: str) -> str:
+        """
+        Convert verb lemma to gerund form (-ing) with proper English grammar rules.
+
+        Examples:
+        - grind -> Grinding
+        - brew -> Brewing
+        - heat -> Heating
+        - add -> Adding
+        - run -> Running (consonant doubling)
+        """
+        verb_lower = verb_lemma.lower()
+
+        # Special cases
+        special_cases = {
+            'die': 'Dying',
+            'lie': 'Lying',
+            'tie': 'Tying'
+        }
+
+        if verb_lower in special_cases:
+            return special_cases[verb_lower]
+
+        # Rule 1: Verbs ending in 'e' (not 'ee', 'oe', 'ye')
+        if verb_lower.endswith('e') and not verb_lower.endswith(('ee', 'oe', 'ye')):
+            return (verb_lower[:-1] + 'ing').capitalize()
+
+        # Rule 2: Consonant doubling (CVC pattern - Consonant Vowel Consonant)
+        # Examples: run -> running, stop -> stopping, begin -> beginning
+        if len(verb_lower) >= 3:
+            vowels = 'aeiou'
+            last_three = verb_lower[-3:]
+            if (last_three[0] not in vowels and
+                last_three[1] in vowels and
+                last_three[2] not in vowels and
+                last_three[2] not in 'wxy'):  # Don't double w, x, y
+                return (verb_lower + verb_lower[-1] + 'ing').capitalize()
+
+        # Rule 3: Default - just add 'ing'
+        return (verb_lower + 'ing').capitalize()
+
     def _derive_abstract_controller_from_nlp(self, functional_suggestion: str) -> Optional[str]:
         """
         Generic NLP analysis to derive abstract controller names from functional suggestions
@@ -1381,45 +2031,106 @@ class StructuredUCAnalyzer:
     
     
     def _generate_entities_for_step(self, step_id: str, grammatical: GrammaticalAnalysis, line_text: str) -> List[RAClass]:
-        """Generate Entities from direct object, prepositional objects, and compound nouns (spaCy-based)"""
+        """Generate Entities from direct object, prepositional objects, compound nouns, and transformation outputs"""
         entities = []
         entity_names = set()
-        
+
+        # Check if this is a control action verb (stop, switch, pause, etc.)
+        # These verbs represent internal state changes and do NOT produce entities
+        is_control_action = self._is_control_action_verb(grammatical.verb_lemma)
+
         # 1. Direct object (highest priority)
-        if grammatical.direct_object:
+        # IMPORTANT: Skip direct object for control action verbs (e.g., "stop milk addition")
+        # IMPORTANT: Skip gerund phrases that describe actions (e.g., "brewing coffee", "heating water")
+        if grammatical.direct_object and not is_control_action:
             entity_name = self._clean_entity_name(grammatical.direct_object)
+
+            # FILTER: Skip gerund action phrases (verb-ing + noun)
+            # Example: "brewing coffee" -> "brewing" is the action, not an entity
+            # Example: "heating water" -> "heating" is the action, not an entity
+            if entity_name and self._is_gerund_action_phrase(entity_name, grammatical.direct_object):
+                # Skip this - it's an action, not an entity
+                pass
             # Check if this name is already defined as an Actor or already exists as Entity
-            if entity_name and entity_name not in entity_names and not self._is_existing_actor(entity_name):
+            elif entity_name and entity_name not in entity_names and not self._is_existing_actor(entity_name):
                 entity = self._get_or_create_entity(entity_name, step_id)
                 if entity:
                     entity_names.add(entity_name)
                     entities.append(entity)
-        
+
         # 2. Prepositional objects (second priority)
-        for prep, obj in grammatical.prepositional_objects:
-            entity_name = self._clean_entity_name(obj)
-            # Check if this name is already defined as an Actor or already exists as Entity
-            if entity_name and entity_name not in entity_names and not self._is_existing_actor(entity_name):
-                entity = self._get_or_create_entity(entity_name, step_id)
-                if entity:
-                    entity_names.add(entity_name)
-                    entities.append(entity)
-        
-        # 3. Compound nouns from spaCy (third priority - only add if meaningful)
-        for compound in grammatical.compound_nouns:
-            entity_name = self._clean_entity_name(compound)
-            # Only add compound nouns that are not already covered and are meaningful
-            if (entity_name and 
-                entity_name not in entity_names and 
-                len(entity_name) > 3 and  # Minimum length
-                entity_name not in line_text[:10] and  # Skip step IDs
-                not self._is_existing_actor(entity_name) and  # Don't create entities for actors
-                not self._is_compound_redundant(entity_name, entity_names)):
-                entity = self._get_or_create_entity(entity_name, step_id)
-                if entity:
-                    entity_names.add(entity_name)
-                    entities.append(entity)
-        
+        # IMPORTANT: Also skip for control action verbs
+        if not is_control_action:
+            for prep, obj in grammatical.prepositional_objects:
+                entity_name = self._clean_entity_name(obj)
+                # Check if this name is already defined as an Actor or already exists as Entity
+                if entity_name and entity_name not in entity_names and not self._is_existing_actor(entity_name):
+                    entity = self._get_or_create_entity(entity_name, step_id)
+                    if entity:
+                        entity_names.add(entity_name)
+                        entities.append(entity)
+
+        # 3. Transformation entities (for transformation verbs)
+        # IMPORTANT: Extract BOTH input and output entities from domain config
+        if hasattr(grammatical, 'verb_type') and grammatical.verb_type == VerbType.TRANSFORMATION_VERB:
+            transformation_info = self.verb_loader.get_transformation_for_verb(grammatical.verb_lemma, self.domain_name)
+            if transformation_info and '->' in transformation_info:
+                parts = transformation_info.split('->')
+
+                # Extract INPUT entities (left side of ->)
+                if len(parts) >= 1:
+                    input_part = parts[0].strip()
+                    # Handle multiple inputs: "GroundCoffee + HotWater + Filter"
+                    input_entities = [inp.strip() for inp in input_part.split('+')]
+                    for input_entity in input_entities:
+                        if input_entity and input_entity not in entity_names:
+                            # FILTER: Skip abstract "Additive" if we have concrete material in text
+                            # Example: "add milk" has "Milk" in text -> skip abstract "Additive"
+                            # Example: "add sugar" has "Sugar" in text -> skip abstract "Additive"
+                            if input_entity.lower() == "additive":
+                                # Check if we have concrete materials in the text
+                                line_lower = line_text.lower()
+                                concrete_materials = ['milk', 'sugar', 'cream', 'syrup', 'chocolate', 'honey', 'cinnamon']
+                                has_concrete_material = any(material in line_lower for material in concrete_materials)
+                                if has_concrete_material:
+                                    # Skip abstract "Additive", we have concrete material
+                                    continue
+
+                            entity = self._get_or_create_entity(input_entity, step_id)
+                            if entity:
+                                entity_names.add(input_entity)
+                                entities.append(entity)
+
+                # Extract OUTPUT entity (right side of ->)
+                if len(parts) >= 2:
+                    output_part = parts[-1].strip()
+                    # Handle multiple outputs: "GroundCoffee + Filter" -> "GroundCoffee"
+                    if '+' in output_part:
+                        output_part = output_part.split('+')[0].strip()
+
+                    if output_part and output_part not in entity_names:
+                        entity = self._get_or_create_entity(output_part, step_id)
+                        if entity:
+                            entity_names.add(output_part)
+                            entities.append(entity)
+
+        # 4. Compound nouns from spaCy (fourth priority - only add if meaningful)
+        # IMPORTANT: Also skip for control action verbs (e.g., "milk addition" in "stop milk addition")
+        if not is_control_action:
+            for compound in grammatical.compound_nouns:
+                entity_name = self._clean_entity_name(compound)
+                # Only add compound nouns that are not already covered and are meaningful
+                if (entity_name and
+                    entity_name not in entity_names and
+                    len(entity_name) > 3 and  # Minimum length
+                    entity_name not in line_text[:10] and  # Skip step IDs
+                    not self._is_existing_actor(entity_name) and  # Don't create entities for actors
+                    not self._is_compound_redundant(entity_name, entity_names)):
+                    entity = self._get_or_create_entity(entity_name, step_id)
+                    if entity:
+                        entity_names.add(entity_name)
+                        entities.append(entity)
+
         return entities
     
     def _is_existing_actor(self, entity_name: str) -> bool:
@@ -1927,13 +2638,7 @@ class StructuredUCAnalyzer:
             # Use LLM semantic analysis with domain knowledge for ALL steps
             contextual_description = self._generate_contextual_description(line_text, global_context)
             print(f"[LLM CONTEXT] {step_id}: {contextual_description}")
-            
-            # Generate semantic technical context based on domain knowledge
-            semantic_context = self._generate_semantic_technical_context(line_text, global_context, step_id)
-            
-            if semantic_context:
-                return semantic_context
-                
+
             # Legacy fallbacks using domain JSON contexts
             domain_config = self.verb_loader.domain_configs.get(self.domain_name, {})
             context_mapping = domain_config.get('technical_context_mapping', {}).get('contexts', {})
@@ -1994,6 +2699,11 @@ class StructuredUCAnalyzer:
     
     def _generate_ra_classes_for_line_enhanced(self, line_text: str, line_type: LineType, step_id: str, grammatical: GrammaticalAnalysis, step_context: StepContext, generated_contexts: List[GeneratedContext]) -> List[RAClass]:
         """Enhanced RA class generation using generative contexts"""
+        
+        # GUARD LOGIC: Alternative flows (A1, A2, A3) are guards - NO RA classes should be generated
+        if step_id and re.match(r'^A\d+$', step_id):
+            print(f"[GUARD] Skipping RA class generation for alternative flow guard: {step_id}")
+            return []
         
         # Start with traditional RA classes
         traditional_ra_classes = self._generate_ra_classes_for_line(line_text, line_type, step_id, grammatical, step_context)
@@ -2092,51 +2802,36 @@ class StructuredUCAnalyzer:
             return line_text
     
     def _generate_contextual_description(self, line_text: str, global_context: str) -> str:
-        """Generate contextual description using LLM semantic analysis with domain knowledge"""
-        if not self.nlp or not global_context:
-            return line_text
-            
-        try:
-            # Parse line with spaCy for semantic understanding
-            doc = self.nlp(line_text)
-            
-            # Extract semantic components
-            main_verb = self._extract_main_verb(doc)
-            entities = self._extract_entities_from_line(doc)
-            purpose = self._extract_purpose_from_global_context(global_context)
-            
-            # Get domain knowledge
-            domain_config = self.verb_loader.domain_configs.get(self.domain_name, {})
-            
-            # Generate semantic description using domain knowledge
-            contextual_desc = self._generate_semantic_description(
-                main_verb, entities, purpose, domain_config, line_text
-            )
-            
-            return contextual_desc
-            
-        except Exception as e:
-            print(f"[DEBUG] Contextual description generation failed: {e}")
-            return line_text
+        """
+        Generate contextual description (GENERIC - no hard-coded materials!)
+
+        Simply returns the original text since semantic analysis with hard-coded
+        material names is not domain-independent.
+        """
+        return line_text
     
     def _extract_main_verb(self, doc):
         """Extract the main action verb from spaCy doc"""
-        # Use semantic verb detection from domain JSON (NO hardcoded rules!)
-        domain_config = self.verb_loader.domain_configs.get(self.domain_name, {})
-        semantic_verbs = domain_config.get('semantic_verb_detection', {})
-        
-        text_lower = doc.text.lower()
-        for verb, patterns in semantic_verbs.items():
-            for pattern in patterns:
-                if pattern in text_lower:
-                    return verb
-        
-        # Then fallback to spaCy detection, but filter out step IDs
+        # IMPORTANT: First try spaCy detection (actual verbs have priority!)
+        # Then fallback to semantic detection only if no clear verb found
+
+        # Priority 1: spaCy detection - look for actual VERB tokens
         for token in doc:
             if token.pos_ == "VERB" and token.dep_ in ["ROOT", "ccomp"]:
                 # Ignore tokens that look like step IDs (B2a, A1, etc.)
                 if not re.match(r'^[A-Z]\d+[a-z]?$', token.text):
                     return token.lemma_
+
+        # Priority 2: Semantic verb detection from domain JSON (only if no verb found)
+        # This catches cases where verb is implied (e.g., "Milcherhitzung" → "heat")
+        domain_config = self.verb_loader.domain_configs.get(self.domain_name, {})
+        semantic_verbs = domain_config.get('semantic_verb_detection', {})
+
+        text_lower = doc.text.lower()
+        for verb, patterns in semantic_verbs.items():
+            for pattern in patterns:
+                if pattern in text_lower:
+                    return verb
         
         # Last fallback: look for any verb that's not a step ID
         for token in doc:
@@ -2146,280 +2841,90 @@ class StructuredUCAnalyzer:
             
         return None
     
-    def _extract_entities_from_line(self, doc):
-        """Extract relevant entities/objects from the line using domain knowledge"""
-        entities = []
-        
-        # Standard spaCy entity extraction
-        for token in doc:
-            if token.dep_ in ["dobj", "pobj"] or token.pos_ in ["NOUN"]:
-                # EXCLUDE 'system' - it's NOT an entity (corrected multiple times!)
-                if token.lemma_.lower() != "system":
-                    entities.append(token.lemma_.lower())
-        
-        # Enhanced entity detection using domain knowledge (Betriebsstoffe)
-        text_lower = doc.text.lower()
-        domain_config = self.verb_loader.domain_configs.get(self.domain_name, {})
-        betriebsmittel = domain_config.get('operational_materials_addressing', {}).get('material_types', {})
-        
-        # Check for Betriebsstoffe (operational materials) from domain JSON
-        for material_name, material_config in betriebsmittel.items():
-            material_keywords = [material_name.replace('_', ' '), material_name.replace('_', '')]
-            for keyword in material_keywords:
-                if keyword in text_lower:
-                    entities.append(material_name)
-                    # Also add the base material name
-                    base_name = material_name.replace('_', '')
-                    if base_name != material_name:
-                        entities.append(base_name)
-        
-        # Additional semantic entity detection for compound terms
-        if "water heater" in text_lower:
-            entities.extend(["water", "heater"])
-        if "coffee beans" in text_lower or "beans" in text_lower:
-            entities.extend(["coffee_beans", "beans"])
-        if "coffee" in text_lower:
-            entities.append("coffee")
-        if "filter" in text_lower:
-            entities.append("filter")
-        if "grind" in text_lower:
-            entities.append("grind")
-        if "cup" in text_lower:
-            entities.append("cup")
-        if "milk" in text_lower:
-            entities.append("milk")
-        if "water" in text_lower:
-            entities.append("water")
-        if "sugar" in text_lower:
-            entities.append("sugar")
-            
-        # Remove 'system' and duplicates
-        entities = [e for e in entities if e != "system"]
-        return list(set(entities))
-    
-    def _extract_purpose_from_global_context(self, global_context: str) -> str:
-        """Extract the main purpose/goal from UC context"""
-        if not global_context:
-            return ""
-        
-        context_lower = global_context.lower()
-        
-        # Use spaCy to understand the purpose semantically
-        if self.nlp:
-            doc = self.nlp(global_context)
-            for token in doc:
-                if token.pos_ == "NOUN" and token.dep_ in ["ROOT", "dobj"]:
-                    return token.lemma_.lower()
-        
-        # Use spaCy + domain JSON for purpose extraction
-        domain_config = self.verb_loader.domain_configs.get(self.domain_name, {})
-        
-        # Semantic analysis using spaCy and domain knowledge
-        if "coffee" in context_lower or "kaffee" in context_lower:
-            if "milk" in context_lower or "milch" in context_lower:
-                return "milk_coffee"
-            return "coffee_preparation"
-        elif "espresso" in context_lower:
-            return "espresso"
-        
-        return "beverage_preparation"
-    
-    def _generate_semantic_description(self, verb: str, entities: list, purpose: str, domain_config: dict, original_text: str) -> str:
-        """Generate semantic description using domain knowledge and LLM understanding"""
-        if not verb or not entities:
-            return original_text
-            
-        # Get domain-specific knowledge
-        term_knowledge = domain_config.get('term_specific_knowledge', {})
-        betriebsmittel = domain_config.get('betriebsmittel_tracking', {}).get('material_types', {})
-        
-        # Semantic mapping based on verb and entities
-        description_parts = []
-        
-        # Determine the functional purpose
-        for entity in entities:
-            if entity in ['filter', 'filtration']:
-                if purpose in ['kaffeezubereitung', 'milchkaffee', 'espresso', 'milk_coffee', 'coffee_preparation']:
-                    description_parts.append(f"Filter für {purpose.capitalize()}")
-                    break
-            elif entity in ['water', 'heater', 'heating']:
-                if 'heat' in verb or 'activate' in verb:
-                    knowledge = term_knowledge.get('coffee', [])
-                    for fact in knowledge:
-                        if 'hot water' in fact.lower():
-                            description_parts.append(f"Wassererhitzung für {purpose.capitalize()}")
-                            break
-            elif entity in ['grind', 'grinding', 'beans']:
-                if 'grind' in verb:
-                    bean_knowledge = betriebsmittel.get('coffee_beans', {})
-                    if bean_knowledge:
-                        description_parts.append(f"Kaffeebohnen mahlen für {purpose.capitalize()}")
-            elif entity in ['milk']:
-                if 'add' in verb:
-                    milk_knowledge = term_knowledge.get('milk', [])
-                    description_parts.append(f"Milch hinzufügen für {purpose.capitalize()}")
-        
-        # If we found semantic mappings, use them
-        if description_parts:
-            return description_parts[0]
-        
-        # Fallback to original text
-        return original_text
-    
-    def _generate_semantic_technical_context(self, line_text: str, global_context: str, step_id: str) -> str:
-        """Generate technical context using LLM semantic analysis with domain knowledge"""
-        if not self.nlp or not global_context:
-            return ""
-            
-        try:
-            # Parse line with spaCy for semantic understanding
-            doc = self.nlp(line_text)
-            
-            # Extract semantic components
-            main_verb = self._extract_main_verb(doc)
-            entities = self._extract_entities_from_line(doc)
-            purpose = self._extract_purpose_from_global_context(global_context)
-            
-            # Get domain knowledge
-            domain_config = self.verb_loader.domain_configs.get(self.domain_name, {})
-            term_knowledge = domain_config.get('term_specific_knowledge', {})
-            betriebsmittel = domain_config.get('operational_materials_addressing', {}).get('material_types', {})
-            
-            # Debug output
-            print(f"[DEBUG] {step_id}: verb='{main_verb}', entities={entities}, purpose='{purpose}'")
-            
-            # Generate semantic technical context - Check verb-centric patterns first
-            
-            # Coffee grinding - check for grinding verbs AND grinding-related entities (including Betriebsstoffe)
-            if main_verb in ['grind', 'mill'] and any(e in ['grind', 'grinding', 'beans', 'coffee_beans', 'coffeebeans', 'amount', 'degree', 'set'] for e in entities):
-                bean_knowledge = betriebsmittel.get('coffee_beans', {})
-                if purpose in ['kaffeezubereitung', 'milchkaffee', 'espresso', 'milk_coffee', 'coffee_preparation']:
-                    print(f"[DEBUG] {step_id}: Grinding detected - verb: {main_verb}, entities: {entities}, betriebsmittel: {list(betriebsmittel.keys())}")
-                    return f"Kaffeebohnen mahlen für {purpose.capitalize()}"
-            
-            # Entity-specific checks (including Betriebsstoffe from domain JSON)
-            for entity in entities:
-                # Water heating for coffee preparation (spaCy + domain analysis)
-                if entity in ['water', 'heater'] and main_verb in ['activate', 'heat', 'turn']:
-                    if purpose in ['kaffeezubereitung', 'milchkaffee', 'espresso', 'milk_coffee', 'coffee_preparation']:
-                        # Use spaCy + domain knowledge for semantic context analysis
-                        required_materials = self._llm_analyze_required_betriebsmittel(main_verb, entities, betriebsmittel)
-                        context_description = self._llm_generate_semantic_context(main_verb, entities, purpose, required_materials)
-                        print(f"[DEBUG] {step_id}: Water heating - required materials: {required_materials}")
-                        return context_description
-                
-                # Filter preparation for coffee
-                elif entity in ['filter'] and main_verb in ['prepare', 'ready', 'setup']:
-                    if purpose in ['kaffeezubereitung', 'milchkaffee', 'espresso', 'milk_coffee', 'coffee_preparation']:
-                        return f"Filter preparation for {purpose}"
-                
-                # Cup/Container handling
-                elif entity in ['cup', 'container'] and main_verb in ['retrieve', 'place', 'position']:
-                    if purpose in ['kaffeezubereitung', 'milchkaffee', 'espresso', 'milk_coffee', 'coffee_preparation']:
-                        return f"Cup positioning for {purpose}"
-                
-                # Coffee brewing (LLM semantic analysis with Betriebsstoffe)
-                elif entity in ['coffee'] and main_verb in ['brew', 'make', 'prepare']:
-                    if purpose in ['kaffeezubereitung', 'milchkaffee', 'espresso', 'milk_coffee', 'coffee_preparation']:
-                        # Use LLM to semantically determine required Betriebsstoffe for brewing
-                        required_materials = self._llm_analyze_required_betriebsmittel(main_verb, entities, betriebsmittel)
-                        context_description = self._llm_generate_semantic_context(main_verb, entities, purpose, required_materials)
-                        print(f"[DEBUG] {step_id}: Coffee brewing - required materials: {required_materials}")
-                        return context_description
-                
-                # Milk addition (spaCy + domain analysis)
-                elif entity in ['milk'] and main_verb in ['add', 'pour']:
-                    if any(term in purpose for term in ['milchkaffee', 'milk_coffee']):
-                        # Use spaCy + domain knowledge for semantic context analysis
-                        required_materials = self._llm_analyze_required_betriebsmittel(main_verb, entities, betriebsmittel)
-                        context_description = self._llm_generate_semantic_context(main_verb, entities, purpose, required_materials)
-                        print(f"[DEBUG] {step_id}: Milk addition - required materials: {required_materials}")
-                        return context_description
-                
-                # Message/Communication
-                elif entity in ['message'] and main_verb in ['output', 'display', 'show']:
-                    return "User Interface"
-                
-                # Time-based triggers
-                elif entity in ['time', 'clock'] and main_verb in ['reach', 'set']:
-                    return "Time Control"
-            
-            return ""
-            
-        except Exception as e:
-            print(f"[DEBUG] Semantic technical context generation failed for {step_id}: {e}")
-            return ""
-    
     def _llm_analyze_required_betriebsmittel(self, main_verb: str, entities: list, available_betriebsmittel: dict) -> list:
-        """Use LLM semantic analysis to determine required Betriebsstoffe for the action"""
-        if not self.nlp or not main_verb:
+        """
+        GENERIC: Determine required Betriebsstoffe using transformation definitions from domain config
+
+        For transformation verbs: Extract inputs from domain config (e.g., "Input1 + Input2 -> Output")
+        For other verbs: Use entities mentioned in text
+        """
+        if not main_verb:
             return []
-        
+
         try:
-            # Semantic analysis: What materials does this verb typically require?
             required_materials = []
-            
-            # LLM semantic understanding of brewing process
-            if main_verb in ['brew', 'brewing']:
-                # Brewing semantically requires: ground coffee (from coffee_beans), hot water, filter
-                if 'coffee_beans' in available_betriebsmittel:
-                    required_materials.append('coffee_beans')  # Source for ground coffee
-                if 'water' in available_betriebsmittel:
-                    required_materials.append('water')  # Hot water
-                # Filter is implied in brewing process (from entities or context)
-                if any(e in ['filter', 'filtration'] for e in entities):
-                    required_materials.append('filter')
-            
-            # For grinding: coffee beans input
-            elif main_verb in ['grind', 'grinding']:
-                if 'coffee_beans' in available_betriebsmittel:
-                    required_materials.append('coffee_beans')
-            
-            # For heating/activation: water (thermal operations)
-            elif main_verb in ['activate', 'heat', 'turn'] and any(e in ['water', 'heater'] for e in entities):
-                if 'water' in available_betriebsmittel:
-                    required_materials.append('water')
-            
-            # For milk addition: milk
-            elif main_verb in ['add', 'pour'] and any(e in ['milk'] for e in entities):
-                if 'milk' in available_betriebsmittel:
-                    required_materials.append('milk')
-            
+
+            # Check if this verb has a transformation definition in domain config
+            transformation_info = self.verb_loader.get_transformation_for_verb(main_verb, self.domain_name)
+
+            if transformation_info and '->' in transformation_info:
+                # GENERIC: Parse transformation to extract input materials
+                # Format: "Input1 + Input2 + Input3 -> Output"
+                parts = transformation_info.split('->')
+                if len(parts) >= 1:
+                    input_part = parts[0].strip()
+                    # Extract all inputs
+                    input_materials = [inp.strip().lower() for inp in input_part.split('+')]
+
+                    # Add inputs that are available as Betriebsmittel
+                    for material in input_materials:
+                        # Check if material exists in available Betriebsmittel (case-insensitive)
+                        for available_mat in available_betriebsmittel.keys():
+                            if material == available_mat.lower() or material.replace(' ', '_') == available_mat.lower():
+                                required_materials.append(available_mat)
+                                break
+            else:
+                # For non-transformation verbs: Use entities from text as required materials
+                # Match entities with available Betriebsmittel
+                for entity in entities:
+                    entity_lower = entity.lower()
+                    for available_mat in available_betriebsmittel.keys():
+                        if entity_lower in available_mat.lower() or available_mat.lower() in entity_lower:
+                            if available_mat not in required_materials:
+                                required_materials.append(available_mat)
+
             return required_materials
-            
+
         except Exception as e:
-            print(f"[DEBUG] LLM Betriebsmittel analysis failed: {e}")
+            print(f"[DEBUG] Betriebsmittel analysis failed: {e}")
             return []
     
     def _llm_generate_semantic_context(self, main_verb: str, entities: list, purpose: str, required_materials: list) -> str:
-        """Use LLM to generate semantic context description based on verb, entities and required materials"""
-        if not self.nlp or not main_verb:
+        """
+        GENERIC: Generate semantic context description from verb + materials (NO hard-coding!)
+
+        Uses verb type classification and primary material to generate context string.
+        """
+        if not main_verb:
             return "General System Control"
-        
+
         try:
-            # LLM semantic context generation
-            if main_verb in ['brew', 'brewing'] and 'coffee_beans' in required_materials and 'water' in required_materials:
-                # Semantic understanding: brewing with coffee beans and water = coffee preparation
-                return f"Coffee brewing process for {purpose}"
-            
-            elif main_verb in ['grind', 'grinding'] and 'coffee_beans' in required_materials:
-                # Semantic understanding: grinding coffee beans = coffee preparation step
-                return f"Coffee beans grinding for {purpose}"
-            
-            elif main_verb in ['add', 'pour'] and 'milk' in required_materials:
-                # Semantic understanding: adding milk = milk coffee preparation
-                return f"Milk addition for {purpose}"
-            
-            elif main_verb in ['activate', 'heat', 'turn'] and 'water' in required_materials:
-                # Semantic understanding: heating water = thermal preparation
-                return f"Water heating for {purpose}"
-            
-            # Fallback: use verb + main entity
-            main_entity = entities[0] if entities else "component"
-            return f"{main_verb.capitalize()} {main_entity} for {purpose}"
-            
+            # Get verb classification to determine context type
+            verb_type = self._classify_verb(main_verb)
+
+            # Determine primary material from required_materials or entities
+            primary_material = None
+            if required_materials:
+                # Use first required material as primary
+                primary_material = required_materials[0].replace('_', ' ').title()
+            elif entities:
+                # Use first entity as primary
+                primary_material = entities[0].replace('_', ' ').title()
+
+            # Generate GENERIC context based on verb type and material
+            if primary_material:
+                if verb_type and 'TRANSFORMATION' in str(verb_type):
+                    return f"{primary_material} {main_verb} for {purpose}"
+                elif verb_type and 'TRANSACTION' in str(verb_type):
+                    return f"{primary_material} {main_verb} for {purpose}"
+                else:
+                    return f"{primary_material} {main_verb} for {purpose}"
+            else:
+                # No material identified - use generic description
+                return f"{main_verb.capitalize()} operation for {purpose}"
+
         except Exception as e:
-            print(f"[DEBUG] LLM semantic context generation failed: {e}")
+            print(f"[DEBUG] Semantic context generation failed: {e}")
             return "General System Control"
     
     def _extract_uc_global_context(self):
@@ -2554,40 +3059,221 @@ class StructuredUCAnalyzer:
         return involved_actors
     
     def _generate_boundaries_for_step(self, step_id: str, grammatical: GrammaticalAnalysis, line_text: str) -> List[RAClass]:
-        """Generate Boundaries based on Actor + Transaction Verb rule"""
+        """Generate Boundaries based on specific functional analysis using common domain JSON"""
         boundaries = []
-        
-        # Check if this step has an actor and transaction verb
-        if grammatical.verb_type != VerbType.TRANSACTION_VERB:
-            return boundaries
-        
-        # Check if any actor appears in the step text
         line_lower = line_text.lower()
-        for actor in self.uc_context.actors:
-            if actor.lower() in line_lower:
-                # Generate boundary for Actor + Transaction Verb
-                actor_clean = ''.join(word.capitalize() for word in actor.split())
-                
-                if grammatical.verb_lemma in ['send', 'transmit', 'deliver', 'provide']:
-                    boundary_name = f"{actor_clean}OutputBoundary"
-                    description = f"Boundary for {actor} to send data/commands to system"
-                elif grammatical.verb_lemma in ['receive', 'request', 'ask', 'input']:
-                    boundary_name = f"{actor_clean}InputBoundary"
-                    description = f"Boundary for {actor} to receive data/requests from system"
-                else:
-                    boundary_name = f"{actor_clean}CommunicationBoundary"
-                    description = f"Boundary for {actor} communication with system"
-                
-                boundaries.append(RAClass(
-                    name=boundary_name,
-                    ra_type=RAType.BOUNDARY,
-                    stereotype="<<boundary>>",
-                    description=description,
-                    step_id=step_id
-                ))
-                break  # Only one boundary per step
+        
+        # Get boundary patterns from domain JSON (beverage_preparation has patterns)
+        domain_config = self.verb_loader.domain_configs.get(self.domain_name, {})
+        boundary_patterns = domain_config.get('boundary_patterns', {})
+        boundary_types = boundary_patterns.get('boundary_types', {})
+        
+        # PRIORITY 1: Analyze trigger patterns for specific boundary types
+        if "(trigger)" in line_lower:
+            # Determine the type of trigger based on content analysis
+            trigger_boundary = self._determine_trigger_boundary_type(line_text, boundary_types)
+            if trigger_boundary:
+                boundaries.append(trigger_boundary)
+            else:
+                # Fallback: determine based on context
+                trigger_boundary = self._generate_context_based_boundary(step_id, line_text, boundary_types)
+                if trigger_boundary:
+                    boundaries.append(trigger_boundary)
+        
+        # PRIORITY 2: Check for human interaction patterns (HMIManager cases)
+        elif self._is_human_interaction(line_text):
+            # Generate specific functional boundary based on interaction purpose
+            boundary = self._generate_functional_boundary_for_interaction(line_text, step_id)
+            if boundary:
+                boundaries.append(boundary)
+        
+        # PRIORITY 3: Legacy transaction verb logic (keep for compatibility)
+        elif grammatical.verb_type == VerbType.TRANSACTION_VERB:
+            # Get transaction verb patterns from common domain JSON
+            transaction_input_verbs = boundary_patterns.get('transaction_input_verbs', [])
+            transaction_output_verbs = boundary_patterns.get('transaction_output_verbs', [])
+            
+            for actor in self.uc_context.actors:
+                if actor.lower() in line_lower:
+                    # Generate boundary for Actor + Transaction Verb
+                    actor_clean = ''.join(word.capitalize() for word in actor.split())
+                    
+                    if grammatical.verb_lemma in transaction_output_verbs:
+                        boundary_name = f"{actor_clean}OutputBoundary"
+                        description = f"Boundary for {actor} to send data/commands to system"
+                    elif grammatical.verb_lemma in transaction_input_verbs:
+                        boundary_name = f"{actor_clean}InputBoundary"
+                        description = f"Boundary for {actor} to receive data/requests from system"
+                    else:
+                        boundary_name = f"{actor_clean}CommunicationBoundary"
+                        description = f"Boundary for {actor} communication with system"
+                    
+                    boundaries.append(RAClass(
+                        name=boundary_name,
+                        ra_type=RAType.BOUNDARY,
+                        stereotype="<<boundary>>",
+                        description=description,
+                        step_id=step_id
+                    ))
+                    break  # Only one boundary per step
         
         return boundaries
+    
+    def _determine_trigger_boundary_type(self, line_text: str, boundary_types: dict) -> Optional[RAClass]:
+        """Determine specific boundary type based on trigger content using generic NLP analysis"""
+        line_lower = line_text.lower()
+        
+        # Get boundary patterns from domain JSON
+        domain_config = self.verb_loader.domain_configs.get(self.domain_name, {})
+        boundary_patterns = domain_config.get('boundary_patterns', {})
+        
+        time_control_verbs = boundary_patterns.get('time_control_verbs', [])
+        supply_control_verbs = boundary_patterns.get('supply_control_verbs', [])
+        
+        # Analyze trigger content generically using domain JSON patterns
+        for verb in time_control_verbs:
+            if verb in line_lower:
+                # Time/scheduling trigger - not user input!
+                return RAClass(
+                    name="TimingBoundary",
+                    ra_type=RAType.BOUNDARY,
+                    stereotype="<<boundary>>",
+                    description="Boundary for time-based system scheduling and triggers",
+                    step_id=""
+                )
+        
+        # Check for user interactions using actor analysis
+        for actor in self.uc_context.actors:
+            if actor.lower() in line_lower:
+                # This is a user trigger - generate specific functional boundary
+                return self._generate_functional_boundary_for_interaction(line_text, "")  # Use empty step_id for triggers
+        
+        return None
+    
+    def _generate_context_based_boundary(self, step_id: str, line_text: str, boundary_types: dict) -> Optional[RAClass]:
+        """Generate boundary based on step context when trigger type is unclear"""
+        line_lower = line_text.lower()
+        
+        # Use NLP to identify key domain entities and determine boundary type
+        doc = self.nlp(line_text) if self.nlp else None
+        if doc:
+            for ent in doc.ents:
+                if ent.label_ == "TIME":
+                    # Time entity detected - scheduling boundary
+                    return RAClass(
+                        name="TimingBoundary", 
+                        ra_type=RAType.BOUNDARY,
+                        stereotype="<<boundary>>",
+                        description="Boundary for time-based system triggers",
+                        step_id=step_id
+                    )
+        
+        # Check for specific material/supply triggers
+        if any(word in line_lower for word in ["available", "supply", "level"]):
+            return RAClass(
+                name="SupplyMonitoringBoundary",
+                ra_type=RAType.BOUNDARY, 
+                stereotype="<<boundary>>",
+                description="Boundary for supply monitoring and alerts",
+                step_id=step_id
+            )
+        
+        # Default fallback - external system boundary
+        return RAClass(
+            name="ExternalSystemBoundary",
+            ra_type=RAType.BOUNDARY,
+            stereotype="<<boundary>>",
+            description="Boundary for external system trigger input",
+            step_id=step_id
+        )
+    
+    def _generate_functional_boundary_for_interaction(self, line_text: str, step_id: str) -> Optional[RAClass]:
+        """Generate specific functional boundary names based on interaction purpose"""
+        line_lower = line_text.lower()
+        
+        # Get boundary patterns from domain JSON
+        domain_config = self.verb_loader.domain_configs.get(self.domain_name, {})
+        boundary_patterns = domain_config.get('boundary_patterns', {})
+        input_verbs = boundary_patterns.get('input_verbs', [])
+        output_verbs = boundary_patterns.get('output_verbs', [])
+        
+        # Analyze the functional purpose of the interaction
+        if any(verb in line_lower for verb in ['output', 'display', 'present', 'show']):
+            if 'message' in line_lower:
+                return RAClass(
+                    name="MessageDisplayBoundary",
+                    ra_type=RAType.BOUNDARY,
+                    stereotype="<<boundary>>",
+                    description="Boundary for displaying messages to user",
+                    step_id=step_id
+                )
+            elif 'error' in line_lower:
+                return RAClass(
+                    name="ErrorDisplayBoundary", 
+                    ra_type=RAType.BOUNDARY,
+                    stereotype="<<boundary>>",
+                    description="Boundary for displaying error information to user",
+                    step_id=step_id
+                )
+            elif any(word in line_lower for word in ['cup', 'product', 'result']):
+                return RAClass(
+                    name="ProductDeliveryBoundary",
+                    ra_type=RAType.BOUNDARY,
+                    stereotype="<<boundary>>", 
+                    description="Boundary for delivering products to user",
+                    step_id=step_id
+                )
+        elif any(verb in line_lower for verb in ['want', 'request', 'ask', 'input']):
+            # Identify specific material/additive and create specific boundary
+            if 'sugar' in line_lower:
+                return RAClass(
+                    name="SugarRequestBoundary",
+                    ra_type=RAType.BOUNDARY,
+                    stereotype="<<boundary>>",
+                    description="Boundary for user sugar requests",
+                    step_id=step_id
+                )
+            elif 'milk' in line_lower:
+                return RAClass(
+                    name="MilkRequestBoundary",
+                    ra_type=RAType.BOUNDARY,
+                    stereotype="<<boundary>>",
+                    description="Boundary for user milk requests",
+                    step_id=step_id
+                )
+            elif 'coffee' in line_lower:
+                return RAClass(
+                    name="CoffeeRequestBoundary",
+                    ra_type=RAType.BOUNDARY,
+                    stereotype="<<boundary>>",
+                    description="Boundary for user coffee requests",
+                    step_id=step_id
+                )
+            elif any(word in line_lower for word in ['additive', 'ingredient', 'extra']):
+                return RAClass(
+                    name="AdditiveRequestBoundary",
+                    ra_type=RAType.BOUNDARY,
+                    stereotype="<<boundary>>",
+                    description="Boundary for user additive requests",
+                    step_id=step_id
+                )
+            else:
+                return RAClass(
+                    name="UserRequestBoundary",
+                    ra_type=RAType.BOUNDARY,
+                    stereotype="<<boundary>>",
+                    description="Boundary for general user requests to system",
+                    step_id=step_id
+                )
+        
+        # Default functional boundary for user interactions
+        return RAClass(
+            name="HMIBoundary",
+            ra_type=RAType.BOUNDARY,
+            stereotype="<<boundary>>",
+            description="Boundary for human-machine interface interactions",
+            step_id=step_id
+        )
     
     def _clean_entity_name(self, text: str) -> str:
         """Clean and normalize entity names"""
@@ -2622,38 +3308,119 @@ class StructuredUCAnalyzer:
         return result
     
     def _generate_data_flows_for_line(self, step_id: str, grammatical: GrammaticalAnalysis, ra_classes: List[RAClass]) -> List[DataFlow]:
-        """Generate data flows based on preposition semantics"""
+        """
+        Generate data flows based on function semantics.
+
+        IMPORTANT RULE: Each function produces EXACTLY ONE output entity (PROVIDE).
+        All other entities are inputs (USE).
+
+        For transformation verbs: Output comes from domain config (e.g., "CoffeeBeans -> GroundCoffee")
+
+        TRIGGERS: Triggers have NO data flows - they are Actor -> Boundary signals only!
+        """
         data_flows = []
-        
+
         if not step_id or not grammatical.main_verb:
             return data_flows
-        
+
+        # TRIGGERS have NO data flows!
+        # Check if any RA class is a trigger (only has Boundary, no Controller)
+        has_controller = any(ra.ra_type == RAType.CONTROLLER for ra in ra_classes)
+        has_boundary = any(ra.ra_type == RAType.BOUNDARY for ra in ra_classes)
+
+        if has_boundary and not has_controller:
+            # This is a TRIGGER (only Boundary, no Controller) - NO data flows!
+            return data_flows
+
         # Find controller for this step
         controller_name = None
         for ra_class in ra_classes:
             if ra_class.ra_type == RAType.CONTROLLER:
                 controller_name = ra_class.name
                 break
-        
+
         if not controller_name:
             return data_flows
-        
-        # Rule: Before preposition = USE, After preposition = PROVIDE
+
+        # Check if this is a control action verb (stop, switch, pause, etc.)
+        # These verbs represent internal state changes and do NOT produce data flows
+        is_control_action = self._is_control_action_verb(grammatical.verb_lemma)
+        if is_control_action:
+            return data_flows  # No data flows for control actions
+
+        # Check if this is a transformation verb
+        is_transformation = hasattr(grammatical, 'verb_type') and grammatical.verb_type == VerbType.TRANSFORMATION_VERB
+        transformation_output = None
+        transformation_inputs = []
+
+        if is_transformation:
+            # Get transformation info from domain config
+            transformation_info = self.verb_loader.get_transformation_for_verb(grammatical.verb_lemma, self.domain_name)
+            if transformation_info and '->' in transformation_info:
+                parts = transformation_info.split('->')
+
+                # Extract INPUT entities
+                if len(parts) >= 1:
+                    input_part = parts[0].strip()
+                    transformation_inputs = [inp.strip() for inp in input_part.split('+')]
+
+                # Extract OUTPUT entity
+                if len(parts) >= 2:
+                    output_part = parts[-1].strip()
+                    # Handle multiple outputs: "GroundCoffee + Filter" -> "GroundCoffee"
+                    if '+' in output_part:
+                        output_part = output_part.split('+')[0].strip()
+                    transformation_output = output_part
+
+        # STEP 1: Process all prepositional objects
+        # For transformation verbs: ALL are USE (parameters/targets)
+        # For other verbs: Use preposition semantics (but prefer USE)
+        prepositional_entities = set()  # Track prepositional entities
         for prep, obj in grammatical.prepositional_objects:
             entity_name = self._clean_entity_name(obj)
-            # Only create data flows for actual entities, not actors
             if entity_name and not self._is_existing_actor(entity_name):
-                # Determine flow type based on preposition
-                if prep in ['with', 'from', 'using', 'via', 'through']:
+                # FILTER: Skip base materials if transformed version exists in transformation inputs
+                # Example: Skip "Water" if "HotWater" is in transformation inputs
+                # Example: Skip "CoffeeBeans" if "GroundCoffee" is in transformation inputs
+                if is_transformation and transformation_inputs:
+                    # Check if a transformed version of this material exists
+                    transformed_version = f"{entity_name.capitalize()}"
+                    has_transformed_version = False
+                    for trans_input in transformation_inputs:
+                        # Check for common transformations: Water->HotWater, CoffeeBeans->GroundCoffee
+                        if entity_name.lower() in trans_input.lower() and entity_name.lower() != trans_input.lower():
+                            has_transformed_version = True
+                            break
+
+                    if has_transformed_version:
+                        # Skip this base material, use transformed version instead
+                        continue
+
+                prepositional_entities.add(entity_name)
+
+                # For transformation verbs: Everything except output is USE
+                if is_transformation:
                     flow_type = "use"
-                    description = f"{controller_name} uses {entity_name} as input"
-                elif prep in ['to', 'for', 'into', 'onto']:
-                    flow_type = "provide"
-                    description = f"{controller_name} provides output to {entity_name}"
+                    if prep in ['with', 'using']:
+                        description = f"{controller_name} uses {entity_name} as parameter"
+                    elif prep in ['into', 'onto', 'to']:
+                        description = f"{controller_name} uses {entity_name} as target"
+                    elif prep in ['of']:
+                        description = f"{controller_name} uses {entity_name} as component"
+                    else:
+                        description = f"{controller_name} uses {entity_name} as input"
                 else:
-                    flow_type = "use"  # Default
-                    description = f"{controller_name} interacts with {entity_name}"
-                
+                    # Non-transformation: Use preposition semantics
+                    if prep in ['with', 'from', 'using', 'via', 'through', 'of']:
+                        flow_type = "use"
+                        description = f"{controller_name} uses {entity_name} as input"
+                    elif prep in ['to', 'for', 'into', 'onto']:
+                        flow_type = "provide"
+                        description = f"{controller_name} provides output to {entity_name}"
+                    else:
+                        flow_type = "use"
+                        description = f"{controller_name} interacts with {entity_name}"
+
                 data_flows.append(DataFlow(
                     step_id=step_id,
                     controller=controller_name,
@@ -2662,33 +3429,111 @@ class StructuredUCAnalyzer:
                     preposition=prep,
                     description=description
                 ))
-        
-        # Direct object typically = PROVIDE (output)
+
+        # STEP 2: Process direct object
+        # For transformation verbs: SKIP direct object if it matches the output
+        # Output comes from domain config
         if grammatical.direct_object:
             entity_name = self._clean_entity_name(grammatical.direct_object)
-            # Only create data flows for actual entities, not actors or implementation elements
-            if (entity_name and 
-                not self._is_existing_actor(entity_name) and 
+            if (entity_name and
+                not self._is_existing_actor(entity_name) and
                 not self._is_implementation_element(entity_name)):
+
+                if is_transformation:
+                    # IMPORTANT: Skip direct object if it's the same as output
+                    # Example: "brewing coffee" - "coffee" is output, not input
+                    if entity_name.lower() != transformation_output.lower() if transformation_output else True:
+                        # Check if it's one of the known inputs from domain config
+                        is_known_input = any(entity_name.lower() == inp.lower() for inp in transformation_inputs)
+
+                        # Special case: "add" verbs - the direct object is ALWAYS the material being added
+                        # Example: "add milk" -> "milk" is input, even if not in transformation_inputs
+                        # Example: "add sugar" -> "sugar" is input
+                        is_add_verb = grammatical.verb_lemma.lower() in ['add', 'mix', 'blend', 'combine', 'incorporate']
+
+                        if is_known_input or not transformation_inputs or is_add_verb:
+                            # Add as input if:
+                            # 1. It's in the transformation inputs OR
+                            # 2. No specific inputs defined OR
+                            # 3. It's an "add" verb (direct object is what's being added)
+                            data_flows.append(DataFlow(
+                                step_id=step_id,
+                                controller=controller_name,
+                                entity=entity_name,
+                                flow_type="use",
+                                description=f"{controller_name} uses {entity_name} as input"
+                            ))
+                else:
+                    # Check if this is a transaction verb (e.g., present, output, send, deliver)
+                    is_transaction = hasattr(grammatical, 'verb_type') and grammatical.verb_type == VerbType.TRANSACTION_VERB
+
+                    if is_transaction:
+                        # Transaction verbs: direct object is INPUT (what is being transferred)
+                        # The boundary/target comes from prepositional object (to user, to system, etc.)
+                        data_flows.append(DataFlow(
+                            step_id=step_id,
+                            controller=controller_name,
+                            entity=entity_name,
+                            flow_type="use",
+                            description=f"{controller_name} uses {entity_name} for transaction"
+                        ))
+                    else:
+                        # Function verbs: direct object is typically output
+                        data_flows.append(DataFlow(
+                            step_id=step_id,
+                            controller=controller_name,
+                            entity=entity_name,
+                            flow_type="provide",
+                            description=f"{controller_name} provides {entity_name} as result"
+                        ))
+
+        # STEP 3: Add transformation INPUT entities from domain config (USE)
+        # These are the ACTUAL inputs for the transformation
+        # IMPORTANT: Only add if not already in prepositional_entities (avoid duplicates)
+        # IMPORTANT: Skip abstract categories (like "Additive") if we have concrete materials
+        if is_transformation and transformation_inputs:
+            # Check if we already have concrete material entities from text
+            # Get all entities already added from text
+            existing_entities_from_text = set()
+            for flow in data_flows:
+                existing_entities_from_text.add(flow.entity.lower())
+
+            for input_entity in transformation_inputs:
+                # Skip if already added from prepositional objects
+                if input_entity in prepositional_entities:
+                    continue
+
+                # Skip abstract categories if we have concrete materials
+                # Example: Skip "Additive" if we already have "Milk" or "Sugar"
+                if input_entity.lower() == "additive":
+                    # Check if we have a concrete material (milk, sugar, etc.)
+                    has_concrete_material = any(
+                        material in existing_entities_from_text
+                        for material in ['milk', 'sugar', 'cream', 'syrup', 'chocolate']
+                    )
+                    if has_concrete_material:
+                        continue  # Skip abstract "Additive", use concrete material instead
+
+                # Create USE data flow for each input
                 data_flows.append(DataFlow(
                     step_id=step_id,
                     controller=controller_name,
-                    entity=entity_name,
-                    flow_type="provide",
-                    description=f"{controller_name} provides {entity_name} as result"
+                    entity=input_entity,
+                    flow_type="use",
+                    description=f"{controller_name} uses {input_entity} as input"
                 ))
-            elif entity_name and self._is_implementation_element(entity_name):
-                # For implementation elements, create data flow to functional equivalent
-                functional_entity = self._get_functional_equivalent(entity_name)
-                if functional_entity:
-                    data_flows.append(DataFlow(
-                        step_id=step_id,
-                        controller=controller_name,
-                        entity=functional_entity,
-                        flow_type="provide",
-                        description=f"{controller_name} provides {functional_entity} as result"
-                    ))
-        
+
+        # STEP 4: Add transformation OUTPUT entity (PROVIDE)
+        # This is the ONLY PROVIDE entity for transformation verbs!
+        if is_transformation and transformation_output:
+            data_flows.append(DataFlow(
+                step_id=step_id,
+                controller=controller_name,
+                entity=transformation_output,
+                flow_type="provide",
+                description=f"{controller_name} produces {transformation_output} as result"
+            ))
+
         return data_flows
     
     def _generate_control_flows(self):
@@ -2728,14 +3573,23 @@ class StructuredUCAnalyzer:
         for i in range(len(parsed_steps) - 1):
             current = parsed_steps[i]
             next_step = parsed_steps[i + 1]
-            
+
             current_type = current['type']
             next_type = next_step['type']
             current_num = current['step_number']
             next_num = next_step['step_number']
-            
+
             print(f"[CONTROL] Analyzing: {current['step_id']} ({current_type}) -> {next_step['step_id']} ({next_type})")
-            
+
+            # IMPORTANT: Check if current and next_step are in the same flow scope
+            # Do NOT create flows between different flow scopes:
+            # - Main flow (B1-B6)
+            # - Alternative flows (A1.x, A2.x, A3.x, ...)
+            # - Extension flows (E1.x, E2.x, ...)
+            if not self._are_in_same_flow_scope(current['step_id'], next_step['step_id']):
+                print(f"[CONTROL] SKIP: {current['step_id']} and {next_step['step_id']} are in different flow scopes")
+                continue
+
             # Rule 1: serial -> serial
             if current_type == 'serial' and next_type == 'serial':
                 print(f"[CONTROL] Rule 1: serial -> serial")
@@ -2758,6 +3612,14 @@ class StructuredUCAnalyzer:
             elif (current_type == 'parallel' and next_type == 'parallel' and current_num == next_num):
                 print(f"[CONTROL] Rule 3: parallel -> parallel (same step {current_num}) - no direct connection")
                 # No direct connection - they're in the same parallel group
+                # Ensure px_start/px_end are defined for this parallel group
+                if 'px_start' not in locals() or not px_start.startswith(f"P{current_num}_"):
+                    px_start = f"P{current_num}_START"
+                    px_end = f"P{current_num}_END"
+                    step_range = self._get_parallel_step_range(current['step_id'])
+                    self._add_parallel_node(current['line_analysis'], px_start, 'distribution', step_range)
+                    self._add_parallel_node(current['line_analysis'], px_end, 'merge', step_range)
+
                  # Connect current to Px_START
                 self._create_control_flow_from_parallel_node (px_start ,current , "parallel", "Rule 3: parallel -> parallel (same step number)")
                 self._create_control_flow_to_parallel_node(current, px_end, "sequential", "Rule 3: parallel -> parallel (same step number)")
@@ -2765,7 +3627,15 @@ class StructuredUCAnalyzer:
                 
             # Rule 4: parallel -> parallel (different step number)
             elif (current_type == 'parallel' and next_type == 'parallel' and current_num != next_num):
-                 # finalize current 
+                # Ensure px_start/px_end are defined for current parallel group
+                if 'px_start' not in locals() or not px_start.startswith(f"P{current_num}_"):
+                    px_start = f"P{current_num}_START"
+                    px_end = f"P{current_num}_END"
+                    step_range = self._get_parallel_step_range(current['step_id'])
+                    self._add_parallel_node(current['line_analysis'], px_start, 'distribution', step_range)
+                    self._add_parallel_node(current['line_analysis'], px_end, 'merge', step_range)
+
+                 # finalize current
                 self._create_control_flow_from_parallel_node (px_start ,current , "parallel", "Rule 4: parallel -> parallel (different step number)")
                 self._create_control_flow_to_parallel_node(current, px_end, "sequential", "Rule 4: parallel -> parallel (different step number)")
                 print(f"[CONTROL] Rule 4: parallel -> parallel (different steps {current_num} -> {next_num})")
@@ -2799,7 +3669,206 @@ class StructuredUCAnalyzer:
                 self._create_control_flow_from_parallel_node(px_end, next_step, "sequential", "Rule 5 - Parallel to Serial Merge")
         
         print(f"[CONTROL] Control flow generation completed")
-    
+
+    def _generate_actor_boundary_flows(self):
+        """Generate control flows: Actor -> Boundary -> Controller"""
+        print("[ACTOR-BOUNDARY] Generating Actor-Boundary and Boundary-Controller flows...")
+
+        # Collect all actors, boundaries, and controllers from line_analyses
+        actors = []
+        boundaries = []
+        controllers = []
+
+        for line_analysis in self.line_analyses:
+            for ra in line_analysis.ra_classes:
+                if ra.ra_type == RAType.ACTOR and ra.name not in [a.name for a in actors]:
+                    actors.append(ra)
+                elif ra.ra_type == RAType.BOUNDARY and ra.name not in [b.name for b in boundaries]:
+                    boundaries.append(ra)
+                elif ra.ra_type == RAType.CONTROLLER and ra.name not in [c.name for c in controllers]:
+                    controllers.append(ra)
+
+        # Step 1: Actor -> Boundary flows for triggers and transaction verbs
+        for line_analysis in self.line_analyses:
+            if not line_analysis.step_id or not line_analysis.grammatical:
+                continue
+
+            step_id = line_analysis.step_id
+            grammatical = line_analysis.grammatical
+            line_text = line_analysis.line_text.lower()
+
+            # Check if this is a trigger step (B1 or has "(trigger)")
+            is_trigger = step_id == "B1" or "(trigger)" in line_text
+
+            # Find relevant boundary for this step
+            step_boundaries = [ra for ra in line_analysis.ra_classes if ra.ra_type == RAType.BOUNDARY]
+
+            if step_boundaries and actors:
+                actor_name = actors[0].name  # Usually "User"
+
+                for boundary in step_boundaries:
+                    boundary_name = boundary.name
+
+                    # Create Actor -> Boundary flow
+                    if is_trigger or grammatical.verb_type == VerbType.TRANSACTION_VERB:
+                        # Check if this flow already exists in this line_analysis
+                        existing = any(
+                            cf.source_step == actor_name and cf.target_step == boundary_name
+                            for cf in line_analysis.control_flows
+                        )
+
+                        if not existing:
+                            flow = ControlFlow(
+                                source_step=actor_name,
+                                target_step=boundary_name,
+                                source_controller=actor_name,
+                                target_controller=boundary_name,
+                                flow_type='signal' if is_trigger else 'transaction',
+                                rule='Actor-Boundary interaction',
+                                description=f"Actor {actor_name} signals {boundary_name}" if is_trigger else f"Actor {actor_name} interacts with {boundary_name}"
+                            )
+                            line_analysis.control_flows.append(flow)
+                            print(f"[ACTOR-BOUNDARY] Created: {actor_name} -> {boundary_name} ({step_id})")
+
+        # Step 2: Boundary -> Controller flows for each step
+        for line_analysis in self.line_analyses:
+            if not line_analysis.step_id:
+                continue
+
+            step_id = line_analysis.step_id
+
+            # Find boundaries and controllers for this step
+            step_boundaries = [ra for ra in line_analysis.ra_classes if ra.ra_type == RAType.BOUNDARY]
+            step_controllers = [ra for ra in line_analysis.ra_classes if ra.ra_type == RAType.CONTROLLER]
+
+            # Create Boundary -> Controller flow
+            for boundary in step_boundaries:
+                for controller in step_controllers:
+                    # Check if this flow already exists
+                    existing = any(
+                        cf.source_step == boundary.name and cf.target_step == controller.name
+                        for cf in line_analysis.control_flows
+                    )
+
+                    if not existing:
+                        flow = ControlFlow(
+                            source_step=boundary.name,
+                            target_step=controller.name,
+                            source_controller=boundary.name,
+                            target_controller=controller.name,
+                            flow_type='activation',
+                            rule='Boundary-Controller activation',
+                            description=f"Boundary {boundary.name} activates {controller.name}"
+                        )
+                        line_analysis.control_flows.append(flow)
+                        print(f"[ACTOR-BOUNDARY] Created: {boundary.name} -> {controller.name} ({step_id})")
+
+        # Step 3: Special handling for Extension/Alternative Trigger -> Action flows
+        # E1 (trigger) has SugarRequestBoundary, E1.1 (action) has SugarSolidManager
+        # We need to connect E1's Boundary to E1.1's Controller
+        print("[ACTOR-BOUNDARY] Handling Extension/Alternative trigger-to-action flows...")
+
+        for i, line_analysis in enumerate(self.line_analyses):
+            if not line_analysis.step_id:
+                continue
+
+            step_id = line_analysis.step_id
+            line_text = line_analysis.line_text.lower()
+
+            # Check if this is an Extension/Alternative trigger (E1, A1, A2, etc.)
+            # Pattern: E1, A1, A2 (no dot, contains "(trigger)")
+            is_ext_alt_trigger = (
+                (step_id.startswith('E') or step_id.startswith('A')) and
+                '.' not in step_id and
+                '(trigger)' in line_text
+            )
+
+            if is_ext_alt_trigger:
+                # Find boundary in this trigger step
+                trigger_boundaries = [ra for ra in line_analysis.ra_classes if ra.ra_type == RAType.BOUNDARY]
+
+                if trigger_boundaries:
+                    # Check if this is a user transaction (wants, requests, enters, etc.)
+                    # Transaction verbs indicate HMI interaction
+                    grammatical = line_analysis.grammatical
+
+                    # If "User" appears in trigger, it's a user interaction via HMI
+                    # Examples: "User wants sugar", "User requests...", "User presses..."
+                    is_user_transaction = 'user' in line_text
+
+                    if is_user_transaction:
+                        # User transaction: Boundary -> HMIManager -> Material-Controller
+                        # Step 3a: Create Boundary -> HMIManager flow
+                        hmi_controller = next((c for c in controllers if c.name == 'HMIManager'), None)
+
+                        if hmi_controller:
+                            for boundary in trigger_boundaries:
+                                # Check if Boundary -> HMIManager flow exists
+                                existing = any(
+                                    cf.source_step == boundary.name and cf.target_step == 'HMIManager'
+                                    for cf in line_analysis.control_flows
+                                )
+
+                                if not existing:
+                                    flow = ControlFlow(
+                                        source_step=boundary.name,
+                                        target_step='HMIManager',
+                                        source_controller=boundary.name,
+                                        target_controller='HMIManager',
+                                        flow_type='transaction',
+                                        rule='User-Transaction Boundary to HMI',
+                                        description=f"User transaction {boundary.name} ({step_id}) processed by HMIManager"
+                                    )
+                                    line_analysis.control_flows.append(flow)
+                                    print(f"[ACTOR-BOUNDARY] Created HMI transaction: {boundary.name} ({step_id}) -> HMIManager")
+
+                    # Find the next action step (E1.1, A1.1, etc.)
+                    expected_action_step = f"{step_id}.1"
+
+                    # Search for action step in line_analyses
+                    for next_line_analysis in self.line_analyses:
+                        if next_line_analysis.step_id == expected_action_step:
+                            # Find controller in action step
+                            action_controllers = [ra for ra in next_line_analysis.ra_classes if ra.ra_type == RAType.CONTROLLER]
+
+                            if action_controllers:
+                                if is_user_transaction:
+                                    # For user transactions: HMIManager -> Material-Controller
+                                    source_controller = 'HMIManager'
+                                    source_name = 'HMIManager'
+                                else:
+                                    # For non-user triggers: Boundary -> Material-Controller
+                                    source_controller = trigger_boundaries[0].name
+                                    source_name = trigger_boundaries[0].name
+
+                                for controller in action_controllers:
+                                    # Check if flow already exists
+                                    existing_in_trigger = any(
+                                        cf.source_step == source_name and cf.target_step == controller.name
+                                        for cf in line_analysis.control_flows
+                                    )
+                                    existing_in_action = any(
+                                        cf.source_step == source_name and cf.target_step == controller.name
+                                        for cf in next_line_analysis.control_flows
+                                    )
+
+                                    if not existing_in_trigger and not existing_in_action:
+                                        flow = ControlFlow(
+                                            source_step=source_name,
+                                            target_step=controller.name,
+                                            source_controller=source_controller,
+                                            target_controller=controller.name,
+                                            flow_type='activation',
+                                            rule='Trigger to Action-Controller',
+                                            description=f"{source_name} ({step_id}) activates {controller.name} ({expected_action_step})"
+                                        )
+                                        # Add to action step's control flows
+                                        next_line_analysis.control_flows.append(flow)
+                                        print(f"[ACTOR-BOUNDARY] Created trigger-to-action: {source_name} ({step_id}) -> {controller.name} ({expected_action_step})")
+                            break
+
+        print(f"[ACTOR-BOUNDARY] Actor-Boundary flow generation completed")
+
     def _is_in_parallel_group(self, step_id: str) -> bool:
         """Check if step is part of a parallel group (has letter suffix)
         Recognizes: B5a, B5b, A1.2a, A1.2b, E3.3a, E3.3b"""
@@ -2819,7 +3888,41 @@ class StructuredUCAnalyzer:
         
         # If there are multiple steps with same base, they are parallel
         return len(parallel_steps) > 1
-    
+
+    def _are_in_same_flow_scope(self, step_id1: str, step_id2: str) -> bool:
+        """
+        Check if two step IDs are in the same flow scope.
+
+        Flow scopes:
+        - Main flow: B1, B2a, B3b, B4, B5, B6
+        - Alternative flow A1: A1, A1.1, A1.2, A1.3
+        - Alternative flow A2: A2, A2.1, A2.2, A2.3
+        - Extension flow E1: E1, E1.1, E1.2
+
+        Returns:
+            True if both steps are in the same flow scope
+            False if they are in different flow scopes
+        """
+        def get_flow_scope(step_id: str) -> str:
+            """Get the flow scope identifier for a step"""
+            if step_id.startswith('B'):
+                return 'B'  # All B steps are in main flow
+            elif step_id.startswith('A'):
+                # Extract A1, A2, A3, etc. (number without dot)
+                match = re.match(r'^(A\d+)', step_id)
+                return match.group(1) if match else step_id
+            elif step_id.startswith('E'):
+                # Extract E1, E2, E3, etc. (number without dot)
+                match = re.match(r'^(E\d+)', step_id)
+                return match.group(1) if match else step_id
+            else:
+                return step_id
+
+        scope1 = get_flow_scope(step_id1)
+        scope2 = get_flow_scope(step_id2)
+
+        return scope1 == scope2
+
     def _is_first_in_parallel_group(self, step_id: str) -> bool:
         """Check if step is first in a parallel group (suffix 'a')"""
         match = re.match(r'^([BAE]\d+(?:\.\d+)?)([a-z])$', step_id)
