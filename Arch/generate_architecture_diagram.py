@@ -283,9 +283,10 @@ def create_architecture_diagram():
 
     # Save
     plt.tight_layout()
-    plt.savefig('ARCHITECTURE_DIAGRAM.png', dpi=300, bbox_inches='tight',
+    output_path = 'Arch/ARCHITECTURE_DIAGRAM.png'
+    plt.savefig(output_path, dpi=300, bbox_inches='tight',
                 facecolor='white', edgecolor='none')
-    print('[OK] Architecture diagram saved: ARCHITECTURE_DIAGRAM.png')
+    print(f'[OK] Architecture diagram saved: {output_path}')
 
     plt.close()
 
@@ -498,9 +499,10 @@ def create_component_diagram():
 
     # Save
     plt.tight_layout()
-    plt.savefig('ARCHITECTURE_COMPONENTS.png', dpi=300, bbox_inches='tight',
+    output_path = 'Arch/ARCHITECTURE_COMPONENTS.png'
+    plt.savefig(output_path, dpi=300, bbox_inches='tight',
                 facecolor='white', edgecolor='none')
-    print('[OK] Component diagram saved: ARCHITECTURE_COMPONENTS.png')
+    print(f'[OK] Component diagram saved: {output_path}')
 
     plt.close()
 
@@ -596,9 +598,10 @@ def create_data_flow_diagram():
 
     # Save
     plt.tight_layout()
-    plt.savefig('ARCHITECTURE_DATAFLOW.png', dpi=300, bbox_inches='tight',
+    output_path = 'Arch/ARCHITECTURE_DATAFLOW.png'
+    plt.savefig(output_path, dpi=300, bbox_inches='tight',
                 facecolor='white', edgecolor='none')
-    print('[OK] Data flow diagram saved: ARCHITECTURE_DATAFLOW.png')
+    print(f'[OK] Data flow diagram saved: {output_path}')
 
     plt.close()
 
@@ -615,8 +618,8 @@ if __name__ == '__main__':
     print("\n" + "="*70)
     print("SUCCESS: All architecture diagrams generated")
     print("="*70)
-    print("\nFiles created:")
+    print("\nFiles created in Arch/:")
     print("  - ARCHITECTURE_DIAGRAM.png (Layered Architecture)")
     print("  - ARCHITECTURE_COMPONENTS.png (Component Interactions)")
     print("  - ARCHITECTURE_DATAFLOW.png (Analysis Pipeline)")
-    print("\nSee ARCHITECTURE.md for detailed documentation")
+    print("\nSee Arch/ARCHITECTURE.md for detailed documentation")
