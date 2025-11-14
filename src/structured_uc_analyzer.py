@@ -25,6 +25,9 @@ from generative_context_manager import GenerativeContextManager, GeneratedContex
 from material_controller_registry import MaterialControllerRegistry, extract_function_from_verb
 # Pure RUP visualizer is imported dynamically in _generate_rup_diagram()
 
+# Configuration Constants
+DEFAULT_DOMAIN = "beverage_preparation"  # Default domain if not specified in config
+
 class LineType(Enum):
     """Types of lines in UC files"""
     CAPABILITY = "capability"
@@ -204,7 +207,7 @@ class StructuredUCAnalyzer:
     Line-by-line UC Analyzer with structured processing
     """
     
-    def __init__(self, domain_name: str = "beverage_preparation"):
+    def __init__(self, domain_name: str = DEFAULT_DOMAIN):
         self.domain_name = domain_name
         self.verb_loader = DomainVerbLoader()
         self.nlp = None
@@ -5764,7 +5767,7 @@ def main():
         elif 'UC5_Robot' in uc_file or 'robot' in uc_file.lower():
             domain = 'robotics'
         else:
-            domain = 'beverage_preparation'  # Default for UC1, UC2
+            domain = DEFAULT_DOMAIN  # Default for UC1, UC2
     else:
         uc_file = 'Use Case/UC3_Rocket_Launch_Improved.txt'
         domain = 'rocket_science'
@@ -5880,7 +5883,7 @@ def analyze_from_config(config_file: str = "uc_analysis_config.json") -> Dict[st
     print(f"\nOutput Directory: {output_dir}")
 
     # Initialize shared analyzer (shares material controller registry across UCs)
-    domain_name = config.get('domain', 'beverage_preparation')
+    domain_name = config.get('domain', DEFAULT_DOMAIN)
     analyzer = StructuredUCAnalyzer(domain_name=domain_name)
 
     # Results storage
@@ -6010,7 +6013,7 @@ def main():
     parser = argparse.ArgumentParser(description='Structured UC Analyzer')
     parser.add_argument('--config', type=str, help='Path to config file for multi-UC analysis')
     parser.add_argument('--uc-file', type=str, help='Single UC file to analyze')
-    parser.add_argument('--domain', type=str, default='beverage_preparation', help='Domain name')
+    parser.add_argument('--domain', type=str, default=DEFAULT_DOMAIN, help='Domain name')
 
     args = parser.parse_args()
 

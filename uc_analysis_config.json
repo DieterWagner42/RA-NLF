@@ -1,4 +1,5 @@
 {
+  "_comment": "Configuration for multi-UC analysis. Domain field specifies the domain to use (beverage_preparation, rocket_science, automotive, etc.). If not specified, DEFAULT_DOMAIN from structured_uc_analyzer.py is used.",
   "analysis_name": "Coffee Machine Multi-UC Analysis",
   "description": "Combined analysis of multiple use cases with shared material controllers",
   "domain": "beverage_preparation",
