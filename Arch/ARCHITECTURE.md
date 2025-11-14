@@ -1,9 +1,19 @@
 # RA-NLF Software Architecture
 ## Robustness Analysis Framework with Natural Language Foundation
 
-**Version**: 2.0
-**Last Updated**: 2025-11-13
+**Version**: 2.1
+**Last Updated**: 2025-11-14
 **Domain**: Domain-Independent UC-Methode Robustness Analysis
+
+---
+
+## Documentation Structure
+
+- **ARCHITECTURE.md** (this document) - High-level system architecture overview
+- **ARCHITECTURE_DETAILED_PIPELINE.md** - Complete step-by-step analysis pipeline with all UC-Methode rules
+- **ARCHITECTURE_DIAGRAM.png** - Layered architecture visualization
+- **ARCHITECTURE_COMPONENTS.png** - Component interaction diagram
+- **ARCHITECTURE_DATAFLOW.png** - Analysis pipeline flow diagram
 
 ---
 
@@ -13,7 +23,7 @@
 2. [Architectural Principles](#architectural-principles)
 3. [Core Components](#core-components)
 4. [Data Flow Architecture](#data-flow-architecture)
-5. [Analysis Pipeline](#analysis-pipeline)
+5. [Analysis Pipeline](#analysis-pipeline) ⭐ See ARCHITECTURE_DETAILED_PIPELINE.md for complete details
 6. [Domain-Driven Design](#domain-driven-design)
 7. [Multi-UC Architecture](#multi-uc-architecture)
 8. [Visualization Layer](#visualization-layer)
@@ -467,15 +477,47 @@ Output (JSON, CSV, SVG, PNG)
 
 ## Analysis Pipeline
 
+> **📚 Detailed Documentation**: For a complete step-by-step breakdown of the analysis pipeline with all UC-Methode rules, detailed algorithms, and comprehensive examples, see **[ARCHITECTURE_DETAILED_PIPELINE.md](ARCHITECTURE_DETAILED_PIPELINE.md)** (2672 lines, 73KB).
+
+This section provides a **high-level overview** of the 7-phase analysis pipeline. Each phase applies specific UC-Methode rules and processes UC text through multiple stages.
+
+---
+
+### Overview of Analysis Phases
+
+```
+Phase 1: Context Analysis
+  ↓ UC-Methode Context Rules
+Phase 2: Resource Analysis (Betriebsmittel)
+  ↓ UC-Methode Resource Rules
+Phase 3: Interaction Analysis
+  ↓ UC-Methode Interaction Rules (Transaction/Transformation/Function verbs)
+Phase 4: Control Flow Generation
+  ↓ UC-Methode Rules 1-5 (Serial/Parallel flows)
+Phase 5: Data Flow Analysis
+  ↓ UC-Methode Data Flow Rules (USE/PROVIDE)
+Phase 6: Actor-Boundary Flows
+  ↓ UC-Methode Actor Rules (HMI pattern)
+Phase 7: RA Classification & Validation
+  ↓ UC-Methode Validation Rules
+```
+
+---
+
 ### Phase 1: Context Analysis
+
+**UC-Methode Rules**:
+- **Context Rule 1**: Every UC must have a clearly defined capability and goal
+- **Context Rule 2**: Domain must be identified before analysis
+- **Context Rule 3**: Preconditions define the operational materials (Betriebsmittel)
 
 **Input**: UC file header (Capability, Goal, Preconditions)
 
-**Processing**:
-1. Extract capability and goal
-2. Detect domain from keywords
-3. Identify operational materials (preconditions)
-4. Load domain configuration
+**Detailed Steps**:
+1. **Extract UC Header** - Parse capability, goal, preconditions from UC file
+2. **Domain Detection** - Match keywords to domain configurations
+3. **Load Domain Config** - Load verb classifications, materials, states
+4. **Initialize NLP** - Load spaCy model (en_core_web_md)
 
 **Output**: `UCContext` object
 
@@ -489,156 +531,253 @@ class UCContext:
     preconditions: List[str]
 ```
 
+**Example**:
+```
+Input UC Header:
+  Capability: Coffee Preparation
+  Goal: User can drink their milk coffee every morning at 7am
+  Domain: beverage_preparation (auto-detected)
+```
+
+> 📖 **See**: ARCHITECTURE_DETAILED_PIPELINE.md - Phase 1 for complete algorithms and 4 detailed sub-steps
+
 ---
 
 ### Phase 2: Resource Analysis (Betriebsmittel)
 
+**UC-Methode Rules**:
+- **Resource Rule 1**: All preconditions must be analyzed for operational materials
+- **Resource Rule 2**: Each material requires a Supply Boundary
+- **Resource Rule 3**: Safety and hygiene requirements must be checked
+- **Resource Rule 4**: Material entities must be created for the system state
+
 **Input**: Precondition lines
 
-**Processing**:
-1. Detect material types (water, coffee, milk, sugar)
-2. Generate Supply Boundaries for each material
-3. Check safety/hygiene requirements from domain JSON
-4. Create operational material entities
+**Detailed Steps**:
+1. **Extract Materials** - Identify material types (water, coffee, milk, sugar)
+2. **Generate Supply Boundaries** - Create {Material}SupplyBoundary for each
+3. **Check Safety Requirements** - Load temperature/pressure limits from domain JSON
+4. **Create Material Entities** - Generate operational material entities
 
 **Example**:
 
 ```
 Precondition: "Water is available in the system"
       ↓
-Entity: Water
-Boundary: WaterSupplyBoundary
-Safety Requirements: temperature_monitoring, pressure_limits
+Steps:
+  1. Extract material: "water"
+  2. Create boundary: WaterSupplyBoundary
+  3. Check safety: temperature_limits (max: 100°C), pressure_limits (max: 15 bar)
+  4. Create entity: Water
 ```
+
+> 📖 **See**: ARCHITECTURE_DETAILED_PIPELINE.md - Phase 2 for complete algorithms and 4 detailed sub-steps
 
 ---
 
 ### Phase 3: Interaction Analysis
 
-**Input**: Basic Flow steps
+**UC-Methode Rules**:
+- **Interaction Rule 1**: Each verb must be classified as Transaction, Transformation, or Function verb
+- **Interaction Rule 2**: Transaction verbs create Boundaries for user-system interactions
+- **Interaction Rule 3**: Transformation verbs create Controllers + output Entities based on domain transformations
+- **Interaction Rule 4**: Function verbs assign functions to existing material-based Controllers
+- **Interaction Rule 5**: Controller selection must consider material base name AND aggregation state
 
-**Processing**:
-1. **Transaction Verbs** → Create Boundaries
-   - "User requests espresso" → HMI Boundary
-   - "System outputs message" → Display Boundary
+**Input**: Basic Flow steps (B1, B2a, B2b, etc.)
 
-2. **Transformation Verbs** → Create Controllers + Entities
-   - "System grinds coffee beans" → CoffeeSolidManager + GroundCoffee
-   - Domain JSON: "grind": "CoffeeBeans -> GroundCoffee"
+**Detailed Steps**:
+1. **NLP Grammatical Analysis** - Extract verbs, direct objects, prepositions using spaCy
+2. **Verb Classification** - Determine verb type from domain configuration (Transaction/Transformation/Function)
+3. **Transaction Verb Processing** - Create Boundaries for user interactions
+4. **Transformation Verb Processing** - Create Controllers and output Entities based on material transformations
+5. **Function Verb Processing** - Assign functions to existing material Controllers
+6. **Aggregation State Determination** - Determine solid/liquid/gas state from keywords and operations
 
-3. **Function Verbs** → Assign to Material Controllers
-   - "System heats water" → WaterLiquidManager.heat()
-   - State detection: liquid (from verb operation)
+**Example**:
 
-**Controller Selection Algorithm**:
-
-```python
-def select_controller(verb: str, object: str, line_text: str):
-    # 1. Check if transformation verb
-    transformation = domain.get_transformation(verb)
-    if transformation:
-        output = extract_output(transformation)  # "GroundCoffee"
-        state = determine_state(output, verb)    # "solid" (from keyword "ground")
-        material = extract_base(output)          # "coffee"
-        return material_registry.get_controller(material, state)
-
-    # 2. Check if function verb
-    if domain.is_function_verb(verb):
-        material = extract_material(object)      # "water"
-        state = determine_state_from_verb(verb)  # "liquid" (heat operation)
-        return material_registry.get_controller(material, state)
-
-    # 3. Default to direct object
-    return material_registry.find_by_keywords(object)
 ```
+Step B2a: "System grinds coffee beans"
+      ↓
+NLP: verb="grind", object="coffee beans"
+Verb Classification: transformation_verb (domain: "grind": "CoffeeBeans -> GroundCoffee")
+Extract Output: "GroundCoffee"
+Determine State: "solid" (keyword: "ground")
+Material Base: "coffee"
+Controller: CoffeeSolidManager (coffee + solid)
+Function: grind()
+Output Entity: GroundCoffee
+```
+
+> 📖 **See**: ARCHITECTURE_DETAILED_PIPELINE.md - Phase 3 for complete algorithms and 6 detailed sub-steps
 
 ---
 
-### Phase 4: Control Flow Analysis (UC-Methode Rules 1-5)
+### Phase 4: Control Flow Generation
 
-**Rule 1**: Serial → Serial (Direct Connection)
+**UC-Methode Rules**:
+- **Rule 1 (Serial → Serial)**: Direct connection between consecutive steps
+- **Rule 2 (Serial → Parallel)**: Insert distribution node (PX_START) before parallel group
+- **Rule 3 (Parallel → Parallel, Same Group)**: All parallel steps in same group connect through same START/END nodes
+- **Rule 4 (Parallel → Parallel, Different Group)**: Connect END node of first group to START node of next group
+- **Rule 5 (Parallel → Serial)**: Insert merge node (PX_END) after parallel group before next serial step
+
+**Input**: Controllers from Phase 3 with step IDs (B1, B2a, B2b, etc.)
+
+**Detailed Steps**:
+1. **Detect Parallel Groups** - Identify groups from step ID patterns (B2a, B2b → Group 2)
+2. **Assign Parallel Group Numbers** - Mark controllers with group number and position
+3. **Apply Rule 1** - Connect consecutive serial steps directly
+4. **Apply Rules 2-3** - Insert PX_START, connect all parallel steps, insert PX_END
+5. **Apply Rule 4** - Connect between different parallel groups (P2_END → P3_START)
+6. **Apply Rule 5** - Connect parallel group end to next serial step
+7. **Validate Flow Connectivity** - Ensure no orphaned nodes
+
+**Example**:
+
 ```
-B4 (HMIManager) → B5 (CupManager)
+Steps: B1, B2a, B2b, B2c, B2d, B3a, B3b, B4
+      ↓
+Parallel Group Detection:
+  - B1: Sequential (group 0)
+  - B2a, B2b, B2c, B2d: Group 2
+  - B3a, B3b: Group 3
+  - B4: Sequential (group 0)
+      ↓
+Control Flow:
+  B1 → P2_START (Rule 2)
+  P2_START → B2a → P2_END (Rule 3)
+  P2_START → B2b → P2_END (Rule 3)
+  P2_START → B2c → P2_END (Rule 3)
+  P2_START → B2d → P2_END (Rule 3)
+  P2_END → P3_START (Rule 4)
+  P3_START → B3a → P3_END (Rule 3)
+  P3_START → B3b → P3_END (Rule 3)
+  P3_END → B4 (Rule 5)
 ```
 
-**Rule 2**: Serial → Parallel (Add Distribution Node)
-```
-B1 (SystemControlManager) → P2_START → [B2a, B2b, B2c, B2d]
-```
-
-**Rule 3**: Parallel → Parallel (Same Step Number)
-```
-P2_START → B2a (WaterLiquidManager) → P2_END
-P2_START → B2b (FilterManager) → P2_END
-P2_START → B2c (CoffeeSolidManager) → P2_END
-P2_START → B2d (CupManager) → P2_END
-```
-
-**Rule 4**: Parallel → Parallel (Different Step Number)
-```
-P2_END → P3_START
-```
-
-**Rule 5**: Parallel → Serial (Add Merge Node)
-```
-[B3a, B3b] → P3_END → B4 (HMIManager)
-```
-
-**Parallel Group Detection**:
-
-```python
-def detect_parallel_groups(steps: List[Step]) -> Dict[int, List[Step]]:
-    """
-    Detect parallel groups from step IDs
-
-    B2a, B2b, B2c, B2d → Group 2 (same base "B2", different suffix)
-    B3a, B3b → Group 3 (same base "B3", different suffix)
-    """
-    groups = {}
-    for step in steps:
-        match = re.match(r'^([BAE]\d+)([a-z])$', step.step_id)
-        if match:
-            base_step = match.group(1)  # "B2"
-            group_num = int(base_step[1:])  # 2
-            groups.setdefault(group_num, []).append(step)
-    return groups
-```
+> 📖 **See**: ARCHITECTURE_DETAILED_PIPELINE.md - Phase 4 for complete algorithms and 7 detailed sub-steps
 
 ---
 
 ### Phase 5: Data Flow Analysis
 
-**USE Relationships** (Entity → Controller):
-- **Prepositions**: "with", "from", "into", "using"
-- **Direction**: Input to controller
+**UC-Methode Rules**:
+- **Data Flow Rule 1**: Prepositions "with", "from", "using" indicate USE relationships (Entity → Controller)
+- **Data Flow Rule 2**: Prepositions "to", "for" in output context indicate PROVIDE relationships (Controller → Entity)
+- **Data Flow Rule 3**: Transformation verbs create USE relationships for inputs and PROVIDE for outputs
+- **Data Flow Rule 4**: Direct objects without prepositions create PROVIDE relationships
+
+**Input**: Control flows with NLP-analyzed step text containing prepositions and objects
+
+**Detailed Steps**:
+1. **Extract Preposition Phrases** - Identify prepositional objects from spaCy parse
+2. **Classify Preposition Type** - Determine if USE (input) or PROVIDE (output) based on preposition
+3. **Create USE Relationships** - Connect input entities to controllers (with, from, using)
+4. **Create PROVIDE Relationships** - Connect controllers to output entities (to, for, direct objects)
+5. **Apply Transformation Patterns** - Use domain JSON transformations for input/output entities
+
+**Example**:
 
 ```
-"System grinds coffee beans with grinding degree"
+Step B2a: "System grinds coffee beans with grinding degree"
       ↓
-USE: GrindingDegree → CoffeeSolidManager
-```
-
-**PROVIDE Relationships** (Controller → Entity):
-- **Prepositions**: "to", "for", "into" (output context)
-- **Direction**: Output from controller
-
-```
-"System outputs message to user"
+NLP Parse:
+  - Verb: "grind"
+  - Direct Object: "coffee beans"
+  - Prepositional Phrase: "with grinding degree"
       ↓
-PROVIDE: HMIManager → Message
+Transformation: "grind": "CoffeeBeans -> GroundCoffee"
+Controller: CoffeeSolidManager
+      ↓
+Data Flows:
+  - USE: CoffeeBeans → CoffeeSolidManager (transformation input)
+  - USE: GrindingDegree → CoffeeSolidManager (prepositional object "with")
+  - PROVIDE: CoffeeSolidManager → GroundCoffee (transformation output)
 ```
 
-**Transformation Patterns**:
+> 📖 **See**: ARCHITECTURE_DETAILED_PIPELINE.md - Phase 5 for complete algorithms and 5 detailed sub-steps
+
+---
+
+### Phase 6: Actor-Boundary Flows
+
+**UC-Methode Rules**:
+- **Actor Rule 1**: User interactions must route through HMI pattern (User → Boundary → HMIManager → Controller)
+- **Actor Rule 2**: Extension flows (E1, E2) with user triggers must create HMI boundaries
+- **Actor Rule 3**: Alternative flows (A1, A2) with user triggers must create HMI boundaries
+- **Actor Rule 4**: Time-based triggers create direct Time → Boundary flows (no HMI intermediary)
+
+**Input**: Detected actor interactions from Basic Flow, Extension Flows, Alternative Flows
+
+**Detailed Steps**:
+1. **Detect User Interactions** - Identify steps starting with "User" or user-related triggers
+2. **Create HMI Boundaries** - Generate purpose-specific boundaries (e.g., SugarRequestBoundary)
+3. **Apply HMI Pattern** - Connect User → Boundary → HMIManager → Target Controller
+4. **Handle Extension/Alternative Triggers** - Parse triggers like "E1 B4-B5 (trigger) User wants sugar"
+5. **Create Time-Based Flows** - Connect Time actor directly to time-trigger boundaries
+
+**Example**:
 
 ```
-Domain JSON:
-  "brew": "GroundCoffee + HotWater -> Coffee"
-
-Analysis:
-  USE: GroundCoffee → CoffeeLiquidManager
-  USE: HotWater → CoffeeLiquidManager
-  PROVIDE: CoffeeLiquidManager → Coffee
+Extension Flow: "E1 B4-B5 (trigger) User wants sugar"
+      ↓
+Detection:
+  - Flow type: Extension (E1)
+  - Trigger range: B4-B5
+  - Text: "User wants sugar"
+  - Actor: User
+      ↓
+HMI Pattern:
+  1. Create Boundary: SugarRequestBoundary
+  2. Create Flow: User → SugarRequestBoundary
+  3. Create Flow: SugarRequestBoundary → HMIManager
+  4. Create Flow: HMIManager → SugarSolidManager (target controller)
 ```
+
+> 📖 **See**: ARCHITECTURE_DETAILED_PIPELINE.md - Phase 6 for complete algorithms and 5 detailed sub-steps
+
+---
+
+### Phase 7: RA Classification & Validation
+
+**UC-Methode Rules**:
+- **Validation Rule 1**: All Boundaries must connect to at least one Controller
+- **Validation Rule 2**: All Controllers must have at least one assigned function
+- **Validation Rule 3**: Parallel flow groups must have both PX_START and PX_END nodes
+- **Validation Rule 4**: No direct Actor → Controller connections (must route through Boundary)
+- **Validation Rule 5**: Material Controllers must specify aggregation state if material has multiple states
+
+**Input**: Complete RA class set from all previous phases
+
+**Detailed Steps**:
+1. **Validate Boundary Connections** - Ensure all boundaries have outgoing flows to controllers
+2. **Validate Controller Functions** - Ensure all controllers have assigned functions from verbs
+3. **Validate Parallel Flow Nodes** - Check START/END pairs for each parallel group
+4. **Validate Actor Patterns** - Ensure no direct Actor → Controller violations
+5. **Generate Warnings** - Flag implementation elements, missing aggregation states, orphaned components
+
+**Example Validation**:
+
+```
+Components:
+  - Boundaries: [WaterSupplyBoundary, SugarRequestBoundary, ...]
+  - Controllers: [WaterLiquidManager, SugarSolidManager, HMIManager, ...]
+  - Flow Nodes: [P2_START, P2_END, P3_START, P3_END]
+      ↓
+Validation Checks:
+  ✅ All boundaries connected to controllers
+  ✅ All controllers have functions
+  ✅ P2_START/P2_END pair exists
+  ✅ P3_START/P3_END pair exists
+  ✅ No direct Actor → Controller connections
+  ✅ Material controllers have aggregation states
+      ↓
+Warnings:
+  ⚠️ "Filter" detected as implementation element (should be abstracted)
+```
+
+> 📖 **See**: ARCHITECTURE_DETAILED_PIPELINE.md - Phase 7 for complete algorithms and 5 detailed sub-steps
 
 ---
 
