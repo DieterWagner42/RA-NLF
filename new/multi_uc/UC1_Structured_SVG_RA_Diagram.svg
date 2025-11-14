@@ -43,107 +43,94 @@
         </text>
         
 
-        <g transform="translate(18.0, 74.0) scale(0.8)">
-            <g class="wikipedia-symbol"><g transform="translate(-287,-467)" style="fill:none;stroke:#000000;stroke-width:1px">
-		<path d="m 91.166271,19.719835 a 13.195118,13.068849 0 1 1 -26.390236,0 13.195118,13.068849 0 1 1 26.390236,0 z" transform="matrix(1.131591,0,0,1.1425243,281.27172,471.26198)"/>
-		<path d="m 77.497641,34.903691 0,46.056642 M 77.497641,80.392123 58.052204,96.933371 M 77.529208,80.392123 98.868681,95.860084 M 57.073619,47.49903 98.931815,47.46746" transform="translate(292,474.36218)"/>
-	</g></g>
-        </g>
-        
-        <text x="84" y="174.0" text-anchor="middle"
-              font-family="Arial, sans-serif" font-size="12" fill="black">
-            Time
-        </text>
-        
-
-        <g transform="translate(746.0, 34.0) scale(0.8)">
+        <g transform="translate(596.0, 134.0) scale(0.8)">
             <g class="wikipedia-symbol"><g transform="translate(-311,-471)" style="fill:none;stroke:#000000;stroke-width:1.6">
 		<path d="M 125.71429,31 A 56.07143,58.57143 0 1 1 13.57143,31 56.07143,58.57143 0 1 1 125.71429,31 z" transform="matrix(0.63648498,0,0,0.60931794,349.70591,514.92159)"/>
 		<path d="m 110.53571,14.303571 -10,9.196429 10,9.196429" transform="translate(292,474.7)" style="stroke-width:1px"/>
 	</g></g>
         </g>
         
-        <text x="812" y="134.0" text-anchor="middle"
-              font-family="Arial, sans-serif" font-size="12" fill="black">
-            SystemControlManager
-        </text>
-        
-
-        <g transform="translate(596.0, 256.0) scale(0.8)">
-            <g class="wikipedia-symbol"><g transform="translate(-311,-471)" style="fill:none;stroke:#000000;stroke-width:1.6">
-		<path d="M 125.71429,31 A 56.07143,58.57143 0 1 1 13.57143,31 56.07143,58.57143 0 1 1 125.71429,31 z" transform="matrix(0.63648498,0,0,0.60931794,349.70591,514.92159)"/>
-		<path d="m 110.53571,14.303571 -10,9.196429 10,9.196429" transform="translate(292,474.7)" style="stroke-width:1px"/>
-	</g></g>
-        </g>
-        
-        <text x="662.0" y="356.0" text-anchor="middle"
+        <text x="662.0" y="234.0" text-anchor="middle"
               font-family="Arial, sans-serif" font-size="12" fill="black">
             WaterLiquidManager
         </text>
         
 
-        <g transform="translate(696.0, 256.0) scale(0.8)">
+        <g transform="translate(696.0, 134.0) scale(0.8)">
             <g class="wikipedia-symbol"><g transform="translate(-311,-471)" style="fill:none;stroke:#000000;stroke-width:1.6">
 		<path d="M 125.71429,31 A 56.07143,58.57143 0 1 1 13.57143,31 56.07143,58.57143 0 1 1 125.71429,31 z" transform="matrix(0.63648498,0,0,0.60931794,349.70591,514.92159)"/>
 		<path d="m 110.53571,14.303571 -10,9.196429 10,9.196429" transform="translate(292,474.7)" style="stroke-width:1px"/>
 	</g></g>
         </g>
         
-        <text x="762.0" y="356.0" text-anchor="middle"
+        <text x="762.0" y="234.0" text-anchor="middle"
               font-family="Arial, sans-serif" font-size="12" fill="black">
             FilterManager
         </text>
         
 
-        <g transform="translate(796.0, 256.0) scale(0.8)">
+        <g transform="translate(796.0, 134.0) scale(0.8)">
             <g class="wikipedia-symbol"><g transform="translate(-311,-471)" style="fill:none;stroke:#000000;stroke-width:1.6">
 		<path d="M 125.71429,31 A 56.07143,58.57143 0 1 1 13.57143,31 56.07143,58.57143 0 1 1 125.71429,31 z" transform="matrix(0.63648498,0,0,0.60931794,349.70591,514.92159)"/>
 		<path d="m 110.53571,14.303571 -10,9.196429 10,9.196429" transform="translate(292,474.7)" style="stroke-width:1px"/>
 	</g></g>
         </g>
         
-        <text x="862.0" y="356.0" text-anchor="middle"
+        <text x="862.0" y="234.0" text-anchor="middle"
               font-family="Arial, sans-serif" font-size="12" fill="black">
             CoffeeSolidManager
         </text>
         
 
-        <g transform="translate(896.0, 256.0) scale(0.8)">
+        <g transform="translate(896.0, 134.0) scale(0.8)">
             <g class="wikipedia-symbol"><g transform="translate(-311,-471)" style="fill:none;stroke:#000000;stroke-width:1.6">
 		<path d="M 125.71429,31 A 56.07143,58.57143 0 1 1 13.57143,31 56.07143,58.57143 0 1 1 125.71429,31 z" transform="matrix(0.63648498,0,0,0.60931794,349.70591,514.92159)"/>
 		<path d="m 110.53571,14.303571 -10,9.196429 10,9.196429" transform="translate(292,474.7)" style="stroke-width:1px"/>
 	</g></g>
         </g>
         
-        <text x="962.0" y="356.0" text-anchor="middle"
+        <text x="962.0" y="234.0" text-anchor="middle"
               font-family="Arial, sans-serif" font-size="12" fill="black">
             CupManager
         </text>
         
 
-        <g transform="translate(696.0, 578.0) scale(0.8)">
+        <g transform="translate(696.0, 456.0) scale(0.8)">
             <g class="wikipedia-symbol"><g transform="translate(-311,-471)" style="fill:none;stroke:#000000;stroke-width:1.6">
 		<path d="M 125.71429,31 A 56.07143,58.57143 0 1 1 13.57143,31 56.07143,58.57143 0 1 1 125.71429,31 z" transform="matrix(0.63648498,0,0,0.60931794,349.70591,514.92159)"/>
 		<path d="m 110.53571,14.303571 -10,9.196429 10,9.196429" transform="translate(292,474.7)" style="stroke-width:1px"/>
 	</g></g>
         </g>
         
-        <text x="762.0" y="678.0" text-anchor="middle"
+        <text x="762.0" y="556.0" text-anchor="middle"
               font-family="Arial, sans-serif" font-size="12" fill="black">
             CoffeeLiquidManager
         </text>
         
 
-        <g transform="translate(796.0, 578.0) scale(0.8)">
+        <g transform="translate(796.0, 456.0) scale(0.8)">
             <g class="wikipedia-symbol"><g transform="translate(-311,-471)" style="fill:none;stroke:#000000;stroke-width:1.6">
 		<path d="M 125.71429,31 A 56.07143,58.57143 0 1 1 13.57143,31 56.07143,58.57143 0 1 1 125.71429,31 z" transform="matrix(0.63648498,0,0,0.60931794,349.70591,514.92159)"/>
 		<path d="m 110.53571,14.303571 -10,9.196429 10,9.196429" transform="translate(292,474.7)" style="stroke-width:1px"/>
 	</g></g>
         </g>
         
-        <text x="862.0" y="678.0" text-anchor="middle"
+        <text x="862.0" y="556.0" text-anchor="middle"
               font-family="Arial, sans-serif" font-size="12" fill="black">
             MilkLiquidManager
+        </text>
+        
+
+        <g transform="translate(746.0, 678.0) scale(0.8)">
+            <g class="wikipedia-symbol"><g transform="translate(-311,-471)" style="fill:none;stroke:#000000;stroke-width:1.6">
+		<path d="M 125.71429,31 A 56.07143,58.57143 0 1 1 13.57143,31 56.07143,58.57143 0 1 1 125.71429,31 z" transform="matrix(0.63648498,0,0,0.60931794,349.70591,514.92159)"/>
+		<path d="m 110.53571,14.303571 -10,9.196429 10,9.196429" transform="translate(292,474.7)" style="stroke-width:1px"/>
+	</g></g>
+        </g>
+        
+        <text x="812" y="778.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            HMIManager
         </text>
         
 
@@ -156,7 +143,7 @@
         
         <text x="812" y="900.0" text-anchor="middle"
               font-family="Arial, sans-serif" font-size="12" fill="black">
-            HMIManager
+            SystemControlManager
         </text>
         
 
@@ -373,7 +360,7 @@
         
         <text x="1176" y="554.0" text-anchor="middle"
               font-family="Arial, sans-serif" font-size="12" fill="black">
-            HotWater
+            GroundCoffee
         </text>
         
 
@@ -386,7 +373,7 @@
         
         <text x="1176" y="644.0" text-anchor="middle"
               font-family="Arial, sans-serif" font-size="12" fill="black">
-            GroundCoffee
+            UserDefinedAmountOfCoffee
         </text>
         
 
@@ -399,7 +386,7 @@
         
         <text x="1176" y="734.0" text-anchor="middle"
               font-family="Arial, sans-serif" font-size="12" fill="black">
-            UserDefinedAmountOfCoffee
+            Cup
         </text>
         
 
@@ -412,7 +399,7 @@
         
         <text x="1176" y="824.0" text-anchor="middle"
               font-family="Arial, sans-serif" font-size="12" fill="black">
-            Cup
+            StorageContainer
         </text>
         
 
@@ -425,7 +412,7 @@
         
         <text x="1176" y="914.0" text-anchor="middle"
               font-family="Arial, sans-serif" font-size="12" fill="black">
-            StorageContainer
+            DefinedAmountOfWater
         </text>
         
 
@@ -438,7 +425,7 @@
         
         <text x="1176" y="1004.0" text-anchor="middle"
               font-family="Arial, sans-serif" font-size="12" fill="black">
-            UserDefinedAmountOfWater
+            HotWater
         </text>
         
 
@@ -477,11 +464,24 @@
         
         <text x="1176" y="1274.0" text-anchor="middle"
               font-family="Arial, sans-serif" font-size="12" fill="black">
-            UserDefinedAmountOfSugar
+            Switch
         </text>
         
 
-        <g transform="translate(797.0, 187.0) scale(0.8)">
+        <g transform="translate(1110.0, 1264.0) scale(0.8)">
+            <g class="wikipedia-symbol"><g transform="translate(-144,907)" style="fill:none;stroke:#000000;stroke-width:1.6">
+		<path d="M 125.71429,31 A 56.07143,58.57143 0 1 1 13.57143,31 56.07143,58.57143 0 1 1 125.71429,31 z" transform="matrix(0.63648498,0,0,0.60931794,180.56024,-868.23207)" />
+		<path d="m 68.7,95.472521 73,0.04277" transform="translate(119.71429,-908.49493)" style="stroke-width:1px"/>
+	</g></g>
+        </g>
+        
+        <text x="1176" y="1364.0" text-anchor="middle"
+              font-family="Arial, sans-serif" font-size="12" fill="black">
+            DefinedAmountOfSugar
+        </text>
+        
+
+        <g transform="translate(797.0, 65.0) scale(0.8)">
             
         <g class="diamond-symbol">
             <path d="M 15 5 L 25 15 L 15 25 L 5 15 Z" 
@@ -490,13 +490,13 @@
         
         </g>
         
-        <text x="812" y="225.0" text-anchor="middle"
+        <text x="812" y="103.0" text-anchor="middle"
               font-family="Arial, sans-serif" font-size="12" fill="black">
             P2_START
         </text>
         
 
-        <g transform="translate(797.0, 409.0) scale(0.8)">
+        <g transform="translate(797.0, 287.0) scale(0.8)">
             
         <g class="diamond-symbol">
             <path d="M 15 5 L 25 15 L 15 25 L 5 15 Z" 
@@ -505,13 +505,13 @@
         
         </g>
         
-        <text x="812" y="447.0" text-anchor="middle"
+        <text x="812" y="325.0" text-anchor="middle"
               font-family="Arial, sans-serif" font-size="12" fill="black">
             P2_END
         </text>
         
 
-        <g transform="translate(797.0, 509.0) scale(0.8)">
+        <g transform="translate(797.0, 387.0) scale(0.8)">
             
         <g class="diamond-symbol">
             <path d="M 15 5 L 25 15 L 15 25 L 5 15 Z" 
@@ -520,13 +520,13 @@
         
         </g>
         
-        <text x="812" y="547.0" text-anchor="middle"
+        <text x="812" y="425.0" text-anchor="middle"
               font-family="Arial, sans-serif" font-size="12" fill="black">
             P3_START
         </text>
         
 
-        <g transform="translate(797.0, 731.0) scale(0.8)">
+        <g transform="translate(797.0, 609.0) scale(0.8)">
             
         <g class="diamond-symbol">
             <path d="M 15 5 L 25 15 L 15 25 L 5 15 Z" 
@@ -535,81 +535,73 @@
         
         </g>
         
-        <text x="812" y="769.0" text-anchor="middle"
+        <text x="812" y="647.0" text-anchor="middle"
               font-family="Arial, sans-serif" font-size="12" fill="black">
             P3_END
         </text>
         
 
-        <line x1="812.0" y1="126.0" x2="812.0" y2="187.0" 
+        <line x1="812.0" y1="317.0" x2="812.0" y2="387.0" 
               stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
         
 
-        <line x1="812.0" y1="439.0" x2="812.0" y2="509.0" 
+        <line x1="109.38730400687547" y1="88.3599373730261" x2="422.61269599312453" y2="561.6400626269739" 
               stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
         
 
-        <line x1="111.79509256612877" y1="156.652869317972" x2="420.20490743387126" y2="563.347130682028" 
+        <line x1="799.5192455849324" y1="88.32050294337844" x2="700.2743135395408" y2="154.48379097363946" 
               stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
         
 
-        <line x1="474.3792678407131" y1="562.3153316561242" x2="785.620732159287" y2="117.68466834387587" 
+        <line x1="697.6866849417453" y1="209.0251704192862" x2="800.3630375189961" y2="292.5352705154502" 
               stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
         
 
-        <line x1="799.5192455849324" y1="210.32050294337844" x2="700.2743135395408" y2="276.48379097363943" 
+        <line x1="805.2917960675006" y1="93.41640786499873" x2="782.5718253929981" y2="138.85634921400387" 
               stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
         
 
-        <line x1="697.6866849417453" y1="331.0251704192862" x2="800.3630375189961" y2="414.5352705154502" 
+        <line x1="779.4442772042586" y1="222.5640363783909" x2="806.3116487377417" y2="288.12042292008994" 
               stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
         
 
-        <line x1="805.2917960675006" y1="215.41640786499875" x2="782.5718253929981" y2="260.8563492140039" 
+        <line x1="818.7082039324994" y1="93.41640786499873" x2="841.4281746070019" y2="138.85634921400387" 
               stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
         
 
-        <line x1="779.4442772042586" y1="344.56403637839094" x2="806.3116487377417" y2="410.12042292008994" 
+        <line x1="844.5557227957414" y1="222.5640363783909" x2="817.6883512622583" y2="288.12042292008994" 
               stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
         
 
-        <line x1="818.7082039324994" y1="215.41640786499875" x2="841.4281746070019" y2="260.8563492140039" 
+        <line x1="824.4807544150676" y1="88.32050294337844" x2="923.7256864604592" y2="154.48379097363946" 
               stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
         
 
-        <line x1="844.5557227957414" y1="344.56403637839094" x2="817.6883512622583" y2="410.12042292008994" 
+        <line x1="926.3133150582547" y1="209.0251704192862" x2="823.6369624810039" y2="292.5352705154502" 
               stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
         
 
-        <line x1="824.4807544150676" y1="210.32050294337844" x2="923.7256864604592" y2="276.48379097363943" 
+        <line x1="805.2917960675006" y1="415.41640786499875" x2="782.5718253929981" y2="460.8563492140039" 
               stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
         
 
-        <line x1="926.3133150582547" y1="331.0251704192862" x2="823.6369624810039" y2="414.5352705154502" 
+        <line x1="779.4442772042586" y1="544.5640363783909" x2="806.3116487377417" y2="610.1204229200899" 
               stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
         
 
-        <line x1="805.2917960675006" y1="537.4164078649987" x2="782.5718253929981" y2="582.8563492140039" 
+        <line x1="818.7082039324994" y1="415.41640786499875" x2="841.4281746070019" y2="460.8563492140039" 
               stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
         
 
-        <line x1="779.4442772042586" y1="666.5640363783909" x2="806.3116487377417" y2="732.1204229200899" 
+        <line x1="844.5557227957414" y1="544.5640363783909" x2="817.6883512622583" y2="610.1204229200899" 
               stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
         
 
-        <line x1="818.7082039324994" y1="537.4164078649987" x2="841.4281746070019" y2="582.8563492140039" 
+        <line x1="812.0" y1="639.0" x2="812.0" y2="678.0" 
               stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
         
 
-        <line x1="844.5557227957414" y1="666.5640363783909" x2="817.6883512622583" y2="732.1204229200899" 
-              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
-        
-
-        <line x1="812.0" y1="761.0" x2="812.0" y2="800.0" 
-              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
-        
-
-        <line x1="824.2275095522511" y1="801.6548986905024" x2="949.7724904477489" y2="346.34510130949764" 
+        <line x1="824.2275095522511" y1="679.6548986905024" x2="949.7724904477489" y2="224.3451013094976" 
               stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
         
 
@@ -617,7 +609,7 @@
               stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
         
 
-        <line x1="490.6937306349432" y1="717.1244084414882" x2="769.3062693650568" y2="828.8755915585118" 
+        <line x1="493.9003369074706" y1="703.026395840053" x2="766.0996630925293" y2="720.973604159947" 
               stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
         
 
@@ -625,27 +617,15 @@
               stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
         
 
-        <line x1="493.6370251219945" y1="805.7673163615707" x2="766.3629748780055" y2="840.2326836384293" 
+        <line x1="493.028978300998" y1="790.5983451899015" x2="766.971021699002" y2="733.4016548100985" 
               stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
         
 
-        <line x1="824.2275095522511" y1="801.6548986905024" x2="949.7724904477489" y2="346.34510130949764" 
+        <line x1="824.2275095522511" y1="679.6548986905024" x2="949.7724904477489" y2="224.3451013094976" 
               stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
         
 
-        <line x1="674.2275095522511" y1="346.34510130949764" x2="799.7724904477489" y2="801.6548986905024" 
-              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
-        
-
-        <line x1="106.47575497086478" y1="90.13527673368712" x2="425.5242450291352" y2="659.8647232663129" 
-              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
-        
-
-        <line x1="490.6937306349432" y1="717.1244084414882" x2="769.3062693650568" y2="828.8755915585118" 
-              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
-        
-
-        <line x1="851.8928190960984" y1="668.875883213323" x2="822.1071809039016" y2="801.124116786677" 
+        <line x1="674.2275095522511" y1="224.3451013094976" x2="799.7724904477489" y2="679.6548986905024" 
               stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
         
 
@@ -653,11 +633,19 @@
               stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
         
 
-        <line x1="490.6937306349432" y1="717.1244084414882" x2="769.3062693650568" y2="828.8755915585118" 
+        <line x1="493.9003369074706" y1="703.026395840053" x2="766.0996630925293" y2="720.973604159947" 
               stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
         
 
-        <line x1="812" y1="80" x2="812" y2="80" 
+        <line x1="851.8928190960984" y1="546.875883213323" x2="822.1071809039016" y2="679.124116786677" 
+              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
+        
+
+        <line x1="106.47575497086478" y1="90.13527673368712" x2="425.5242450291352" y2="659.8647232663129" 
+              stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
+        
+
+        <line x1="493.9003369074706" y1="703.026395840053" x2="766.0996630925293" y2="720.973604159947" 
               stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
         
 
@@ -665,102 +653,90 @@
               stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
         
 
-        <line x1="493.5020160248136" y1="893.2497009193958" x2="766.4979839751863" y2="852.7502990806042" 
+        <line x1="489.41307961689387" y1="879.9760933720513" x2="770.5869203831061" y2="744.0239066279487" 
               stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
         
 
-        <line x1="812.0" y1="892.0" x2="812.0" y2="922.0" 
+        <line x1="812.0" y1="770.0" x2="812.0" y2="922.0" 
               stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
         
 
-        <line x1="1130.4447665663781" y1="236.38127783505988" x2="707.5552334336218" y2="295.61872216494015" 
+
+
+        <line x1="1133.4985244461193" y1="67.59615229937735" x2="904.5014755538807" y2="162.40384770062263" 
               stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
         
 
-        <line x1="1130.4447665663781" y1="236.38127783505988" x2="707.5552334336218" y2="295.61872216494015" 
-              stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
-        
-
-        <line x1="704.9252825423987" y1="318.53542012333645" x2="1133.0747174576013" y2="483.46457987666355" 
+        <line x1="894.2176435629206" y1="212.8332673252694" x2="1143.7823564370794" y2="467.1667326747306" 
               stroke="green" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#greenarrowhead)"/>
         
 
-
-
-        <line x1="1140.1246644073328" y1="78.79167060303223" x2="897.8753355926672" y2="273.20832939696777" 
+        <line x1="1148.0308525344997" y1="553.4797756023721" x2="889.9691474655003" y2="216.52022439762789" 
               stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
         
 
-        <line x1="895.9001261411393" y1="333.09310932690477" x2="1142.0998738588607" y2="558.9068906730953" 
+        <line x1="1160.3151337478496" y1="726.7566771552862" x2="977.6848662521504" y2="223.24332284471387" 
+              stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
+        
+
+        <line x1="980.0998700421169" y1="222.2894159862545" x2="1157.900129957883" y2="637.7105840137455" 
               stroke="green" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#greenarrowhead)"/>
         
 
-        <line x1="1146.6067982109305" y1="644.6158271456426" x2="891.3932017890694" y2="337.3841728543574" 
+        <line x1="1141.2050463874125" y1="829.9116101610957" x2="796.7949536125876" y2="532.0883898389043" 
               stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
         
 
-        <line x1="1159.5282327152681" y1="817.0502516594377" x2="978.4717672847318" y2="344.94974834056234" 
+        <line x1="1133.7404765381532" y1="661.8304464342784" x2="804.2595234618467" y2="520.1695535657216" 
               stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
         
 
-        <line x1="981.1291738622349" y1="343.83389424077546" x2="1156.870826137765" y2="728.1661057592245" 
+        <line x1="1130.0005367592576" y1="500.22221962918235" x2="807.9994632407423" y2="501.77778037081765" 
+              stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
+        
+
+        <line x1="1144.7803278688525" y1="916.2163934426229" x2="793.2196721311475" y2="535.7836065573771" 
+              stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
+        
+
+
+        <line x1="796.6288889857478" y1="471.7206333023171" x2="1141.3711110142522" y2="170.27936669768292" 
               stroke="green" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#greenarrowhead)"/>
         
 
-        <line x1="1139.8596687695785" y1="921.5416715431946" x2="798.1403312304216" y2="652.4583284568054" 
+        <line x1="1137.5551127337353" y1="255.258476658029" x2="800.4448872662647" y2="476.741523341971" 
               stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
         
 
-        <line x1="1132.6185770171253" y1="754.7012373055562" x2="805.3814229828748" y2="639.2987626944438" 
+        <line x1="1135.9826242836155" y1="657.3149908359349" x2="902.0173757163845" y2="524.6850091640651" 
               stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
         
 
-        <line x1="1130.1543458256265" y1="593.7651020336442" x2="807.8456541743735" y2="620.2348979663558" 
+        <line x1="1136.2019659973414" y1="343.06765028179575" x2="901.7980340026586" y2="478.93234971820425" 
               stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
         
 
-        <line x1="1131.934136165126" y1="513.1984712935372" x2="806.0658638348742" y2="610.8015287064628" 
+        <line x1="1145.8585798584093" y1="174.74902576833068" x2="892.1414201415907" y2="467.2509742316693" 
               stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
         
 
-
-        <line x1="791.9007004406078" y1="589.0436255718498" x2="1146.0992995593922" y2="174.9563744281502" 
+        <line x1="892.1414201415907" y1="467.2509742316693" x2="1145.8585798584093" y2="174.74902576833068" 
               stroke="green" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#greenarrowhead)"/>
         
 
-        <line x1="1142.6781728121625" y1="261.71207708214484" x2="795.3218271878375" y2="592.2879229178552" 
+        <line x1="1141.263503969855" y1="1009.844140808995" x2="846.736496030145" y2="754.155859191005" 
               stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
         
 
-        <line x1="1134.2884665252138" y1="750.6054653270103" x2="903.711533474786" y2="643.3945346729897" 
+        <line x1="1157.900129957883" y1="637.7105840137455" x2="980.0998700421169" y2="222.2894159862545" 
               stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
         
 
-        <line x1="1142.9510889808982" y1="351.9963979293215" x2="895.0489110191019" y2="592.0036020706785" 
+        <line x1="1145.2929292754068" y1="1095.7498057302614" x2="842.7070707245932" y2="758.2501942697386" 
               stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
         
 
-        <line x1="1150.9641757402567" y1="178.59025140673805" x2="887.0358242597433" y2="585.409748593262" 
-              stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
-        
-
-        <line x1="887.0358242597433" y1="585.409748593262" x2="1150.9641757402567" y2="178.59025140673805" 
-              stroke="green" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#greenarrowhead)"/>
-        
-
-        <line x1="1135.4055920676774" y1="1018.3645188492566" x2="852.5944079323227" y2="867.6354811507434" 
-              stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
-        
-
-        <line x1="1156.870826137765" y1="728.1661057592245" x2="981.1291738622349" y2="343.83389424077546" 
-              stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
-        
-
-        <line x1="1139.7327597436965" y1="1101.703581778049" x2="848.2672402563035" y2="874.2964182219511" 
-              stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
-        
-
-        <line x1="1139.7327597436965" y1="1101.703581778049" x2="848.2672402563035" y2="874.2964182219511" 
+        <line x1="1145.2929292754068" y1="1095.7498057302614" x2="842.7070707245932" y2="758.2501942697386" 
               stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
         
 
@@ -768,11 +744,11 @@
               stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
         
 
-        <line x1="1135.5913754686308" y1="791.9805155417888" x2="852.4086245313694" y2="946.0194844582112" 
+        <line x1="1139.925855121652" y1="708.5421805630886" x2="848.0741448783481" y2="939.4578194369114" 
               stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
         
 
-        <line x1="1138.1791591843862" y1="1193.8163409738058" x2="849.8208408156138" y2="994.1836590261942" 
+        <line x1="1142.4757742637323" y1="1278.501963731309" x2="845.5242257362676" y2="999.498036268691" 
               stroke="orange" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#orangearrowhead)"/>
         
 

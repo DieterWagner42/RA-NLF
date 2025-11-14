@@ -5,9 +5,9 @@
     "capability": "Coffee Preparation",
     "feature": "Espresso Feature",
     "goal": "User wants to drink an espresso",
-    "total_ra_classes": 93,
+    "total_ra_classes": 89,
     "analysis_engine": "structured_uc_analyzer.py",
-    "generated_at": "2025-11-13T20:25:51.596981",
+    "generated_at": "2025-11-14T13:57:00.489270",
     "json_format_version": "2.0"
   },
   "components": {
@@ -15,46 +15,37 @@
       {
         "name": "User",
         "description": "System actor: User"
-      },
-      {
-        "name": "Time",
-        "description": "System actor: Time"
       }
     ],
     "controllers": [
       {
-        "name": "SystemControlManager",
-        "description": "Manages system control operations: schedule() in B1",
-        "parallel_group": 0
-      },
-      {
         "name": "WaterLiquidManager",
-        "description": "Manages water (liquid state): heat() in B2a",
+        "description": "Manages water (liquid state): heat in B2a | Implicit: OverheatProtection[high], WaterQualityProtection[medium]",
         "parallel_group": 2
       },
       {
         "name": "FilterManager",
-        "description": "Manages filter: prepare() in B2b",
+        "description": "Manages filter: prepare in B2b",
         "parallel_group": 2
       },
       {
         "name": "CoffeeSolidManager",
-        "description": "Manages coffee (solid state): grind() in B2c",
+        "description": "Manages coffee (solid state): grind in B2c | Implicit: FreshnessProtection[low]",
         "parallel_group": 2
       },
       {
         "name": "CupManager",
-        "description": "Manages cup: store() in B2d",
+        "description": "Manages cup: store in B2d",
         "parallel_group": 2
       },
       {
         "name": "CoffeeLiquidManager",
-        "description": "Manages coffee (liquid state): brew() in B3a",
+        "description": "Manages coffee (liquid state): brew in B3a",
         "parallel_group": 3
       },
       {
         "name": "MilkLiquidManager",
-        "description": "Manages milk (liquid state): add() in B3b",
+        "description": "Manages milk (liquid state): add in B3b | Implicit: FreshnessProtection[high], LineHygieneProtection[high], TemperatureProtection[high]",
         "parallel_group": 3
       },
       {
@@ -63,8 +54,13 @@
         "parallel_group": 0
       },
       {
+        "name": "SystemControlManager",
+        "description": "Manages system control operations: stop() in A3.1",
+        "parallel_group": 0
+      },
+      {
         "name": "SugarSolidManager",
-        "description": "Manages sugar (solid state): add() in E1.1",
+        "description": "Manages sugar (solid state): add in E1.1 | Implicit: MoistureProtection[medium]",
         "parallel_group": 0
       }
     ],
@@ -132,10 +128,6 @@
         "description": "Precondition entity: sugar"
       },
       {
-        "name": "HotWater",
-        "description": "Domain entity: hotwater"
-      },
-      {
         "name": "GroundCoffee",
         "description": "Domain entity: groundcoffee"
       },
@@ -152,8 +144,12 @@
         "description": "Domain entity: storagecontainer"
       },
       {
-        "name": "UserDefinedAmountOfWater",
-        "description": "Domain entity: userdefinedamountofwater"
+        "name": "DefinedAmountOfWater",
+        "description": "Domain entity: definedamountofwater"
+      },
+      {
+        "name": "HotWater",
+        "description": "Domain entity: hotwater"
       },
       {
         "name": "Message",
@@ -164,8 +160,12 @@
         "description": "Domain entity: errormessage"
       },
       {
-        "name": "UserDefinedAmountOfSugar",
-        "description": "Domain entity: userdefinedamountofsugar"
+        "name": "Switch",
+        "description": "Domain entity: switch"
+      },
+      {
+        "name": "DefinedAmountOfSugar",
+        "description": "Domain entity: definedamountofsugar"
       },
       {
         "name": "SetAmount",
@@ -215,12 +215,6 @@
   },
   "layout": {
     "uc_step_order": [
-      {
-        "step_number": 1,
-        "type": "controller",
-        "name": "SystemControlManager",
-        "parallel_group": 0
-      },
       {
         "type": "control_flow_node",
         "name": "P2_START",
@@ -284,6 +278,12 @@
         "parallel_group": 0
       },
       {
+        "step_number": 103,
+        "type": "controller",
+        "name": "SystemControlManager",
+        "parallel_group": 0
+      },
+      {
         "step_number": 201,
         "type": "controller",
         "name": "SugarSolidManager",
@@ -294,14 +294,6 @@
   "relationships": {
     "control_flows": [
       {
-        "source": "SystemControlManager",
-        "destination": "P2_START",
-        "source_step": "B1",
-        "target_step": "P2_START",
-        "rule": "Rule 2 - Serial to Parallel Distribution",
-        "description": "Flow from B1 to parallel P2_START"
-      },
-      {
         "source": "P2_END",
         "destination": "P3_START",
         "source_step": "P2_END",
@@ -310,28 +302,12 @@
         "description": "Flow between parallel nodes P2_END -> P3_START"
       },
       {
-        "source": "Time",
+        "source": "User",
         "destination": "TimingBoundary",
-        "source_step": "Time",
+        "source_step": "User",
         "target_step": "TimingBoundary",
         "rule": "Actor-Boundary interaction",
-        "description": "Actor Time signals TimingBoundary"
-      },
-      {
-        "source": "TimingBoundary",
-        "destination": "SystemControlManager",
-        "source_step": "TimingBoundary",
-        "target_step": "SystemControlManager",
-        "rule": "Boundary-Controller activation",
-        "description": "Boundary TimingBoundary activates SystemControlManager"
-      },
-      {
-        "source": "SystemControlManager",
-        "destination": "P2_START",
-        "source_step": "B1",
-        "target_step": "P2_START",
-        "rule": "Rule 2 - Serial to Parallel Distribution",
-        "description": "Flow from B1 to parallel P2_START"
+        "description": "Actor User signals TimingBoundary"
       },
       {
         "source": "P2_END",
@@ -670,22 +646,6 @@
         "description": "User interaction MessageDisplayBoundary (A2.2) processed by HMIManager"
       },
       {
-        "source": "SystemControlManager",
-        "destination": "SystemControlManager",
-        "source_step": "A3.1",
-        "target_step": "A3.2",
-        "rule": "Rule 1 - Serial to Serial",
-        "description": "Sequential flow from A3.1 to A3.2"
-      },
-      {
-        "source": "SystemControlManager",
-        "destination": "SystemControlManager",
-        "source_step": "A3.1",
-        "target_step": "A3.2",
-        "rule": "Rule 1 - Serial to Serial",
-        "description": "Sequential flow from A3.1 to A3.2"
-      },
-      {
         "source": "User",
         "destination": "SugarRequestBoundary",
         "source_step": "User",
@@ -880,30 +840,6 @@
     ],
     "data_flows": [
       {
-        "controller": "WaterLiquidManager",
-        "entity": "Water",
-        "step_id": "B2a",
-        "type": "use",
-        "preposition": "",
-        "description": "WaterLiquidManager uses Water as input"
-      },
-      {
-        "controller": "WaterLiquidManager",
-        "entity": "Water",
-        "step_id": "B2a",
-        "type": "use",
-        "preposition": "",
-        "description": "WaterLiquidManager uses Water as input"
-      },
-      {
-        "controller": "WaterLiquidManager",
-        "entity": "HotWater",
-        "step_id": "B2a",
-        "type": "provide",
-        "preposition": "",
-        "description": "WaterLiquidManager produces HotWater as result"
-      },
-      {
         "controller": "FilterManager",
         "entity": "FilterDepot",
         "step_id": "B2b",
@@ -961,11 +897,11 @@
       },
       {
         "controller": "CoffeeLiquidManager",
-        "entity": "UserDefinedAmountOfWater",
+        "entity": "DefinedAmountOfWater",
         "step_id": "B3a",
         "type": "use",
         "preposition": "with",
-        "description": "CoffeeLiquidManager uses UserDefinedAmountOfWater as parameter"
+        "description": "CoffeeLiquidManager uses DefinedAmountOfWater as parameter"
       },
       {
         "controller": "CoffeeLiquidManager",
@@ -1097,11 +1033,11 @@
       },
       {
         "controller": "SugarSolidManager",
-        "entity": "UserDefinedAmountOfSugar",
+        "entity": "DefinedAmountOfSugar",
         "step_id": "E1.1",
         "type": "use",
         "preposition": "",
-        "description": "SugarSolidManager uses UserDefinedAmountOfSugar as input"
+        "description": "SugarSolidManager uses DefinedAmountOfSugar as input"
       },
       {
         "controller": "SugarSolidManager",
@@ -1363,11 +1299,11 @@
           }
         ],
         "semantic_features": [
-          "verb:request",
-          "noun_phrase:a espresso",
-          "dependency:dobj:espresso",
           "dependency:nsubj:user",
-          "verb_form:request"
+          "dependency:dobj:espresso",
+          "verb_form:request",
+          "verb:request",
+          "noun_phrase:a espresso"
         ],
         "domain_alignment_avg": 1.0,
         "context_types": {
@@ -1387,7 +1323,7 @@
       "business_context": "",
       "technical_context": "",
       "actors_involved": [],
-      "step_text": "B2a The system heats water",
+      "step_text": "B2a The system activates the water heater",
       "nlp_context": {
         "generated_contexts": [
           {
@@ -1401,17 +1337,17 @@
               "noun_phrase:the water heater",
               "dependency:nsubj:system",
               "dependency:dobj:heater",
-              "monitorTemperature",
               "heatWater",
-              "protectOverheating"
+              "protectOverheating",
+              "monitorTemperature"
             ],
             "domain_alignment": 0.9,
             "safety_class": null,
             "hygiene_level": null,
             "special_requirements": [
-              "monitorTemperature",
               "heatWater",
-              "protectOverheating"
+              "protectOverheating",
+              "monitorTemperature"
             ],
             "controllers": []
           },
@@ -1517,15 +1453,15 @@
           }
         ],
         "semantic_features": [
-          "verb_form:activates",
-          "noun_phrase:the system",
           "noun_phrase:the water heater",
+          "noun_phrase:the system",
           "dependency:nsubj:system",
-          "monitorTemperature",
-          "dependency:dobj:heater",
           "protectOverheating",
+          "verb_form:activates",
+          "monitorTemperature",
           "heatWater",
-          "verb:activate"
+          "verb:activate",
+          "dependency:dobj:heater"
         ],
         "domain_alignment_avg": 0.9333333333333335,
         "context_types": {
@@ -1533,14 +1469,14 @@
           "technical_context": 4
         },
         "safety_functions": [
-          "Technical context: Liquid Control",
-          "Technical context: Thermal Control",
-          "Functional activity: starts/enables system component",
-          "monitorTemperature",
           "Technical context: Brewing Control",
           "protectOverheating",
+          "monitorTemperature",
           "heatWater",
-          "Technical context: Filter Preparation"
+          "Technical context: Thermal Control",
+          "Technical context: Filter Preparation",
+          "Technical context: Liquid Control",
+          "Functional activity: starts/enables system component"
         ],
         "detected_functions": [
           "heatWater",
@@ -1603,13 +1539,13 @@
           }
         ],
         "semantic_features": [
-          "noun_phrase:the system",
-          "verb:b2b",
           "dependency:dobj:filter",
-          "dependency:nsubj:system",
-          "verb:prepare",
           "verb_form:b2b",
-          "verb_form:prepares"
+          "noun_phrase:the system",
+          "dependency:nsubj:system",
+          "verb:b2b",
+          "verb_form:prepares",
+          "verb:prepare"
         ],
         "domain_alignment_avg": 0.85,
         "context_types": {
@@ -1617,8 +1553,8 @@
           "functional_context": 1
         },
         "safety_functions": [
-          "Functional activity: FilterDepot -> Filter",
-          "Technical context: Filter Preparation"
+          "Technical context: Filter Preparation",
+          "Functional activity: FilterDepot -> Filter"
         ],
         "detected_functions": []
       }
@@ -1771,18 +1707,18 @@
           }
         ],
         "semantic_features": [
-          "dependency:pobj:degree",
-          "noun_phrase:the system",
-          "noun_phrase:the set amount",
-          "dependency:nsubj:system",
-          "dependency:dobj:amount",
-          "dependency:pobj:filter",
-          "verb_form:grinding",
           "entity:ORG:b2c",
-          "verb:grind",
-          "verb_form:grinds",
           "noun_phrase:the set grinding degree",
-          "noun_phrase:the filter"
+          "noun_phrase:the system",
+          "noun_phrase:the filter",
+          "verb_form:grinds",
+          "dependency:nsubj:system",
+          "dependency:pobj:degree",
+          "verb_form:grinding",
+          "dependency:pobj:filter",
+          "noun_phrase:the set amount",
+          "verb:grind",
+          "dependency:dobj:amount"
         ],
         "domain_alignment_avg": 0.8800000000000001,
         "context_types": {
@@ -1790,9 +1726,9 @@
           "functional_context": 2
         },
         "safety_functions": [
+          "Technical context: Filter Preparation",
           "Functional activity: CoffeeBeans -> GroundCoffee",
           "Technical context: Mechanical Control",
-          "Technical context: Filter Preparation",
           "Technical context: Time Control"
         ],
         "detected_functions": []
@@ -1946,19 +1882,19 @@
           }
         ],
         "semantic_features": [
-          "dependency:dobj:cup",
+          "dependency:dobj:it",
+          "verb_form:places",
           "verb:retrieve",
           "noun_phrase:the system",
-          "dependency:pobj:container",
-          "verb_form:retrieves",
-          "dependency:dobj:it",
-          "dependency:nsubj:system",
-          "noun_phrase:storage container",
-          "dependency:pobj:filter",
-          "verb_form:places",
-          "entity:PERSON:b2d",
           "noun_phrase:the filter",
-          "verb:place"
+          "dependency:nsubj:system",
+          "entity:PERSON:b2d",
+          "verb_form:retrieves",
+          "dependency:pobj:container",
+          "dependency:pobj:filter",
+          "noun_phrase:storage container",
+          "verb:place",
+          "dependency:dobj:cup"
         ],
         "domain_alignment_avg": 0.9400000000000001,
         "context_types": {
@@ -1967,10 +1903,10 @@
         },
         "safety_functions": [
           "Technical context: Power Supply",
-          "Functional activity: obtains data/item from storage",
           "Technical context: Brewing Control",
           "Technical context: Container Management",
-          "Technical context: Filter Preparation"
+          "Technical context: Filter Preparation",
+          "Functional activity: obtains data/item from storage"
         ],
         "detected_functions": []
       }
@@ -1983,13 +1919,13 @@
       "business_context": "",
       "technical_context": "",
       "actors_involved": [],
-      "step_text": "B3a The system begins brewing coffee with the user defined amount of water into the cup",
+      "step_text": "B3a The system begins brewing coffee with the defined amount of water into the cup",
       "nlp_context": {
         "generated_contexts": [
           {
             "context_type": "functional_context",
             "context_name": "WaterManager",
-            "source_text": "B3a The system begins brewing coffee with the user defined amount of water into the cup",
+            "source_text": "B3a The system begins brewing coffee with the defined amount of water into the cup",
             "semantic_features": [
               "verb:begin",
               "verb_form:begins",
@@ -1998,31 +1934,31 @@
               "verb:define",
               "verb_form:defined",
               "noun_phrase:the system",
-              "noun_phrase:the user defined amount",
+              "noun_phrase:the defined amount",
               "noun_phrase:the cup",
               "dependency:nsubj:system",
               "dependency:dobj:coffee",
               "dependency:pobj:amount",
               "dependency:pobj:water",
               "dependency:pobj:cup",
-              "monitorTemperature",
               "heatWater",
-              "protectOverheating"
+              "protectOverheating",
+              "monitorTemperature"
             ],
             "domain_alignment": 0.9,
             "safety_class": null,
             "hygiene_level": null,
             "special_requirements": [
-              "monitorTemperature",
               "heatWater",
-              "protectOverheating"
+              "protectOverheating",
+              "monitorTemperature"
             ],
             "controllers": []
           },
           {
             "context_type": "functional_context",
             "context_name": "CoffeeManager",
-            "source_text": "B3a The system begins brewing coffee with the user defined amount of water into the cup",
+            "source_text": "B3a The system begins brewing coffee with the defined amount of water into the cup",
             "semantic_features": [
               "verb:begin",
               "verb_form:begins",
@@ -2031,31 +1967,31 @@
               "verb:define",
               "verb_form:defined",
               "noun_phrase:the system",
-              "noun_phrase:the user defined amount",
+              "noun_phrase:the defined amount",
               "noun_phrase:the cup",
               "dependency:nsubj:system",
               "dependency:dobj:coffee",
               "dependency:pobj:amount",
               "dependency:pobj:water",
               "dependency:pobj:cup",
-              "prepareBrew",
               "brewCoffee",
+              "manageBrewTime",
+              "startExtraction",
               "initiateBrewing",
               "extractCoffee",
-              "startExtraction",
-              "manageBrewTime",
+              "prepareBrew",
               "controlExtraction"
             ],
             "domain_alignment": 0.9,
             "safety_class": null,
             "hygiene_level": null,
             "special_requirements": [
-              "prepareBrew",
               "brewCoffee",
+              "manageBrewTime",
+              "startExtraction",
               "initiateBrewing",
               "extractCoffee",
-              "startExtraction",
-              "manageBrewTime",
+              "prepareBrew",
               "controlExtraction"
             ],
             "controllers": []
@@ -2063,7 +1999,7 @@
           {
             "context_type": "technical_context",
             "context_name": "MechanicalControlContext",
-            "source_text": "B3a The system begins brewing coffee with the user defined amount of water into the cup",
+            "source_text": "B3a The system begins brewing coffee with the defined amount of water into the cup",
             "semantic_features": [
               "verb:begin",
               "verb_form:begins",
@@ -2072,7 +2008,7 @@
               "verb:define",
               "verb_form:defined",
               "noun_phrase:the system",
-              "noun_phrase:the user defined amount",
+              "noun_phrase:the defined amount",
               "noun_phrase:the cup",
               "dependency:nsubj:system",
               "dependency:dobj:coffee",
@@ -2091,7 +2027,7 @@
           {
             "context_type": "technical_context",
             "context_name": "BrewingControlContext",
-            "source_text": "B3a The system begins brewing coffee with the user defined amount of water into the cup",
+            "source_text": "B3a The system begins brewing coffee with the defined amount of water into the cup",
             "semantic_features": [
               "verb:begin",
               "verb_form:begins",
@@ -2100,7 +2036,7 @@
               "verb:define",
               "verb_form:defined",
               "noun_phrase:the system",
-              "noun_phrase:the user defined amount",
+              "noun_phrase:the defined amount",
               "noun_phrase:the cup",
               "dependency:nsubj:system",
               "dependency:dobj:coffee",
@@ -2119,7 +2055,7 @@
           {
             "context_type": "technical_context",
             "context_name": "LiquidControlContext",
-            "source_text": "B3a The system begins brewing coffee with the user defined amount of water into the cup",
+            "source_text": "B3a The system begins brewing coffee with the defined amount of water into the cup",
             "semantic_features": [
               "verb:begin",
               "verb_form:begins",
@@ -2128,7 +2064,7 @@
               "verb:define",
               "verb_form:defined",
               "noun_phrase:the system",
-              "noun_phrase:the user defined amount",
+              "noun_phrase:the defined amount",
               "noun_phrase:the cup",
               "dependency:nsubj:system",
               "dependency:dobj:coffee",
@@ -2147,7 +2083,7 @@
           {
             "context_type": "technical_context",
             "context_name": "ContainerManagementContext",
-            "source_text": "B3a The system begins brewing coffee with the user defined amount of water into the cup",
+            "source_text": "B3a The system begins brewing coffee with the defined amount of water into the cup",
             "semantic_features": [
               "verb:begin",
               "verb_form:begins",
@@ -2156,7 +2092,7 @@
               "verb:define",
               "verb_form:defined",
               "noun_phrase:the system",
-              "noun_phrase:the user defined amount",
+              "noun_phrase:the defined amount",
               "noun_phrase:the cup",
               "dependency:nsubj:system",
               "dependency:dobj:coffee",
@@ -2174,36 +2110,8 @@
           },
           {
             "context_type": "technical_context",
-            "context_name": "UserInterfaceContext",
-            "source_text": "B3a The system begins brewing coffee with the user defined amount of water into the cup",
-            "semantic_features": [
-              "verb:begin",
-              "verb_form:begins",
-              "verb:brew",
-              "verb_form:brewing",
-              "verb:define",
-              "verb_form:defined",
-              "noun_phrase:the system",
-              "noun_phrase:the user defined amount",
-              "noun_phrase:the cup",
-              "dependency:nsubj:system",
-              "dependency:dobj:coffee",
-              "dependency:pobj:amount",
-              "dependency:pobj:water",
-              "dependency:pobj:cup"
-            ],
-            "domain_alignment": 1.0,
-            "safety_class": null,
-            "hygiene_level": null,
-            "special_requirements": [
-              "Technical context: User Interface"
-            ],
-            "controllers": []
-          },
-          {
-            "context_type": "technical_context",
             "context_name": "PowerSupplyContext",
-            "source_text": "B3a The system begins brewing coffee with the user defined amount of water into the cup",
+            "source_text": "B3a The system begins brewing coffee with the defined amount of water into the cup",
             "semantic_features": [
               "verb:begin",
               "verb_form:begins",
@@ -2212,7 +2120,7 @@
               "verb:define",
               "verb_form:defined",
               "noun_phrase:the system",
-              "noun_phrase:the user defined amount",
+              "noun_phrase:the defined amount",
               "noun_phrase:the cup",
               "dependency:nsubj:system",
               "dependency:dobj:coffee",
@@ -2231,7 +2139,7 @@
           {
             "context_type": "functional_context",
             "context_name": "BrewFunctionalContext",
-            "source_text": "B3a The system begins brewing coffee with the user defined amount of water into the cup",
+            "source_text": "B3a The system begins brewing coffee with the defined amount of water into the cup",
             "semantic_features": [
               "verb:begin",
               "verb_form:begins",
@@ -2240,7 +2148,7 @@
               "verb:define",
               "verb_form:defined",
               "noun_phrase:the system",
-              "noun_phrase:the user defined amount",
+              "noun_phrase:the defined amount",
               "noun_phrase:the cup",
               "dependency:nsubj:system",
               "dependency:dobj:coffee",
@@ -2258,53 +2166,52 @@
           }
         ],
         "semantic_features": [
-          "dependency:dobj:coffee",
-          "verb:brew",
-          "heatWater",
-          "verb_form:defined",
-          "dependency:nsubj:system",
-          "brewCoffee",
           "verb:define",
-          "noun_phrase:the cup",
-          "noun_phrase:the system",
-          "prepareBrew",
-          "verb_form:brewing",
-          "dependency:pobj:water",
-          "noun_phrase:the user defined amount",
-          "dependency:pobj:cup",
-          "initiateBrewing",
-          "protectOverheating",
-          "verb:begin",
+          "brewCoffee",
           "monitorTemperature",
-          "extractCoffee",
+          "noun_phrase:the cup",
+          "verb_form:brewing",
+          "verb_form:begins",
+          "protectOverheating",
+          "manageBrewTime",
+          "initiateBrewing",
+          "noun_phrase:the defined amount",
+          "dependency:pobj:cup",
+          "prepareBrew",
+          "controlExtraction",
+          "noun_phrase:the system",
+          "dependency:nsubj:system",
           "dependency:pobj:amount",
           "startExtraction",
-          "verb_form:begins",
-          "manageBrewTime",
-          "controlExtraction"
+          "verb:begin",
+          "verb_form:defined",
+          "heatWater",
+          "dependency:dobj:coffee",
+          "verb:brew",
+          "extractCoffee",
+          "dependency:pobj:water"
         ],
-        "domain_alignment_avg": 0.9444444444444444,
+        "domain_alignment_avg": 0.9375,
         "context_types": {
           "functional_context": 3,
-          "technical_context": 6
+          "technical_context": 5
         },
         "safety_functions": [
-          "Technical context: Liquid Control",
-          "prepareBrew",
-          "Technical context: Mechanical Control",
           "Technical context: Power Supply",
-          "startExtraction",
-          "brewCoffee",
-          "initiateBrewing",
-          "monitorTemperature",
-          "Technical context: User Interface",
-          "extractCoffee",
-          "Functional activity: GroundCoffee + HotWater + Filter -> Coffee",
           "Technical context: Brewing Control",
+          "Technical context: Mechanical Control",
+          "brewCoffee",
           "protectOverheating",
+          "monitorTemperature",
+          "manageBrewTime",
+          "startExtraction",
           "Technical context: Container Management",
           "heatWater",
-          "manageBrewTime",
+          "Functional activity: GroundCoffee + HotWater + Filter -> Coffee",
+          "initiateBrewing",
+          "extractCoffee",
+          "Technical context: Liquid Control",
+          "prepareBrew",
           "controlExtraction"
         ],
         "detected_functions": [
@@ -2336,11 +2243,11 @@
               "dependency:nsubj:system",
               "dependency:dobj:milk",
               "dependency:pobj:cup",
-              "monitorExpiration",
-              "steamMilk",
               "trackFreshness",
-              "hygieneSafetyControl",
+              "steamMilk",
+              "monitorExpiration",
               "pourMilk",
+              "hygieneSafetyControl",
               "addMilk",
               "maintainTemperature"
             ],
@@ -2348,11 +2255,11 @@
             "safety_class": null,
             "hygiene_level": null,
             "special_requirements": [
-              "monitorExpiration",
-              "steamMilk",
               "trackFreshness",
-              "hygieneSafetyControl",
+              "steamMilk",
+              "monitorExpiration",
               "pourMilk",
+              "hygieneSafetyControl",
               "addMilk",
               "maintainTemperature"
             ],
@@ -2423,20 +2330,20 @@
           }
         ],
         "semantic_features": [
-          "noun_phrase:the system",
-          "dependency:pobj:cup",
-          "monitorExpiration",
-          "steamMilk",
-          "dependency:nsubj:system",
-          "trackFreshness",
-          "hygieneSafetyControl",
-          "pourMilk",
-          "addMilk",
-          "dependency:dobj:milk",
-          "verb:add",
           "verb_form:adds",
-          "maintainTemperature",
-          "noun_phrase:the cup"
+          "trackFreshness",
+          "dependency:nsubj:system",
+          "noun_phrase:the system",
+          "dependency:dobj:milk",
+          "steamMilk",
+          "monitorExpiration",
+          "pourMilk",
+          "hygieneSafetyControl",
+          "addMilk",
+          "noun_phrase:the cup",
+          "dependency:pobj:cup",
+          "verb:add",
+          "maintainTemperature"
         ],
         "domain_alignment_avg": 0.8999999999999999,
         "context_types": {
@@ -2444,15 +2351,15 @@
           "technical_context": 2
         },
         "safety_functions": [
-          "Technical context: Liquid Control",
-          "monitorExpiration",
-          "steamMilk",
           "trackFreshness",
-          "hygieneSafetyControl",
+          "steamMilk",
+          "monitorExpiration",
           "pourMilk",
+          "hygieneSafetyControl",
+          "Technical context: Container Management",
           "Functional activity: Coffee + Additive -> Coffee",
           "addMilk",
-          "Technical context: Container Management",
+          "Technical context: Liquid Control",
           "maintainTemperature"
         ],
         "detected_functions": []
@@ -2484,17 +2391,17 @@
               "dependency:nsubj:system",
               "dependency:dobj:water",
               "dependency:pobj:grounds",
-              "monitorTemperature",
               "heatWater",
-              "protectOverheating"
+              "protectOverheating",
+              "monitorTemperature"
             ],
             "domain_alignment": 0.9,
             "safety_class": null,
             "hygiene_level": null,
             "special_requirements": [
-              "monitorTemperature",
               "heatWater",
-              "protectOverheating"
+              "protectOverheating",
+              "monitorTemperature"
             ],
             "controllers": []
           },
@@ -2514,18 +2421,18 @@
               "dependency:dobj:water",
               "dependency:pobj:grounds",
               "extractCoffee",
-              "manageBrewTime",
+              "controlExtraction",
               "brewCoffee",
-              "controlExtraction"
+              "manageBrewTime"
             ],
             "domain_alignment": 0.9,
             "safety_class": null,
             "hygiene_level": null,
             "special_requirements": [
               "extractCoffee",
-              "manageBrewTime",
+              "controlExtraction",
               "brewCoffee",
-              "controlExtraction"
+              "manageBrewTime"
             ],
             "controllers": []
           },
@@ -2627,23 +2534,23 @@
           }
         ],
         "semantic_features": [
-          "noun_phrase:the system",
-          "verb_form:pressing",
-          "noun_phrase:hot water",
-          "dependency:nsubj:system",
-          "manageBrewTime",
-          "verb:begin",
-          "brewCoffee",
-          "monitorTemperature",
-          "extractCoffee",
-          "verb:press",
-          "dependency:pobj:grounds",
-          "protectOverheating",
-          "verb_form:begins",
           "noun_phrase:the coffee grounds",
           "dependency:dobj:water",
-          "controlExtraction",
-          "heatWater"
+          "brewCoffee",
+          "noun_phrase:the system",
+          "dependency:nsubj:system",
+          "protectOverheating",
+          "verb:press",
+          "dependency:pobj:grounds",
+          "monitorTemperature",
+          "verb_form:pressing",
+          "manageBrewTime",
+          "heatWater",
+          "verb:begin",
+          "noun_phrase:hot water",
+          "extractCoffee",
+          "verb_form:begins",
+          "controlExtraction"
         ],
         "domain_alignment_avg": 0.9666666666666667,
         "context_types": {
@@ -2651,16 +2558,16 @@
           "technical_context": 4
         },
         "safety_functions": [
-          "Technical context: Liquid Control",
-          "Technical context: Thermal Control",
           "Technical context: Power Supply",
-          "brewCoffee",
-          "monitorTemperature",
-          "extractCoffee",
           "Technical context: Brewing Control",
+          "brewCoffee",
           "protectOverheating",
-          "heatWater",
+          "Technical context: Thermal Control",
+          "monitorTemperature",
           "manageBrewTime",
+          "heatWater",
+          "extractCoffee",
+          "Technical context: Liquid Control",
           "controlExtraction"
         ],
         "detected_functions": [
@@ -2724,13 +2631,13 @@
           }
         ],
         "semantic_features": [
-          "verb_form:outputs",
           "noun_phrase:the system",
-          "dependency:dobj:message",
-          "verb:output",
           "dependency:nsubj:system",
+          "noun_phrase:a message",
           "dependency:pobj:user",
-          "noun_phrase:a message"
+          "verb:output",
+          "dependency:dobj:message",
+          "verb_form:outputs"
         ],
         "domain_alignment_avg": 0.85,
         "context_types": {
@@ -2802,17 +2709,17 @@
               "noun_phrase:water heater",
               "dependency:nsubj:system",
               "dependency:dobj:heater",
-              "monitorTemperature",
               "heatWater",
-              "protectOverheating"
+              "protectOverheating",
+              "monitorTemperature"
             ],
             "domain_alignment": 0.9,
             "safety_class": null,
             "hygiene_level": null,
             "special_requirements": [
-              "monitorTemperature",
               "heatWater",
-              "protectOverheating"
+              "protectOverheating",
+              "monitorTemperature"
             ],
             "controllers": []
           },
@@ -2918,15 +2825,15 @@
           }
         ],
         "semantic_features": [
-          "verb_form:switches",
           "noun_phrase:water heater",
+          "verb_form:switches",
           "noun_phrase:the system",
           "dependency:nsubj:system",
-          "verb:switch",
-          "monitorTemperature",
-          "dependency:dobj:heater",
           "protectOverheating",
-          "heatWater"
+          "monitorTemperature",
+          "verb:switch",
+          "heatWater",
+          "dependency:dobj:heater"
         ],
         "domain_alignment_avg": 0.9833333333333334,
         "context_types": {
@@ -2934,14 +2841,14 @@
           "technical_context": 5
         },
         "safety_functions": [
-          "Technical context: Liquid Control",
-          "Technical context: Thermal Control",
           "Technical context: Power Supply",
-          "monitorTemperature",
           "Technical context: Brewing Control",
           "protectOverheating",
+          "monitorTemperature",
           "heatWater",
-          "Technical context: Filter Preparation"
+          "Technical context: Thermal Control",
+          "Technical context: Filter Preparation",
+          "Technical context: Liquid Control"
         ],
         "detected_functions": [
           "heatWater",
@@ -3028,14 +2935,14 @@
           }
         ],
         "semantic_features": [
-          "noun_phrase:the system",
-          "verb_form:outputs",
-          "dependency:dobj:message",
-          "verb:output",
           "noun_phrase:an error message",
+          "noun_phrase:the system",
           "dependency:nsubj:system",
           "dependency:pobj:user",
-          "entity:PRODUCT:a1.2"
+          "verb:output",
+          "entity:PRODUCT:a1.2",
+          "dependency:dobj:message",
+          "verb_form:outputs"
         ],
         "domain_alignment_avg": 0.9,
         "context_types": {
@@ -3044,8 +2951,8 @@
         },
         "safety_functions": [
           "Technical context: User Interface",
-          "Functional activity: sends data to Output boundary",
-          "Technical context: Error Handling"
+          "Technical context: Error Handling",
+          "Functional activity: sends data to Output boundary"
         ],
         "detected_functions": []
       }
@@ -3076,16 +2983,63 @@
       "business_context": "",
       "technical_context": "",
       "actors_involved": [],
-      "step_text": "A2 at B3b Too little .1",
+      "step_text": "A2 at B3b Too little milk",
       "nlp_context": {
         "generated_contexts": [
           {
-            "context_type": "technical_context",
-            "context_name": "ErrorHandlingContext",
-            "source_text": "A2 at B3b Too little .1",
+            "context_type": "functional_context",
+            "context_name": "MilkManager",
+            "source_text": "A2 at B3b Too little milk",
             "semantic_features": [
               "entity:CARDINAL:a2",
-              "noun_phrase:too little .1",
+              "dependency:nsubj:a2",
+              "dependency:pobj:b3b",
+              "trackFreshness",
+              "steamMilk",
+              "monitorExpiration",
+              "pourMilk",
+              "hygieneSafetyControl",
+              "addMilk",
+              "maintainTemperature"
+            ],
+            "domain_alignment": 0.9,
+            "safety_class": null,
+            "hygiene_level": null,
+            "special_requirements": [
+              "trackFreshness",
+              "steamMilk",
+              "monitorExpiration",
+              "pourMilk",
+              "hygieneSafetyControl",
+              "addMilk",
+              "maintainTemperature"
+            ],
+            "controllers": []
+          },
+          {
+            "context_type": "technical_context",
+            "context_name": "LiquidControlContext",
+            "source_text": "A2 at B3b Too little milk",
+            "semantic_features": [
+              "entity:CARDINAL:a2",
+              "dependency:nsubj:a2",
+              "dependency:pobj:b3b"
+            ],
+            "domain_alignment": 1.0,
+            "safety_class": null,
+            "hygiene_level": null,
+            "special_requirements": [
+              "Technical context: Liquid Control"
+            ],
+            "controllers": []
+          },
+          {
+            "context_type": "technical_context",
+            "context_name": "ErrorHandlingContext",
+            "source_text": "A2 at B3b Too little milk",
+            "semantic_features": [
+              "entity:CARDINAL:a2",
+              "dependency:nsubj:a2",
               "dependency:pobj:b3b"
             ],
             "domain_alignment": 1.0,
@@ -3098,16 +3052,32 @@
           }
         ],
         "semantic_features": [
-          "dependency:pobj:b3b",
+          "trackFreshness",
           "entity:CARDINAL:a2",
-          "noun_phrase:too little .1"
+          "steamMilk",
+          "monitorExpiration",
+          "pourMilk",
+          "hygieneSafetyControl",
+          "dependency:nsubj:a2",
+          "addMilk",
+          "dependency:pobj:b3b",
+          "maintainTemperature"
         ],
-        "domain_alignment_avg": 1.0,
+        "domain_alignment_avg": 0.9666666666666667,
         "context_types": {
-          "technical_context": 1
+          "functional_context": 1,
+          "technical_context": 2
         },
         "safety_functions": [
-          "Technical context: Error Handling"
+          "trackFreshness",
+          "steamMilk",
+          "monitorExpiration",
+          "pourMilk",
+          "hygieneSafetyControl",
+          "Technical context: Error Handling",
+          "addMilk",
+          "Technical context: Liquid Control",
+          "maintainTemperature"
         ],
         "detected_functions": []
       }
@@ -3136,18 +3106,18 @@
               "noun_phrase:milk addition",
               "dependency:nsubj:system",
               "dependency:dobj:addition",
+              "pourMilk",
               "addMilk",
               "hygieneSafetyControl",
-              "pourMilk",
               "steamMilk"
             ],
             "domain_alignment": 0.9,
             "safety_class": null,
             "hygiene_level": null,
             "special_requirements": [
+              "pourMilk",
               "addMilk",
               "hygieneSafetyControl",
-              "pourMilk",
               "steamMilk"
             ],
             "controllers": []
@@ -3242,18 +3212,18 @@
           }
         ],
         "semantic_features": [
-          "noun_phrase:milk addition",
+          "verb:stop",
           "noun_phrase:the system",
-          "verb_form:a2.1",
-          "steamMilk",
           "dependency:nsubj:system",
-          "dependency:dobj:addition",
-          "hygieneSafetyControl",
+          "steamMilk",
           "pourMilk",
+          "hygieneSafetyControl",
           "addMilk",
           "verb:a2.1",
           "verb_form:stops",
-          "verb:stop"
+          "verb_form:a2.1",
+          "noun_phrase:milk addition",
+          "dependency:dobj:addition"
         ],
         "domain_alignment_avg": 0.9199999999999999,
         "context_types": {
@@ -3261,14 +3231,14 @@
           "technical_context": 3
         },
         "safety_functions": [
-          "Technical context: Liquid Control",
+          "Technical context: Power Supply",
           "Functional activity: ends system operation",
           "steamMilk",
-          "Technical context: Power Supply",
-          "hygieneSafetyControl",
           "Technical context: Error Handling",
           "pourMilk",
-          "addMilk"
+          "hygieneSafetyControl",
+          "addMilk",
+          "Technical context: Liquid Control"
         ],
         "detected_functions": []
       }
@@ -3349,13 +3319,13 @@
           }
         ],
         "semantic_features": [
-          "verb_form:outputs",
-          "noun_phrase:the system",
-          "dependency:dobj:message",
-          "verb:output",
           "noun_phrase:an error message",
+          "noun_phrase:the system",
           "dependency:nsubj:system",
-          "dependency:pobj:user"
+          "dependency:pobj:user",
+          "verb:output",
+          "dependency:dobj:message",
+          "verb_form:outputs"
         ],
         "domain_alignment_avg": 0.9,
         "context_types": {
@@ -3364,8 +3334,8 @@
         },
         "safety_functions": [
           "Technical context: User Interface",
-          "Functional activity: sends data to Output boundary",
-          "Technical context: Error Handling"
+          "Technical context: Error Handling",
+          "Functional activity: sends data to Output boundary"
         ],
         "detected_functions": []
       }
@@ -3409,27 +3379,27 @@
               "noun_phrase:any time",
               "dependency:pobj:time",
               "dependency:nsubj:overheat",
-              "scheduleEvent",
-              "synchronizeTime",
               "trackTime",
+              "controlTiming",
+              "setTimer",
               "manageTimer",
+              "synchronizeTime",
               "checkSchedule",
               "monitorTime",
-              "controlTiming",
-              "setTimer"
+              "scheduleEvent"
             ],
             "domain_alignment": 0.9,
             "safety_class": null,
             "hygiene_level": null,
             "special_requirements": [
-              "scheduleEvent",
-              "synchronizeTime",
               "trackTime",
+              "controlTiming",
+              "setTimer",
               "manageTimer",
+              "synchronizeTime",
               "checkSchedule",
               "monitorTime",
-              "controlTiming",
-              "setTimer"
+              "scheduleEvent"
             ],
             "controllers": []
           },
@@ -3511,19 +3481,19 @@
           }
         ],
         "semantic_features": [
-          "verb:detect",
           "noun_phrase:any time",
-          "scheduleEvent",
-          "synchronizeTime",
+          "dependency:nsubj:overheat",
           "trackTime",
-          "manageTimer",
-          "checkSchedule",
-          "monitorTime",
+          "verb:detect",
           "controlTiming",
           "dependency:pobj:time",
+          "manageTimer",
+          "scheduleEvent",
+          "monitorTime",
+          "synchronizeTime",
           "setTimer",
-          "dependency:nsubj:overheat",
-          "verb_form:detected"
+          "verb_form:detected",
+          "checkSchedule"
         ],
         "domain_alignment_avg": 0.9199999999999999,
         "context_types": {
@@ -3531,18 +3501,18 @@
           "technical_context": 3
         },
         "safety_functions": [
-          "Technical context: Thermal Control",
-          "scheduleEvent",
-          "synchronizeTime",
           "trackTime",
-          "Technical context: Time Control",
-          "manageTimer",
-          "Technical context: Error Handling",
-          "Functional activity: senses condition/presence",
-          "checkSchedule",
-          "monitorTime",
           "controlTiming",
-          "setTimer"
+          "Technical context: Thermal Control",
+          "Technical context: Time Control",
+          "Technical context: Error Handling",
+          "manageTimer",
+          "Functional activity: senses condition/presence",
+          "scheduleEvent",
+          "monitorTime",
+          "synchronizeTime",
+          "setTimer",
+          "checkSchedule"
         ],
         "detected_functions": []
       }
@@ -3640,12 +3610,12 @@
           }
         ],
         "semantic_features": [
+          "dependency:dobj:actions",
+          "verb:stop",
           "noun_phrase:the system",
           "dependency:nsubj:system",
-          "noun_phrase:all actions",
           "verb_form:stops",
-          "verb:stop",
-          "dependency:dobj:actions"
+          "noun_phrase:all actions"
         ],
         "domain_alignment_avg": 0.925,
         "context_types": {
@@ -3655,8 +3625,8 @@
         "safety_functions": [
           "Functional activity: ends system operation",
           "Technical context: Power Supply",
-          "Technical context: Error Handling",
-          "Technical context: Brewing Control"
+          "Technical context: Brewing Control",
+          "Technical context: Error Handling"
         ],
         "detected_functions": []
       }
@@ -3669,16 +3639,16 @@
       "business_context": "",
       "technical_context": "",
       "actors_involved": [],
-      "step_text": "A3.2 The system switches off itself",
+      "step_text": "A3.2 The system switch of itself",
       "nlp_context": {
         "generated_contexts": [
           {
             "context_type": "technical_context",
             "context_name": "PowerSupplyContext",
-            "source_text": "A3.2 The system switches off itself",
+            "source_text": "A3.2 The system switch of itself",
             "semantic_features": [
               "verb:switch",
-              "verb_form:switches",
+              "verb_form:switch",
               "noun_phrase:the system",
               "dependency:nsubj:system",
               "dependency:pobj:itself"
@@ -3693,11 +3663,11 @@
           }
         ],
         "semantic_features": [
-          "verb_form:switches",
           "noun_phrase:the system",
           "dependency:nsubj:system",
+          "dependency:pobj:itself",
           "verb:switch",
-          "dependency:pobj:itself"
+          "verb_form:switch"
         ],
         "domain_alignment_avg": 1.0,
         "context_types": {
@@ -3735,7 +3705,7 @@
       "business_context": "",
       "technical_context": "",
       "actors_involved": [],
-      "step_text": "E1 at B3-B5 (trigger) User wants sugar in coffee",
+      "step_text": "E1 B3-B5 (trigger) User wants sugar in coffee",
       "nlp_context": {
         "generated_contexts": [
           {
@@ -3749,22 +3719,22 @@
               "dependency:nsubj:user",
               "dependency:dobj:sugar",
               "dependency:pobj:coffee",
+              "trackInventory",
               "maintainDryness",
+              "monitorMoisture",
               "measureSugar",
               "addSugar",
-              "trackInventory",
-              "monitorMoisture",
               "dispenseSugar"
             ],
             "domain_alignment": 0.9,
             "safety_class": null,
             "hygiene_level": null,
             "special_requirements": [
+              "trackInventory",
               "maintainDryness",
+              "monitorMoisture",
               "measureSugar",
               "addSugar",
-              "trackInventory",
-              "monitorMoisture",
               "dispenseSugar"
             ],
             "controllers": []
@@ -3780,24 +3750,24 @@
               "dependency:nsubj:user",
               "dependency:dobj:sugar",
               "dependency:pobj:coffee",
-              "prepareBrew",
               "brewCoffee",
+              "manageBrewTime",
+              "startExtraction",
               "initiateBrewing",
               "extractCoffee",
-              "startExtraction",
-              "manageBrewTime",
+              "prepareBrew",
               "controlExtraction"
             ],
             "domain_alignment": 0.9,
             "safety_class": null,
             "hygiene_level": null,
             "special_requirements": [
-              "prepareBrew",
               "brewCoffee",
+              "manageBrewTime",
+              "startExtraction",
               "initiateBrewing",
               "extractCoffee",
-              "startExtraction",
-              "manageBrewTime",
+              "prepareBrew",
               "controlExtraction"
             ],
             "controllers": []
@@ -3844,25 +3814,25 @@
           }
         ],
         "semantic_features": [
-          "maintainDryness",
-          "addSugar",
-          "verb_form:wants",
-          "measureSugar",
           "brewCoffee",
-          "dependency:pobj:coffee",
-          "dependency:nsubj:user",
-          "verb:want",
-          "prepareBrew",
-          "initiateBrewing",
-          "trackInventory",
+          "maintainDryness",
           "dependency:dobj:sugar",
-          "dispenseSugar",
-          "entity:PRODUCT:e1 b4-b5",
-          "extractCoffee",
-          "startExtraction",
-          "monitorMoisture",
           "manageBrewTime",
-          "controlExtraction"
+          "initiateBrewing",
+          "controlExtraction",
+          "prepareBrew",
+          "dependency:nsubj:user",
+          "trackInventory",
+          "verb:want",
+          "monitorMoisture",
+          "startExtraction",
+          "dispenseSugar",
+          "dependency:pobj:coffee",
+          "measureSugar",
+          "addSugar",
+          "extractCoffee",
+          "verb_form:wants",
+          "entity:PRODUCT:e1 b4-b5"
         ],
         "domain_alignment_avg": 0.95,
         "context_types": {
@@ -3870,21 +3840,21 @@
           "technical_context": 2
         },
         "safety_functions": [
-          "prepareBrew",
-          "maintainDryness",
-          "measureSugar",
           "Technical context: Power Supply",
-          "addSugar",
-          "brewCoffee",
-          "initiateBrewing",
           "trackInventory",
-          "Technical context: User Interface",
-          "extractCoffee",
-          "controlExtraction",
-          "startExtraction",
+          "brewCoffee",
+          "maintainDryness",
           "monitorMoisture",
           "manageBrewTime",
-          "dispenseSugar"
+          "startExtraction",
+          "measureSugar",
+          "addSugar",
+          "initiateBrewing",
+          "extractCoffee",
+          "dispenseSugar",
+          "Technical context: User Interface",
+          "prepareBrew",
+          "controlExtraction"
         ],
         "detected_functions": []
       }
@@ -3897,7 +3867,7 @@
       "business_context": "",
       "technical_context": "",
       "actors_involved": [],
-      "step_text": "E1.1 The system adds user defined amount of sugar to the cup",
+      "step_text": "E1.1 The system adds defined amount of sugar to the cup",
       "nlp_context": {
         "generated_contexts": [
           {
@@ -3912,22 +3882,22 @@
               "dependency:nsubj:system",
               "dependency:dobj:sugar",
               "dependency:pobj:cup",
+              "trackInventory",
               "maintainDryness",
+              "monitorMoisture",
               "measureSugar",
               "addSugar",
-              "trackInventory",
-              "monitorMoisture",
               "dispenseSugar"
             ],
             "domain_alignment": 0.9,
             "safety_class": null,
             "hygiene_level": null,
             "special_requirements": [
+              "trackInventory",
               "maintainDryness",
+              "monitorMoisture",
               "measureSugar",
               "addSugar",
-              "trackInventory",
-              "monitorMoisture",
               "dispenseSugar"
             ],
             "controllers": []
@@ -3976,19 +3946,19 @@
           }
         ],
         "semantic_features": [
-          "noun_phrase:the system",
-          "dependency:pobj:cup",
-          "maintainDryness",
-          "measureSugar",
-          "dependency:nsubj:system",
-          "addSugar",
-          "trackInventory",
-          "dependency:dobj:sugar",
-          "monitorMoisture",
-          "verb:add",
           "verb_form:adds",
+          "trackInventory",
+          "dependency:nsubj:system",
+          "noun_phrase:the system",
+          "maintainDryness",
+          "monitorMoisture",
+          "measureSugar",
+          "addSugar",
+          "noun_phrase:the cup",
           "dispenseSugar",
-          "noun_phrase:the cup"
+          "dependency:pobj:cup",
+          "verb:add",
+          "dependency:dobj:sugar"
         ],
         "domain_alignment_avg": 0.8666666666666666,
         "context_types": {
@@ -3996,13 +3966,13 @@
           "technical_context": 1
         },
         "safety_functions": [
-          "maintainDryness",
-          "measureSugar",
-          "addSugar",
           "trackInventory",
+          "maintainDryness",
+          "monitorMoisture",
           "Functional activity: Coffee + Additive -> Coffee",
           "Technical context: Container Management",
-          "monitorMoisture",
+          "measureSugar",
+          "addSugar",
           "dispenseSugar"
         ],
         "detected_functions": []
@@ -4055,17 +4025,17 @@
           }
         ],
         "semantic_features": [
+          "noun_phrase:main flow",
           "dependency:pobj:flow",
-          "noun_phrase:e1.2 continue",
-          "noun_phrase:main flow"
+          "noun_phrase:e1.2 continue"
         ],
         "domain_alignment_avg": 1.0,
         "context_types": {
           "technical_context": 2
         },
         "safety_functions": [
-          "Technical context: Liquid Control",
-          "Technical context: Power Supply"
+          "Technical context: Power Supply",
+          "Technical context: Liquid Control"
         ],
         "detected_functions": []
       }
@@ -4102,11 +4072,11 @@
           }
         ],
         "semantic_features": [
-          "verb:request",
-          "noun_phrase:a espresso",
-          "dependency:dobj:espresso",
           "dependency:nsubj:user",
-          "verb_form:request"
+          "dependency:dobj:espresso",
+          "verb_form:request",
+          "verb:request",
+          "noun_phrase:a espresso"
         ],
         "domain_alignment_avg": 1.0,
         "context_types": {
@@ -4140,17 +4110,17 @@
               "noun_phrase:the water heater",
               "dependency:nsubj:system",
               "dependency:dobj:heater",
-              "monitorTemperature",
               "heatWater",
-              "protectOverheating"
+              "protectOverheating",
+              "monitorTemperature"
             ],
             "domain_alignment": 0.9,
             "safety_class": null,
             "hygiene_level": null,
             "special_requirements": [
-              "monitorTemperature",
               "heatWater",
-              "protectOverheating"
+              "protectOverheating",
+              "monitorTemperature"
             ],
             "controllers": []
           },
@@ -4256,15 +4226,15 @@
           }
         ],
         "semantic_features": [
-          "verb_form:activates",
-          "noun_phrase:the system",
           "noun_phrase:the water heater",
+          "noun_phrase:the system",
           "dependency:nsubj:system",
-          "monitorTemperature",
-          "dependency:dobj:heater",
           "protectOverheating",
+          "verb_form:activates",
+          "monitorTemperature",
           "heatWater",
-          "verb:activate"
+          "verb:activate",
+          "dependency:dobj:heater"
         ],
         "domain_alignment_avg": 0.9333333333333335,
         "context_types": {
@@ -4272,14 +4242,14 @@
           "technical_context": 4
         },
         "safety_functions": [
-          "Technical context: Liquid Control",
-          "Technical context: Thermal Control",
-          "Functional activity: starts/enables system component",
-          "monitorTemperature",
           "Technical context: Brewing Control",
           "protectOverheating",
+          "monitorTemperature",
           "heatWater",
-          "Technical context: Filter Preparation"
+          "Technical context: Thermal Control",
+          "Technical context: Filter Preparation",
+          "Technical context: Liquid Control",
+          "Functional activity: starts/enables system component"
         ],
         "detected_functions": [
           "heatWater",
@@ -4342,13 +4312,13 @@
           }
         ],
         "semantic_features": [
-          "noun_phrase:the system",
-          "verb:b2b",
           "dependency:dobj:filter",
-          "dependency:nsubj:system",
-          "verb:prepare",
           "verb_form:b2b",
-          "verb_form:prepares"
+          "noun_phrase:the system",
+          "dependency:nsubj:system",
+          "verb:b2b",
+          "verb_form:prepares",
+          "verb:prepare"
         ],
         "domain_alignment_avg": 0.85,
         "context_types": {
@@ -4356,8 +4326,8 @@
           "functional_context": 1
         },
         "safety_functions": [
-          "Functional activity: FilterDepot -> Filter",
-          "Technical context: Filter Preparation"
+          "Technical context: Filter Preparation",
+          "Functional activity: FilterDepot -> Filter"
         ],
         "detected_functions": []
       }
@@ -4510,18 +4480,18 @@
           }
         ],
         "semantic_features": [
-          "dependency:pobj:degree",
-          "noun_phrase:the system",
-          "noun_phrase:the set amount",
-          "dependency:nsubj:system",
-          "dependency:dobj:amount",
-          "dependency:pobj:filter",
-          "verb_form:grinding",
           "entity:ORG:b2c",
-          "verb:grind",
-          "verb_form:grinds",
           "noun_phrase:the set grinding degree",
-          "noun_phrase:the filter"
+          "noun_phrase:the system",
+          "noun_phrase:the filter",
+          "verb_form:grinds",
+          "dependency:nsubj:system",
+          "dependency:pobj:degree",
+          "verb_form:grinding",
+          "dependency:pobj:filter",
+          "noun_phrase:the set amount",
+          "verb:grind",
+          "dependency:dobj:amount"
         ],
         "domain_alignment_avg": 0.8800000000000001,
         "context_types": {
@@ -4529,9 +4499,9 @@
           "functional_context": 2
         },
         "safety_functions": [
+          "Technical context: Filter Preparation",
           "Functional activity: CoffeeBeans -> GroundCoffee",
           "Technical context: Mechanical Control",
-          "Technical context: Filter Preparation",
           "Technical context: Time Control"
         ],
         "detected_functions": []
@@ -4685,19 +4655,19 @@
           }
         ],
         "semantic_features": [
-          "dependency:dobj:cup",
+          "dependency:dobj:it",
+          "verb_form:places",
           "verb:retrieve",
           "noun_phrase:the system",
-          "dependency:pobj:container",
-          "verb_form:retrieves",
-          "dependency:dobj:it",
-          "dependency:nsubj:system",
-          "noun_phrase:storage container",
-          "dependency:pobj:filter",
-          "verb_form:places",
-          "entity:PERSON:b2d",
           "noun_phrase:the filter",
-          "verb:place"
+          "dependency:nsubj:system",
+          "entity:PERSON:b2d",
+          "verb_form:retrieves",
+          "dependency:pobj:container",
+          "dependency:pobj:filter",
+          "noun_phrase:storage container",
+          "verb:place",
+          "dependency:dobj:cup"
         ],
         "domain_alignment_avg": 0.9400000000000001,
         "context_types": {
@@ -4706,10 +4676,10 @@
         },
         "safety_functions": [
           "Technical context: Power Supply",
-          "Functional activity: obtains data/item from storage",
           "Technical context: Brewing Control",
           "Technical context: Container Management",
-          "Technical context: Filter Preparation"
+          "Technical context: Filter Preparation",
+          "Functional activity: obtains data/item from storage"
         ],
         "detected_functions": []
       }
@@ -4741,23 +4711,23 @@
               "dependency:dobj:compressor",
               "dependency:dobj:pressure",
               "dependency:pobj:espresso",
-              "monitorTemperature",
               "trackWaterLevel",
-              "monitorWaterQuality",
-              "maintainPressure",
               "protectOverheating",
-              "heatWater"
+              "monitorTemperature",
+              "maintainPressure",
+              "heatWater",
+              "monitorWaterQuality"
             ],
             "domain_alignment": 0.9,
             "safety_class": null,
             "hygiene_level": null,
             "special_requirements": [
-              "monitorTemperature",
               "trackWaterLevel",
-              "monitorWaterQuality",
-              "maintainPressure",
               "protectOverheating",
-              "heatWater"
+              "monitorTemperature",
+              "maintainPressure",
+              "heatWater",
+              "monitorWaterQuality"
             ],
             "controllers": []
           },
@@ -4889,22 +4859,22 @@
         ],
         "semantic_features": [
           "noun_phrase:the system",
-          "dependency:dobj:compressor",
-          "dependency:pobj:espresso",
+          "noun_phrase:water compressor",
           "dependency:nsubj:system",
-          "heatWater",
+          "trackWaterLevel",
+          "protectOverheating",
           "monitorTemperature",
           "verb:start",
+          "verb:generate",
           "noun_phrase:appropriate water pressure",
-          "dependency:dobj:pressure",
-          "trackWaterLevel",
-          "monitorWaterQuality",
-          "maintainPressure",
-          "protectOverheating",
-          "verb_form:starts",
-          "noun_phrase:water compressor",
+          "dependency:pobj:espresso",
+          "dependency:dobj:compressor",
           "verb_form:generate",
-          "verb:generate"
+          "maintainPressure",
+          "heatWater",
+          "monitorWaterQuality",
+          "dependency:dobj:pressure",
+          "verb_form:starts"
         ],
         "domain_alignment_avg": 0.8833333333333333,
         "context_types": {
@@ -4912,17 +4882,17 @@
           "technical_context": 3
         },
         "safety_functions": [
-          "Technical context: Liquid Control",
-          "monitorTemperature",
-          "Functional activity: begins system operation",
-          "trackWaterLevel",
-          "Functional activity: InputData -> GeneratedResult",
-          "monitorWaterQuality",
-          "maintainPressure",
           "Technical context: Brewing Control",
+          "trackWaterLevel",
           "protectOverheating",
+          "monitorTemperature",
+          "maintainPressure",
+          "Functional activity: InputData -> GeneratedResult",
           "heatWater",
-          "Technical context: Filter Preparation"
+          "monitorWaterQuality",
+          "Technical context: Filter Preparation",
+          "Technical context: Liquid Control",
+          "Functional activity: begins system operation"
         ],
         "detected_functions": [
           "heatWater",
@@ -4956,17 +4926,17 @@
               "dependency:nsubj:system",
               "dependency:dobj:water",
               "dependency:pobj:grounds",
-              "monitorTemperature",
               "heatWater",
-              "protectOverheating"
+              "protectOverheating",
+              "monitorTemperature"
             ],
             "domain_alignment": 0.9,
             "safety_class": null,
             "hygiene_level": null,
             "special_requirements": [
-              "monitorTemperature",
               "heatWater",
-              "protectOverheating"
+              "protectOverheating",
+              "monitorTemperature"
             ],
             "controllers": []
           },
@@ -4986,18 +4956,18 @@
               "dependency:dobj:water",
               "dependency:pobj:grounds",
               "extractCoffee",
-              "manageBrewTime",
+              "controlExtraction",
               "brewCoffee",
-              "controlExtraction"
+              "manageBrewTime"
             ],
             "domain_alignment": 0.9,
             "safety_class": null,
             "hygiene_level": null,
             "special_requirements": [
               "extractCoffee",
-              "manageBrewTime",
+              "controlExtraction",
               "brewCoffee",
-              "controlExtraction"
+              "manageBrewTime"
             ],
             "controllers": []
           },
@@ -5099,23 +5069,23 @@
           }
         ],
         "semantic_features": [
-          "noun_phrase:the system",
-          "verb_form:pressing",
-          "noun_phrase:hot water",
-          "dependency:nsubj:system",
-          "manageBrewTime",
-          "verb:begin",
-          "brewCoffee",
-          "monitorTemperature",
-          "extractCoffee",
-          "verb:press",
-          "dependency:pobj:grounds",
-          "protectOverheating",
-          "verb_form:begins",
           "noun_phrase:the coffee grounds",
           "dependency:dobj:water",
-          "controlExtraction",
-          "heatWater"
+          "brewCoffee",
+          "noun_phrase:the system",
+          "dependency:nsubj:system",
+          "protectOverheating",
+          "verb:press",
+          "dependency:pobj:grounds",
+          "monitorTemperature",
+          "verb_form:pressing",
+          "manageBrewTime",
+          "heatWater",
+          "verb:begin",
+          "noun_phrase:hot water",
+          "extractCoffee",
+          "verb_form:begins",
+          "controlExtraction"
         ],
         "domain_alignment_avg": 0.9666666666666667,
         "context_types": {
@@ -5123,16 +5093,16 @@
           "technical_context": 4
         },
         "safety_functions": [
-          "Technical context: Liquid Control",
-          "Technical context: Thermal Control",
           "Technical context: Power Supply",
-          "brewCoffee",
-          "monitorTemperature",
-          "extractCoffee",
           "Technical context: Brewing Control",
+          "brewCoffee",
           "protectOverheating",
-          "heatWater",
+          "Technical context: Thermal Control",
+          "monitorTemperature",
           "manageBrewTime",
+          "heatWater",
+          "extractCoffee",
+          "Technical context: Liquid Control",
           "controlExtraction"
         ],
         "detected_functions": [
@@ -5196,13 +5166,13 @@
           }
         ],
         "semantic_features": [
-          "verb_form:outputs",
           "noun_phrase:the system",
-          "dependency:dobj:message",
-          "verb:output",
           "dependency:nsubj:system",
+          "noun_phrase:a message",
           "dependency:pobj:user",
-          "noun_phrase:a message"
+          "verb:output",
+          "dependency:dobj:message",
+          "verb_form:outputs"
         ],
         "domain_alignment_avg": 0.85,
         "context_types": {
@@ -5274,17 +5244,17 @@
               "noun_phrase:water heater",
               "dependency:nsubj:system",
               "dependency:dobj:heater",
-              "monitorTemperature",
               "heatWater",
-              "protectOverheating"
+              "protectOverheating",
+              "monitorTemperature"
             ],
             "domain_alignment": 0.9,
             "safety_class": null,
             "hygiene_level": null,
             "special_requirements": [
-              "monitorTemperature",
               "heatWater",
-              "protectOverheating"
+              "protectOverheating",
+              "monitorTemperature"
             ],
             "controllers": []
           },
@@ -5390,15 +5360,15 @@
           }
         ],
         "semantic_features": [
-          "verb_form:switches",
           "noun_phrase:water heater",
+          "verb_form:switches",
           "noun_phrase:the system",
           "dependency:nsubj:system",
-          "verb:switch",
-          "monitorTemperature",
-          "dependency:dobj:heater",
           "protectOverheating",
-          "heatWater"
+          "monitorTemperature",
+          "verb:switch",
+          "heatWater",
+          "dependency:dobj:heater"
         ],
         "domain_alignment_avg": 0.9833333333333334,
         "context_types": {
@@ -5406,14 +5376,14 @@
           "technical_context": 5
         },
         "safety_functions": [
-          "Technical context: Liquid Control",
-          "Technical context: Thermal Control",
           "Technical context: Power Supply",
-          "monitorTemperature",
           "Technical context: Brewing Control",
           "protectOverheating",
+          "monitorTemperature",
           "heatWater",
-          "Technical context: Filter Preparation"
+          "Technical context: Thermal Control",
+          "Technical context: Filter Preparation",
+          "Technical context: Liquid Control"
         ],
         "detected_functions": [
           "heatWater",
@@ -5500,14 +5470,14 @@
           }
         ],
         "semantic_features": [
-          "noun_phrase:the system",
-          "verb_form:outputs",
-          "dependency:dobj:message",
-          "verb:output",
           "noun_phrase:an error message",
+          "noun_phrase:the system",
           "dependency:nsubj:system",
           "dependency:pobj:user",
-          "entity:PRODUCT:a1.2"
+          "verb:output",
+          "entity:PRODUCT:a1.2",
+          "dependency:dobj:message",
+          "verb_form:outputs"
         ],
         "domain_alignment_avg": 0.9,
         "context_types": {
@@ -5516,8 +5486,8 @@
         },
         "safety_functions": [
           "Technical context: User Interface",
-          "Functional activity: sends data to Output boundary",
-          "Technical context: Error Handling"
+          "Technical context: Error Handling",
+          "Functional activity: sends data to Output boundary"
         ],
         "detected_functions": []
       }
@@ -5562,22 +5532,22 @@
               "dependency:nsubj:user",
               "dependency:dobj:sugar",
               "dependency:pobj:coffee",
+              "trackInventory",
               "maintainDryness",
+              "monitorMoisture",
               "measureSugar",
               "addSugar",
-              "trackInventory",
-              "monitorMoisture",
               "dispenseSugar"
             ],
             "domain_alignment": 0.9,
             "safety_class": null,
             "hygiene_level": null,
             "special_requirements": [
+              "trackInventory",
               "maintainDryness",
+              "monitorMoisture",
               "measureSugar",
               "addSugar",
-              "trackInventory",
-              "monitorMoisture",
               "dispenseSugar"
             ],
             "controllers": []
@@ -5593,24 +5563,24 @@
               "dependency:nsubj:user",
               "dependency:dobj:sugar",
               "dependency:pobj:coffee",
-              "prepareBrew",
               "brewCoffee",
+              "manageBrewTime",
+              "startExtraction",
               "initiateBrewing",
               "extractCoffee",
-              "startExtraction",
-              "manageBrewTime",
+              "prepareBrew",
               "controlExtraction"
             ],
             "domain_alignment": 0.9,
             "safety_class": null,
             "hygiene_level": null,
             "special_requirements": [
-              "prepareBrew",
               "brewCoffee",
+              "manageBrewTime",
+              "startExtraction",
               "initiateBrewing",
               "extractCoffee",
-              "startExtraction",
-              "manageBrewTime",
+              "prepareBrew",
               "controlExtraction"
             ],
             "controllers": []
@@ -5657,25 +5627,25 @@
           }
         ],
         "semantic_features": [
-          "maintainDryness",
-          "addSugar",
-          "verb_form:wants",
-          "measureSugar",
           "brewCoffee",
-          "dependency:pobj:coffee",
-          "dependency:nsubj:user",
-          "verb:want",
-          "prepareBrew",
-          "initiateBrewing",
-          "trackInventory",
+          "maintainDryness",
           "dependency:dobj:sugar",
-          "dispenseSugar",
-          "entity:PRODUCT:e1 b4-b5",
-          "extractCoffee",
-          "startExtraction",
-          "monitorMoisture",
           "manageBrewTime",
-          "controlExtraction"
+          "initiateBrewing",
+          "controlExtraction",
+          "prepareBrew",
+          "dependency:nsubj:user",
+          "trackInventory",
+          "verb:want",
+          "monitorMoisture",
+          "startExtraction",
+          "dispenseSugar",
+          "dependency:pobj:coffee",
+          "measureSugar",
+          "addSugar",
+          "extractCoffee",
+          "verb_form:wants",
+          "entity:PRODUCT:e1 b4-b5"
         ],
         "domain_alignment_avg": 0.95,
         "context_types": {
@@ -5683,21 +5653,21 @@
           "technical_context": 2
         },
         "safety_functions": [
-          "prepareBrew",
-          "maintainDryness",
-          "measureSugar",
           "Technical context: Power Supply",
-          "addSugar",
-          "brewCoffee",
-          "initiateBrewing",
           "trackInventory",
-          "Technical context: User Interface",
-          "extractCoffee",
-          "controlExtraction",
-          "startExtraction",
+          "brewCoffee",
+          "maintainDryness",
           "monitorMoisture",
           "manageBrewTime",
-          "dispenseSugar"
+          "startExtraction",
+          "measureSugar",
+          "addSugar",
+          "initiateBrewing",
+          "extractCoffee",
+          "dispenseSugar",
+          "Technical context: User Interface",
+          "prepareBrew",
+          "controlExtraction"
         ],
         "detected_functions": []
       }
@@ -5725,22 +5695,22 @@
               "dependency:nsubj:system",
               "dependency:dobj:sugar",
               "dependency:pobj:cup",
+              "trackInventory",
               "maintainDryness",
+              "monitorMoisture",
               "measureSugar",
               "addSugar",
-              "trackInventory",
-              "monitorMoisture",
               "dispenseSugar"
             ],
             "domain_alignment": 0.9,
             "safety_class": null,
             "hygiene_level": null,
             "special_requirements": [
+              "trackInventory",
               "maintainDryness",
+              "monitorMoisture",
               "measureSugar",
               "addSugar",
-              "trackInventory",
-              "monitorMoisture",
               "dispenseSugar"
             ],
             "controllers": []
@@ -5789,19 +5759,19 @@
           }
         ],
         "semantic_features": [
-          "noun_phrase:the system",
-          "dependency:pobj:cup",
-          "maintainDryness",
-          "measureSugar",
-          "dependency:nsubj:system",
-          "addSugar",
-          "trackInventory",
-          "dependency:dobj:sugar",
-          "monitorMoisture",
-          "verb:add",
           "verb_form:adds",
+          "trackInventory",
+          "dependency:nsubj:system",
+          "noun_phrase:the system",
+          "maintainDryness",
+          "monitorMoisture",
+          "measureSugar",
+          "addSugar",
+          "noun_phrase:the cup",
           "dispenseSugar",
-          "noun_phrase:the cup"
+          "dependency:pobj:cup",
+          "verb:add",
+          "dependency:dobj:sugar"
         ],
         "domain_alignment_avg": 0.8666666666666666,
         "context_types": {
@@ -5809,13 +5779,13 @@
           "technical_context": 1
         },
         "safety_functions": [
-          "maintainDryness",
-          "measureSugar",
-          "addSugar",
           "trackInventory",
+          "maintainDryness",
+          "monitorMoisture",
           "Functional activity: Coffee + Additive -> Coffee",
           "Technical context: Container Management",
-          "monitorMoisture",
+          "measureSugar",
+          "addSugar",
           "dispenseSugar"
         ],
         "detected_functions": []
@@ -5868,30 +5838,30 @@
           }
         ],
         "semantic_features": [
+          "noun_phrase:main flow",
           "dependency:pobj:flow",
-          "noun_phrase:e1.2 continue",
-          "noun_phrase:main flow"
+          "noun_phrase:e1.2 continue"
         ],
         "domain_alignment_avg": 1.0,
         "context_types": {
           "technical_context": 2
         },
         "safety_functions": [
-          "Technical context: Liquid Control",
-          "Technical context: Power Supply"
+          "Technical context: Power Supply",
+          "Technical context: Liquid Control"
         ],
         "detected_functions": []
       }
     }
   ],
   "summary": {
-    "total_components": 93,
-    "actors_count": 2,
+    "total_components": 89,
+    "actors_count": 1,
     "controllers_count": 9,
     "boundaries_count": 10,
-    "entities_count": 17,
-    "control_flows_count": 73,
-    "data_flows_count": 49,
+    "entities_count": 18,
+    "control_flows_count": 68,
+    "data_flows_count": 46,
     "parallel_nodes_count": 6
   }
 }

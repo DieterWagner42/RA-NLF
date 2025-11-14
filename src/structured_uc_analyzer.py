@@ -212,12 +212,16 @@ class StructuredUCAnalyzer:
         self.verb_loader = DomainVerbLoader()
         self.nlp = None
         self._load_spacy()
-        
+
         # Initialize generative context manager
         self.context_manager = GenerativeContextManager(domain_name)
 
         # Initialize material controller registry
         self.controller_registry = MaterialControllerRegistry()
+
+        # Load implicit protection functions
+        self.protection_functions = self.verb_loader.get_implicit_protection_functions(domain_name)
+        print(f"[PROTECTION] Loaded {len(self.protection_functions)} material protection function sets")
 
         # Analysis state
         self.uc_context = UCContext()
@@ -364,7 +368,80 @@ class StructuredUCAnalyzer:
             print("ERROR: spaCy model 'en_core_web_md' not found")
             print("Please install: python -m spacy download en_core_web_md")
             sys.exit(1)
-    
+
+    def _find_triggered_protection_functions(self, material: str, text: str, step_id: str = "") -> List[Tuple[str, str, str]]:
+        """
+        Find protection functions that should be triggered based on text patterns.
+
+        Args:
+            material: Material name (e.g., 'water', 'milk', 'sugar')
+            text: UC step text to analyze
+            step_id: Step ID for logging (optional)
+
+        Returns:
+            List of tuples: (function_name, criticality, constraint)
+        """
+        triggered = []
+        text_lower = text.lower()
+        material_lower = material.lower()
+
+        # Map material names to protection function keys
+        material_mapping = {
+            'water': 'water',
+            'milk': 'milk',
+            'sugar': 'sugar',
+            'coffee': 'coffee_beans',
+            'coffee beans': 'coffee_beans',
+            'coffeebeans': 'coffee_beans',
+            'filter': 'filter'
+        }
+
+        protection_key = material_mapping.get(material_lower)
+        if not protection_key or protection_key not in self.protection_functions:
+            return triggered
+
+        material_protections = self.protection_functions[protection_key]
+
+        # Check all function types (safety_functions, hygiene_functions, quality_functions)
+        for func_type in ['safety_functions', 'hygiene_functions', 'quality_functions']:
+            if func_type not in material_protections:
+                continue
+
+            for protection_func in material_protections[func_type]:
+                func_name = protection_func['name']
+                trigger_patterns = protection_func.get('trigger_patterns', [])
+                criticality = protection_func.get('criticality', 'medium')
+                constraint = protection_func.get('constraint', '')
+
+                # Check if any trigger pattern matches the text
+                for pattern in trigger_patterns:
+                    if pattern.lower() in text_lower:
+                        triggered.append((func_name, criticality, constraint))
+                        print(f"[PROTECTION] Triggered {func_name} for {material} in {step_id}: '{pattern}' matched")
+                        break  # Don't match same function multiple times
+
+        return triggered
+
+    def _add_protection_functions_to_controller(self, controller_name: str, material: str, step_text: str, step_id: str):
+        """
+        Add implicit protection functions to a material controller.
+
+        Args:
+            controller_name: Controller name (e.g., 'WaterLiquidManager')
+            material: Material name (e.g., 'water')
+            step_text: UC step text
+            step_id: Step ID
+        """
+        triggered_funcs = self._find_triggered_protection_functions(material, step_text, step_id)
+
+        if triggered_funcs:
+            controller = self.controller_registry.get_controller_by_name(controller_name)
+            if controller:
+                for func_name, criticality, constraint in triggered_funcs:
+                    # Add as implicit function (marked with prefix)
+                    controller.add_function(f"{func_name} [implicit-{criticality}]")
+                    print(f"[PROTECTION] Added {func_name} to {controller_name} (criticality: {criticality})")
+
     def _detect_aggregation_state(self, text_lower: str, verb_lemma: str, material_name: str) -> Optional[Tuple[str, List[str]]]:
         """
         Generic aggregation state detection for any material: solid/liquid/gas
@@ -1518,7 +1595,18 @@ class StructuredUCAnalyzer:
                 description=f"Boundary for {entity_name} supply monitoring and alerts"
             )
             ra_classes.append(boundary)
-        
+
+            # Add implicit protection functions for precondition materials
+            # E.g., "Milk is available" triggers TemperatureProtection, FreshnessProtection
+            material_controller = self.controller_registry.find_controller_by_material(material)
+            if material_controller:
+                self._add_protection_functions_to_controller(
+                    controller_name=material_controller.name,
+                    material=material,
+                    step_text=line_text,
+                    step_id="PRECONDITION"
+                )
+
         return ra_classes
     
     def _generate_controller_for_step(self, step_id: str, grammatical: GrammaticalAnalysis, step_context: StepContext = None, line_text: str = "") -> Optional[RAClass]:
@@ -1754,14 +1842,38 @@ class StructuredUCAnalyzer:
             # Add function to controller's function set
             material_controller.add_function(function_name)
 
+            # Add implicit protection functions based on triggers
+            self._add_protection_functions_to_controller(
+                controller_name=material_controller.name,
+                material=material_controller.material,
+                step_text=line_text,
+                step_id=step_id
+            )
+
             # Determine parallel group from step_id
             parallel_group = self._get_parallel_group_from_step_id(step_id)
 
-            # Create controller description with function
+            # Create controller description with all functions (explicit + implicit)
             description = f"Manages {material_controller.material}"
             if material_controller.aggregation_state:
                 description += f" ({material_controller.aggregation_state} state)"
-            description += f": {function_name}() in {step_id}"
+
+            # List all functions (explicit and implicit)
+            all_functions = sorted(material_controller.functions)
+            explicit_funcs = [f for f in all_functions if '[implicit-' not in f]
+            implicit_funcs = [f for f in all_functions if '[implicit-' in f]
+
+            if explicit_funcs:
+                description += f": {', '.join(explicit_funcs)} in {step_id}"
+            if implicit_funcs:
+                # Clean up implicit function names for display
+                implicit_display = []
+                for f in implicit_funcs:
+                    # Extract function name and criticality
+                    func_name = f.split(' [implicit-')[0]
+                    criticality = f.split('[implicit-')[1].rstrip(']')
+                    implicit_display.append(f"{func_name}[{criticality}]")
+                description += f" | Implicit: {', '.join(implicit_display)}"
 
             return RAClass(
                 name=material_controller.name,

@@ -210,7 +210,26 @@ class DomainVerbLoader:
     def is_coffee_additive(self, additive_name: str, domain_name: Optional[str] = None) -> bool:
         """Check if an ingredient is a recognized coffee additive"""
         return self.get_coffee_additive_info(additive_name, domain_name) is not None
-    
+
+    def get_implicit_protection_functions(self, domain_name: str) -> Dict:
+        """
+        Get implicit protection functions for a specific domain.
+
+        These are safety/hygiene functions automatically required by operational
+        materials but not explicitly mentioned in Use Cases.
+
+        Args:
+            domain_name: Domain name (e.g., 'beverage_preparation')
+
+        Returns:
+            Dict with material -> protection functions mapping
+        """
+        if domain_name not in self.domain_configs:
+            return {}
+
+        domain_config = self.domain_configs[domain_name]
+        return domain_config.get('implicit_protection_functions', {})
+
     def get_available_domains(self) -> List[str]:
         """Get list of available domain names"""
         return list(self.domain_configs.keys())

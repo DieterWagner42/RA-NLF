@@ -632,5 +632,142 @@
         "controller_realization": "TimeManager"
       }
     }
+  },
+  "implicit_protection_functions": {
+    "description": "Protection functions implicitly required by safety/hygiene constraints but not explicitly mentioned in Use Cases",
+    "water": {
+      "safety_functions": [
+        {
+          "name": "OverheatProtection",
+          "constraint": "Max temperature 100°C",
+          "constraint_source": "safety_requirements.thermal_safety.max_temperature",
+          "trigger": "heating operations detected",
+          "trigger_patterns": ["heat", "activate heater", "warm", "boil", "hot water"],
+          "controller": "WaterLiquidManager",
+          "implicit": true,
+          "criticality": "high"
+        },
+        {
+          "name": "OverpressureProtection",
+          "constraint": "Max pressure 15 bar",
+          "constraint_source": "safety_requirements.pressure_safety.max_pressure",
+          "trigger": "pressurization operations detected",
+          "trigger_patterns": ["pressurize", "compress", "compressor", "pressure", "press"],
+          "controller": "WaterLiquidManager",
+          "implicit": true,
+          "criticality": "high"
+        },
+        {
+          "name": "DryRunProtection",
+          "constraint": "No heating without sufficient water",
+          "constraint_source": "safety_requirements.thermal_safety.overheat_protection",
+          "trigger": "heating operations AND low water level",
+          "trigger_patterns": ["too little water", "water level low", "insufficient water"],
+          "controller": "WaterLiquidManager",
+          "implicit": true,
+          "criticality": "high"
+        }
+      ],
+      "hygiene_functions": [
+        {
+          "name": "WaterQualityProtection",
+          "constraint": "Water age < 24 hours",
+          "constraint_source": "hygiene_requirements.contamination_prevention.bacterial_growth",
+          "trigger": "water storage detected",
+          "trigger_patterns": ["water is available", "precondition", "water supply"],
+          "controller": "WaterLiquidManager",
+          "implicit": true,
+          "criticality": "medium"
+        }
+      ]
+    },
+    "milk": {
+      "safety_functions": [
+        {
+          "name": "TemperatureProtection",
+          "constraint": "Storage temperature < 4°C",
+          "constraint_source": "hygiene_requirements.milk_hygiene.temperature_control",
+          "trigger": "milk storage detected",
+          "trigger_patterns": ["milk is available", "precondition", "milk supply"],
+          "controller": "MilkLiquidManager",
+          "implicit": true,
+          "criticality": "high"
+        },
+        {
+          "name": "FreshnessProtection",
+          "constraint": "Milk expiration monitoring",
+          "constraint_source": "hygiene_requirements.milk_hygiene.freshness_monitoring",
+          "trigger": "milk storage detected",
+          "trigger_patterns": ["milk is available", "precondition", "milk supply"],
+          "controller": "MilkLiquidManager",
+          "implicit": true,
+          "criticality": "high"
+        }
+      ],
+      "hygiene_functions": [
+        {
+          "name": "LineHygieneProtection",
+          "constraint": "Automatic purging after milk use",
+          "constraint_source": "hygiene_requirements.milk_hygiene.automatic_purging",
+          "trigger": "milk dispensing completed",
+          "trigger_patterns": ["adds milk", "add milk", "pour milk", "steam milk"],
+          "controller": "MilkLiquidManager",
+          "implicit": true,
+          "criticality": "high"
+        },
+        {
+          "name": "SystemHygieneProtection",
+          "constraint": "Daily cleaning cycle",
+          "constraint_source": "hygiene_requirements.cleaning_cycles.daily_cleaning",
+          "trigger": "daily schedule",
+          "trigger_patterns": ["daily", "cleaning cycle", "end of day"],
+          "controller": "MilkLiquidManager",
+          "implicit": true,
+          "criticality": "medium"
+        }
+      ]
+    },
+    "sugar": {
+      "hygiene_functions": [
+        {
+          "name": "MoistureProtection",
+          "constraint": "Dry storage environment",
+          "constraint_source": "operational_materials_addressing.material_types.sugar.storage_conditions",
+          "trigger": "sugar storage detected",
+          "trigger_patterns": ["sugar is available", "precondition", "sugar supply"],
+          "controller": "SugarSolidManager",
+          "implicit": true,
+          "criticality": "medium"
+        }
+      ]
+    },
+    "coffee_beans": {
+      "quality_functions": [
+        {
+          "name": "FreshnessProtection",
+          "constraint": "Cool, dark, dry storage",
+          "constraint_source": "operational_materials_addressing.material_types.coffee_beans.storage_requirements",
+          "trigger": "coffee beans storage detected",
+          "trigger_patterns": ["coffee beans are available", "precondition", "beans supply"],
+          "controller": "CoffeeSolidManager",
+          "implicit": true,
+          "criticality": "low"
+        }
+      ]
+    },
+    "filter": {
+      "hygiene_functions": [
+        {
+          "name": "SingleUseProtection",
+          "constraint": "Filter single-use only",
+          "constraint_source": "hygiene_requirements.contamination_prevention.residue_removal",
+          "trigger": "brewing completed",
+          "trigger_patterns": ["End UC", "brewing completed", "end use case"],
+          "controller": "FilterManager",
+          "implicit": true,
+          "criticality": "medium"
+        }
+      ]
+    }
   }
 }
